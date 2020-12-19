@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { AuthContextProvider } from "./context";
 import App from "./layout/App";
 
 import reportWebVitals from "./reportWebVitals";
@@ -7,7 +8,9 @@ import reportWebVitals from "./reportWebVitals";
 const ReactApp = () => {
   return (
     <React.StrictMode>
-      <App />
+      <AuthContextProvider>
+        <App />
+      </AuthContextProvider>
     </React.StrictMode>
   );
 };

@@ -1,37 +1,15 @@
-import { useEffect, useState } from "react";
-import { firebaseAuth, firestore } from "src/firebase";
+import { BrowserRouter } from "react-router-dom";
+import Content from "./content";
+import Footer from "./footer";
+import Header from "./header";
 
 const App = () => {
-  const [data, setData] = useState<object[]>([]);
-
-  useEffect(() => {
-    firebaseAuth.signInAnonymously().then((result) => {
-      console.log("sign in result", { result });
-    });
-  }, []);
-
-  const retrieve = () => {
-    firestore
-      .collection("testing")
-      .get()
-      .then((querySnapshot) => {
-        const list = querySnapshot.docs.map((doc) => {
-          return { id: doc.id, ...doc.data() };
-        });
-        setData(list);
-      })
-      .catch((err) => console.error({ err }));
-  };
-
   return (
-    <div>
-      <button onClick={retrieve}>Retrieve</button>
-      <div>
-        {data.map((item,index) => (
-          <div key={index}>{JSON.stringify(item)}</div>
-        ))}
-      </div>
-    </div>
+    <BrowserRouter>
+      <Header />
+      <Content />
+      <Footer />
+    </BrowserRouter>
   );
 };
 
