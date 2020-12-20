@@ -15,7 +15,8 @@ service cloud.firestore {
     }
   
     match /user_roles/{document=**}{
-  	   allow read,write: if false;
+  	   allow read: if true;
+       allow write: if false;
     }
   
     match /testing/{document=**} {

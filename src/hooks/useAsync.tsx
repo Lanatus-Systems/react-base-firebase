@@ -1,21 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 
-interface Iprops<T> {
-  fun: () => Promise<T>;
-  defaultValue?: T;
-}
+type TasyncFunction<T, R> = (req: T) => Promise<R>;
 
-const useAsync = <T,>({
-  fun,
-  defaultValue,
-}: Iprops<T>): [T | undefined, boolean] => {
-  const [value, setValue] = useState<T | undefined>(defaultValue);
-  useEffect(() => {
-    fun().then(setValue);
-    // call on mount only
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  return [value, value !== defaultValue];
+const useAsync = <T, R>(
+  asyncFunction: TasyncFunction<T, R>
+): [TasyncFunction<T, R>, boolean, Error | undefined] => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error>();
+
+  const wrapper = useCallback(
+    (req: T) => {
+      setLoading(true);
+      return asyncFunction(req)
+        .catch((err: Error) => {
+          setError(err);
+          throw err;
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [asyncFunction]
+  );
+  return [wrapper, loading, error];
 };
 
 export default useAsync;

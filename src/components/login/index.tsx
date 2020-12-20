@@ -7,8 +7,8 @@ const LoginPage = () => {
 
   const history = useHistory();
 
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("test@test.com");
+  const [password, setPassword] = useState<string>("test123");
 
   const login = () => {
     emailPasswordLogin(email, password).then(() => history.push("/"));
@@ -24,7 +24,7 @@ const LoginPage = () => {
       <div>
         {" "}
         <label>Password : </label>
-        <input value={password} onChange={(e) => setPassword(e.target.value)} />
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
       </div>
       <div>
         <button onClick={login}>Login</button>

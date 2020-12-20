@@ -1,14 +1,11 @@
-import React, { ReactNode, useCallback, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { firebaseAuth } from "src/firebase";
-
-interface AppUser {
-  id: string;
-  email: string;
-  editor: boolean;
-}
+import { AppUser, Roles } from "src/model/auth";
+import { getUserRoles } from "src/api/auth";
 
 interface IauthContext {
   user?: AppUser;
+  roles: Roles;
   emailPasswordLogin: (email: string, password: string) => Promise<unknown>;
   logout: () => Promise<unknown>;
 }
@@ -16,6 +13,7 @@ interface IauthContext {
 const AuthContext = React.createContext<IauthContext>({
   emailPasswordLogin: () => new Promise((resolve) => resolve(false)),
   logout: () => new Promise((resolve) => resolve(false)),
+  roles: {} as Roles,
 });
 
 interface Iprops {
@@ -24,6 +22,21 @@ interface Iprops {
 
 export const AuthContextProvider = ({ children }: Iprops) => {
   const [user, setUser] = useState<AppUser>();
+  const [roles, setRoles] = useState<Roles>({} as Roles);
+
+  useEffect(() => {
+    firebaseAuth.onAuthStateChanged((user) => {
+      setUser((user as unknown) as AppUser);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (user == null) {
+      setRoles({} as Roles);
+    } else {
+      getUserRoles(user.email).then(setRoles);
+    }
+  }, [user]);
 
   const emailPasswordLogin = useCallback((email: string, password: string) => {
     return firebaseAuth
@@ -39,7 +52,7 @@ export const AuthContextProvider = ({ children }: Iprops) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, emailPasswordLogin, logout }}>
+    <AuthContext.Provider value={{ user, roles, emailPasswordLogin, logout }}>
       {children}
     </AuthContext.Provider>
   );
