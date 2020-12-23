@@ -1,12 +1,12 @@
 import { Route } from "react-router-dom";
+import Categories from "src/components/admin/categories";
 import LoginPage from "src/components/login";
-import Test from "src/components/test";
 
 const Content = () => {
   return (
-    <div style={{ height: "80vh" }}>
+    <div style={{ height: "1000vh" }}>
       <Route exact path="/login" component={LoginPage} />
-      <Route exact path="/" component={Test} />
+      <Route exact path="/" component={Categories} />
     </div>
   );
 };

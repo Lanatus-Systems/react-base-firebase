@@ -1,7 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { AuthContextProvider } from "./context";
+import { AuthContextProvider, LayoutContextProvider } from "./context";
+
 import App from "./layout/App";
+
+import "./i18n/config";
 
 import reportWebVitals from "./reportWebVitals";
 
@@ -9,7 +12,9 @@ const ReactApp = () => {
   return (
     <React.StrictMode>
       <AuthContextProvider>
-        <App />
+        <LayoutContextProvider>
+          <App />
+        </LayoutContextProvider>
       </AuthContextProvider>
     </React.StrictMode>
   );

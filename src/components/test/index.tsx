@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "src/context";
+import { AuthContext, LayoutContext } from "src/context";
 import { firestore } from "src/firebase";
 import { useAsync } from "src/hooks";
 
@@ -77,6 +77,19 @@ const getItems = () => {
     });
 };
 
+const getCategories = () => {
+  return firestore
+    .collection("categories")
+    .get()
+    .then((querySnapshot) => {
+      const list = querySnapshot.docs.map((doc) => {
+        return { id: doc.id, ...doc.data() } as ItemType;
+      });
+      console.log({ categories: list });
+      return list;
+    });
+};
+
 const addItem = (item: ItemType) => {
   return firestore.collection("testing").add(item);
 };
@@ -88,6 +101,8 @@ const Test = () => {
 
   const { roles, user } = useContext(AuthContext);
 
+  const { isMobile } = useContext(LayoutContext);
+
   const [getAllItems, loading, getError] = useAsync<void, ItemType[]>(getItems);
 
   const [addNewItem, adding, addError] = useAsync(addItem);
@@ -96,8 +111,12 @@ const Test = () => {
     getAllItems().then(setData);
   };
 
+  useEffect(() => {
+    getCategories();
+  }, []);
   return (
     <div>
+      {isMobile ? "Mobile" : "PC"}
       <div>
         <button onClick={retrieve}>Retrieve</button>
         <input
