@@ -1,6 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { AuthContextProvider, LayoutContextProvider } from "./context";
+import {
+  AuthContextProvider,
+  GlobalContextProvider,
+  LayoutContextProvider,
+} from "./context";
 
 import App from "./layout/App";
 
@@ -13,7 +17,9 @@ const ReactApp = () => {
     <React.StrictMode>
       <AuthContextProvider>
         <LayoutContextProvider>
-          <App />
+          <GlobalContextProvider>
+            <App />
+          </GlobalContextProvider>
         </LayoutContextProvider>
       </AuthContextProvider>
     </React.StrictMode>

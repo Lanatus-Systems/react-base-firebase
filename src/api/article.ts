@@ -22,7 +22,9 @@ export const updateCategory = (item: Category) => {
 };
 
 export const addCategory = (item: Category) => {
-  return firestore.collection(CATEGORIES).add(item);
+  return firestore.collection(CATEGORIES).doc(item.id).set({
+    label: item.label,
+  });
 };
 
 // const removeCategory = (item: Category) => {

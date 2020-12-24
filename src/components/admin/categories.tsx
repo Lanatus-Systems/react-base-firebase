@@ -22,38 +22,40 @@ const Item = ({ item, index, retrieve }: Iprops) => {
     setFrenchValue(item.label.fr);
   }, [item]);
   return (
-    <div style={{ margin: 10 }}>
-      <span style={{ margin: 5 }}>{index} ) </span>
+    <tr>
+      <td>{item.id}</td>
+      <td>
+        <input
+          value={englishValue}
+          onChange={(e) => setEnglishValue(e.target.value)}
+        />
+      </td>
 
-      <label>{item.id}</label>
-      <label>English : </label>
-      <input
-        value={englishValue}
-        onChange={(e) => setEnglishValue(e.target.value)}
-      />
+      <td>
+        <input
+          value={frenchValue}
+          onChange={(e) => setFrenchValue(e.target.value)}
+        />
+      </td>
 
-      <label>French :</label>
-      <input
-        value={frenchValue}
-        onChange={(e) => setFrenchValue(e.target.value)}
-      />
-
-      {updating ? (
-        "updating ..."
-      ) : (
-        <button
-          onClick={() =>
-            updateData({
-              ...item,
-              label: { en: englishValue, fr: frenchValue },
-            }).then(retrieve)
-          }
-        >
-          Update
-        </button>
-      )}
-      {error && <div>{error.message}</div>}
-    </div>
+      <td>
+        {updating ? (
+          "updating ..."
+        ) : (
+          <button
+            onClick={() =>
+              updateData({
+                ...item,
+                label: { en: englishValue, fr: frenchValue },
+              }).then(retrieve)
+            }
+          >
+            Update
+          </button>
+        )}
+      </td>
+      <td>{error && <div>{error.message}</div>}</td>
+    </tr>
   );
 };
 
@@ -63,8 +65,6 @@ const Categories = () => {
   const [newCategoryId, setNewCategoryId] = useState("");
   const [newCategoryEnText, setNewCategoryEnText] = useState("");
   const [newCategoryFrText, setNewCategoryFrText] = useState("");
-
-  const { isMobile } = useContext(LayoutContext);
 
   const [getAllItems, loading, getError] = useAsync<void, Category[]>(
     api.getCategories
@@ -78,70 +78,95 @@ const Categories = () => {
 
   return (
     <div>
-      {isMobile ? "Mobile" : "PC"}
+      <div>
+        <h1>Categories</h1>
+      </div>
       <div>
         <button onClick={retrieve}>Retrieve</button>
-        <div>
+        <div style={{ padding: 10, border: "1px dashed lightgrey" }}>
           <legend>Add Category</legend>
-          <label>Id:</label>
-          <input
-            value={newCategoryId}
-            onChange={(e) => setNewCategoryId(e.target.value)}
-          />
-          <label>English Label : </label>
-          <input
-            value={newCategoryEnText}
-            onChange={(e) => setNewCategoryEnText(e.target.value)}
-          />
-          <label> French Label : </label>
-          <input
-            value={newCategoryFrText}
-            onChange={(e) => setNewCategoryFrText(e.target.value)}
-          />
-          {adding ? (
-            "adding"
-          ) : (
-            <button
-              onClick={() => {
-                newCategoryId &&
-                  addNewItem({
-                    id: newCategoryId,
-                    label: { en: newCategoryEnText, fr: newCategoryFrText },
-                  }).then(() => retrieve());
-                setNewCategoryId("");
-                setNewCategoryEnText("");
-                setNewCategoryFrText("");
-              }}
-            >
-              Add
-            </button>
-          )}
-
-          <span>
-            you can not add without login, i didn't hide this button
-            automatically because it shows that backend is also secured
-          </span>
-          {addError && <div>{addError.message}</div>}
+          <table>
+            <tr>
+              <th>Id</th>
+              <th>English Label</th>
+              <th>French Label</th>
+            </tr>
+            <tr>
+              <td>
+                <input
+                  value={newCategoryId}
+                  onChange={(e) => setNewCategoryId(e.target.value)}
+                />
+              </td>
+              <td>
+                <input
+                  value={newCategoryEnText}
+                  onChange={(e) => setNewCategoryEnText(e.target.value)}
+                />
+              </td>
+              <td>
+                <input
+                  value={newCategoryFrText}
+                  onChange={(e) => setNewCategoryFrText(e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td style={{ textAlign: "center" }}>
+                {adding ? (
+                  "adding"
+                ) : (
+                  <button
+                    onClick={() => {
+                      newCategoryId &&
+                        addNewItem({
+                          id: newCategoryId,
+                          label: {
+                            en: newCategoryEnText,
+                            fr: newCategoryFrText,
+                          },
+                        }).then(() => retrieve());
+                      setNewCategoryId("");
+                      setNewCategoryEnText("");
+                      setNewCategoryFrText("");
+                    }}
+                  >
+                    Add
+                  </button>
+                )}
+              </td>
+            </tr>
+            {addError && <div>{addError.message}</div>}
+          </table>
         </div>
       </div>
 
       <div>
-        {loading ? (
-          "Loading..."
-        ) : (
-          <div>
-            {data.length
-              ? data.map((item, index) => (
-                  <Item
-                    key={index}
-                    index={index}
-                    item={item}
-                    retrieve={retrieve}
-                  />
-                ))
-              : "RetrieveData"}
-          </div>
-        )}
+        <table>
+          <tr>
+            <th>Id</th>
+            <th>English Label</th>
+            <th>French Label</th>
+          </tr>
+
+          {loading ? (
+            "Loading..."
+          ) : (
+            <>
+              {data.length
+                ? data.map((item, index) => (
+                    <Item
+                      key={index}
+                      index={index}
+                      item={item}
+                      retrieve={retrieve}
+                    />
+                  ))
+                : "RetrieveData"}
+            </>
+          )}
+        </table>
       </div>
 
       {getError && <div>{getError.message}</div>}
