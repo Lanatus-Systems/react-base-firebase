@@ -20,11 +20,13 @@
     "react-dom": "^17.0.1",
     "react-headroom": "^3.1.0",
     "react-i18next": "^11.8.4",
+    "react-modal": "^3.12.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
     "react-slick": "^0.27.13",
     "react-sticky": "^6.0.3",
     "typescript": "^4.0.3",
+    "uuid": "^8.3.2",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
@@ -54,6 +56,8 @@
   "devDependencies": {
     "@craco/craco": "^6.0.0",
     "@emotion/babel-plugin": "^11.1.2",
-    "@types/react-router-dom": "^5.1.6"
+    "@types/react-modal": "^3.10.6",
+    "@types/react-router-dom": "^5.1.6",
+    "@types/uuid": "^8.3.0"
   }
 }

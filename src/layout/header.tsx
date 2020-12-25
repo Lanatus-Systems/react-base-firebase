@@ -1,12 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext, GlobalContext } from "src/context";
+import { AuthContext, GlobalContext, LayoutContext } from "src/context";
 import Headroom from "react-headroom";
 import { Filler } from "src/style-utils";
-import { useTranslation } from "react-i18next";
-import { getCategories } from "src/api/article";
-import { Category } from "src/model/article";
+import { PlainLink } from "src/base";
+import { useMultiLanguage } from "src/hooks";
+import { ENGLISH, FRENCH } from "src/i18n/languages";
 
 // const defaultCategories = [
 //   "fashion",
@@ -20,7 +20,10 @@ import { Category } from "src/model/article";
 const Header = () => {
   const { user, logout } = useContext(AuthContext);
   const { categories } = useContext(GlobalContext);
-  const { t, i18n } = useTranslation(["phrases"]);
+
+  const { isMobile } = useContext(LayoutContext);
+
+  const { localize, derive, i18n } = useMultiLanguage();
 
   const headerFontRef = useRef(80);
   const [_, setReRenderHeader] = useState(false);
@@ -63,19 +66,19 @@ const Header = () => {
       <div css={{ boxShadow: "2px 2px lightgrey", background: "white" }}>
         <div css={{ background: "black", height: 10 }} />
         <div css={{ display: "flex" }}>
-          <Link to="/">
+          <PlainLink to="/">
             <h1
               css={{
                 margin: 10,
-                fontSize: headerFontRef.current,
+                fontSize: isMobile ? 40 : headerFontRef.current,
                 cursor: "pointer",
                 transition: "1s",
               }}
             >
               {" "}
-              {t("brandName", "test")}
+              {localize("brandName")}
             </h1>
-          </Link>
+          </PlainLink>
 
           <Filler />
           <div css={{ padding: 10, border: "1px dashed lightgrey" }}>
@@ -101,8 +104,8 @@ const Header = () => {
                 changeLanguage(e.target.value);
               }}
             >
-              <option value="en">English</option>
-              <option value="fr">French</option>
+              <option value={ENGLISH}>English</option>
+              <option value={FRENCH}>French</option>
             </select>
           </div>
         </div>
@@ -116,10 +119,7 @@ const Header = () => {
           {
             categories.length
               ? categories.map((item) => (
-                  <Link
-                    to={`/articles/${item.id}`}
-                    style={{ color: "inherit", textDecoration: "inherit" }}
-                  >
+                  <PlainLink key={item.id} to={`/articles/${item.id}`}>
                     <div
                       key={item.id}
                       css={{
@@ -134,9 +134,9 @@ const Header = () => {
                         cursor: "pointer",
                       }}
                     >
-                      {item.label[i18n.language].toLocaleUpperCase()}
+                      {derive(item.label).toLocaleUpperCase()}
                     </div>
-                  </Link>
+                  </PlainLink>
                 ))
               : "Loading..."
             // defaultCategories.map((item) => (

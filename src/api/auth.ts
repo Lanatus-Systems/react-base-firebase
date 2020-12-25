@@ -1,9 +1,10 @@
 import { firestore } from "src/firebase";
 import { Roles } from "src/model/auth";
+import { USER_ROLE } from "./collections";
 
 export const getUserRoles = (email: string): Promise<Roles> => {
   return firestore
-    .collection("user_roles")
+    .collection(USER_ROLE)
     .doc(email)
     .get()
     .then((val) => {

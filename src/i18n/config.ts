@@ -3,12 +3,13 @@ import englishPhrases from "./en/translation.json";
 import frenchPhrases from "./fr/translation.json";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import { ENGLISH, FRENCH } from "./languages";
 
 export const resources = {
-  en: {
+  [ENGLISH]: {
     phrases: englishPhrases,
   },
-  fr: {
+  [FRENCH]: {
     phrases: frenchPhrases,
   },
 } as const;
@@ -18,8 +19,8 @@ i18n
   .use(initReactI18next)
   .init({
     ns: ["phrases"],
-    fallbackLng: "en",
-    whitelist: ["en", "fr"],
+    fallbackLng: ENGLISH,
+    whitelist: [ENGLISH, FRENCH],
     interpolation: {
       escapeValue: false,
     },

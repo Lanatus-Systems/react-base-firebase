@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import { LayoutContext } from "src/context";
+import { useEffect, useState } from "react";
 import { useAsync } from "src/hooks";
 import { Category } from "src/model/article";
 
