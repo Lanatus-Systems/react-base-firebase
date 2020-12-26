@@ -1,6 +1,6 @@
 import { useMultiLanguage } from "src/hooks";
 import { Story } from "src/model/article";
-import TextEdit from "../editables/MultiLangTextEdit";
+import MultiLangTextEdit from "../editables/MultiLangTextEdit";
 
 import parseHtml from "html-react-parser";
 import ImageEdit from "../editables/ImageEdit";
@@ -48,7 +48,7 @@ const StoryItem = ({ value, onChange }: Iprops) => {
         </div>
         <div>
           {parseHtml(derive(value.content))}
-          <TextEdit
+          <MultiLangTextEdit
             rich
             title="Edit Detail"
             value={value.content}

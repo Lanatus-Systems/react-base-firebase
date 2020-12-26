@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useContext, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import { Article, ArticleDetail, Story } from "src/model/article";
+import { Article, ArticleDetail, Content, Story } from "src/model/article";
 import * as api from "src/api/article";
 import { uploadImage } from "src/api/storage";
 import { useAsync, useMultiLanguage } from "src/hooks";
@@ -71,7 +71,28 @@ const ArticleContent = (props: Iprops) => {
     });
 
     if (articleContent != null) {
-      Promise.all(
+      const uploadedContent = Promise.all(
+        articleContent.content
+          .map((content) => content.image)
+          .map((url) =>
+            url && url.startsWith("blob:")
+              ? fetch(url)
+                  .then((r) => r.blob())
+                  .then((file) => uploadImageData(file))
+              : new Promise<string | undefined>((resolve) => resolve(url))
+          )
+      ).then((urls) => {
+        return articleContent.content.map((item, index) =>
+          urls[index]
+            ? {
+                ...item,
+                image: urls[index],
+              }
+            : item
+        );
+      });
+
+      const uploadedStories = Promise.all(
         articleContent.stories
           .map((story) => story.image)
           .map((url) =>
@@ -82,15 +103,43 @@ const ArticleContent = (props: Iprops) => {
               : new Promise<string>((resolve) => resolve(url))
           )
       ).then((urls) => {
-        const finalContent = {
-          ...articleContent,
-          stories: articleContent.stories.map((story, index) => ({
-            ...story,
-            image: urls[index] || "-",
-          })),
-        };
-        updateArticleContent(finalContent);
+        return articleContent.stories.map((story, index) => ({
+          ...story,
+          image: urls[index] || "-",
+        }));
       });
+
+      Promise.all([uploadedContent, uploadedStories]).then(
+        ([contentList, stories]) => {
+          const finalContent = {
+            ...articleContent,
+            content: contentList,
+            stories,
+          };
+          updateArticleContent(finalContent);
+        }
+      );
+
+      // Promise.all(
+      //   articleContent.stories
+      //     .map((story) => story.image)
+      //     .map((url) =>
+      //       url.startsWith("blob:")
+      //         ? fetch(url)
+      //             .then((r) => r.blob())
+      //             .then((file) => uploadImageData(file))
+      //         : new Promise<string>((resolve) => resolve(url))
+      //     )
+      // ).then((urls) => {
+      //   const finalContent = {
+      //     ...articleContent,
+      //     stories: articleContent.stories.map((story, index) => ({
+      //       ...story,
+      //       image: urls[index] || "-",
+      //     })),
+      //   };
+      //   updateArticleContent(finalContent);
+      // });
     }
   };
 
@@ -178,12 +227,6 @@ const ArticleContent = (props: Iprops) => {
                     setArticle((val) => ({ ...val, author: updated }))
                   }
                 />
-                {/* <input
-                  value={article.author}
-                  onChange={(e) =>
-                    setArticle((val) => ({ ...val, author: e.target.value }))
-                  }
-                /> */}
               </div>
               <div>
                 {dayjs(article.date).format("DD MMMM YYYY")}
@@ -212,22 +255,6 @@ const ArticleContent = (props: Iprops) => {
                       }
                     />
                   </div>
-
-                  {/* <div style={{ margin: 10 }}>
-          
-                     {parseHtml(derive(articleContent.detail))}
-                    <TextEdit
-                      multiline
-                      rich
-                      title="Edit Detail"
-                      value={articleContent.detail}
-                      onChange={(updated) =>
-                        setArticleContent(
-                          (val) => val && { ...val, detail: updated }
-                        )
-                      }
-                    />
-                  </div> */}
                   <div
                     css={{
                       marginTop: 50,
@@ -273,9 +300,36 @@ const ArticleContent = (props: Iprops) => {
       </div>
 
       <div>
-        {articleContent?.content?.map((item) => (
-          <ContentItem />
-        ))}
+        <div>
+          {articleContent?.content?.map((item, index) => (
+            <ContentItem
+              value={item}
+              onChange={(item) =>
+                setArticleContent((val) => {
+                  if (val == null) {
+                    return val;
+                  }
+                  const current = val.content || [];
+                  current[index] = item;
+                  return { ...val, content: current };
+                })
+              }
+            />
+          ))}
+        </div>
+        <button
+          onClick={() =>
+            setArticleContent((val) => {
+              if (val == null) return val;
+              return {
+                ...val,
+                content: [...(val.content || []), { type: "text" } as Content],
+              };
+            })
+          }
+        >
+          Add Content
+        </button>
       </div>
 
       <div>

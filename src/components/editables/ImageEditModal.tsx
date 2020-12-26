@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 import { v4 } from "uuid";
+import TextEdit from "./TextEdit";
 
 interface Iprops {
   title: string;
@@ -31,8 +32,13 @@ const ImageEditModal = ({ title, type, value, onChange, hide }: Iprops) => {
         <div style={{ width: "40%", maxHeight: "80vh" }}>
           <img src={imageUrl} alt="pick a file" width="100%" height="100%" />
         </div>
+        Choose Image
         <label htmlFor={uniqueId}>
-          <FontAwesomeIcon icon={faEdit} size="2x" />
+          <FontAwesomeIcon
+            icon={faEdit}
+            size="2x"
+            style={{ cursor: "pointer" }}
+          />
           <input
             id={uniqueId}
             style={{ display: "none" }}
@@ -47,6 +53,16 @@ const ImageEditModal = ({ title, type, value, onChange, hide }: Iprops) => {
             }}
           />
         </label>
+        <div>
+          <div>
+            Or Specify Remote Url
+            <TextEdit
+              title="Custom Remote URL"
+              value={imageUrl}
+              onChange={setImageUrl}
+            />
+          </div>
+        </div>
       </div>
     </Modal>
   );
