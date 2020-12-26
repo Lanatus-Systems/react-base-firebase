@@ -1,26 +1,20 @@
 import React, { Suspense, useState } from "react";
+import { MultiLanguage } from "src/model/common";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 
-const InputModal = React.lazy(() => import("./InputEditModal"));
+const InputModal = React.lazy(() => import("./MultiLangInputModal"));
 
 interface Iprops {
   title: string;
-  value: string;
-  onChange: (val: string) => void;
+  value: MultiLanguage;
+  onChange: (val: MultiLanguage) => void;
   multiline?: boolean;
   rich?: boolean;
-  type?: string;
 }
 
-const TextEdit = ({
-  title,
-  value,
-  type,
-  onChange,
-  multiline,
-  rich,
-}: Iprops) => {
+const MultiLangTextEdit = ({ title, value, onChange, multiline, rich }: Iprops) => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   return modalVisible ? (
@@ -32,7 +26,6 @@ const TextEdit = ({
         onChange={onChange}
         multiline={multiline}
         rich={rich}
-        type={type}
       />
     </Suspense>
   ) : (
@@ -44,4 +37,4 @@ const TextEdit = ({
   );
 };
 
-export default TextEdit;
+export default MultiLangTextEdit;

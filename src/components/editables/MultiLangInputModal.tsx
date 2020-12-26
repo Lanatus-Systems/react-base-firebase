@@ -28,6 +28,8 @@ const EditableInputModal = ({
     value ? value[FRENCH] : ""
   );
 
+  const [activeTab, setActiveTab] = useState(ENGLISH);
+
   return (
     <Modal
       title={title}
@@ -39,9 +41,18 @@ const EditableInputModal = ({
         });
         hide();
       }}
+      width={rich ? "70vw" : "50vw"}
     >
-      <div>English</div>
-      <div>
+      {rich && (
+        <div>
+          <button onClick={() => setActiveTab(ENGLISH)}>English</button>
+          <button onClick={() => setActiveTab(FRENCH)}>French</button>
+        </div>
+      )}
+      {!rich && <div>English</div>}
+      <div
+        style={{ display: rich && activeTab !== ENGLISH ? "none" : "unset" }}
+      >
         <TextComponent
           multiline={multiline}
           rich={rich}
@@ -49,8 +60,8 @@ const EditableInputModal = ({
           onChange={setEnglishText}
         />
       </div>
-      <div>French</div>
-      <div>
+      {!rich && <div>French</div>}
+      <div style={{ display: rich && activeTab !== FRENCH ? "none" : "unset" }}>
         <TextComponent
           multiline={multiline}
           rich={rich}

@@ -8,9 +8,11 @@ import {
 
 import App from "./layout/App";
 
-import "./i18n/config";
 
 import reportWebVitals from "./reportWebVitals";
+
+import "./i18n/config";
+import 'react-quill/dist/quill.snow.css'; 
 
 const ReactApp = () => {
   return (

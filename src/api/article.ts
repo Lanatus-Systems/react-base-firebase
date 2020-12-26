@@ -33,7 +33,12 @@ export const getArticles = (categories: string[]) => {
     .get()
     .then((querySnapshot) => {
       const list = querySnapshot.docs.map((doc) => {
-        return { id: doc.id, ...doc.data() } as Article;
+        const value = doc.data();
+        return {
+          id: doc.id,
+          ...value,
+          date: value.date && value.date.toDate(),
+        } as Article;
       });
       return list;
     });
@@ -45,7 +50,16 @@ export const getArticle = (id: string) => {
     .doc(id)
     .get()
     .then((doc) => {
-      return { id: doc.id, ...doc.data() } as Article;
+      if (doc.exists) {
+        const value = doc.data() || {};
+        return {
+          id: doc.id,
+          ...value,
+          date: value.date && value.date.toDate(),
+        } as Article;
+      } else {
+        throw new Error("Article Does not exists");
+      }
     });
 };
 

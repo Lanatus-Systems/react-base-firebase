@@ -22,11 +22,11 @@ const ArticleSummary = ({ article, height = 200, width = 200 }: Iprops) => {
         height,
         width,
         border: "1px dashed lightgrey",
-        // position: "relative",
+        position: "relative",
       }}
     >
       {article.image && (
-        <div style={{ height: "60%" }}>
+        <div style={{ height: "100%", position: "absolute" }}>
           <img
             src={article.image}
             alt="Not Present"
@@ -35,15 +35,15 @@ const ArticleSummary = ({ article, height = 200, width = 200 }: Iprops) => {
           />
         </div>
       )}
-      <div>
+      <div style={{ position: "absolute" }}>
         <PlainLink
-          style={{ cursor: "pointer" }}
+          // style={{ cursor: "pointer" }}
           to={{
             pathname: `/article-content/${article.id}`,
             state: { article },
           }}
         >
-          <button>Edit</button>
+          <button style={{ cursor : 'pointer'}}>Edit</button>
         </PlainLink>
         {/* <div>{article.id}</div> */}
         <div>{derive(article.title)}</div>

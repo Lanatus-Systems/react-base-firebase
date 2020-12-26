@@ -1,26 +1,18 @@
-import React, { Suspense, useState } from "react";
+import React, { CSSProperties, Suspense, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 
-const InputModal = React.lazy(() => import("./InputEditModal"));
+const InputModal = React.lazy(() => import("./ImageEditModal"));
 
 interface Iprops {
   title: string;
   value: string;
   onChange: (val: string) => void;
-  multiline?: boolean;
-  rich?: boolean;
   type?: string;
+  style?: CSSProperties;
 }
 
-const TextEdit = ({
-  title,
-  value,
-  type,
-  onChange,
-  multiline,
-  rich,
-}: Iprops) => {
+const ImageEdit = ({ title, value, type, onChange, style = {} }: Iprops) => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   return modalVisible ? (
@@ -30,18 +22,16 @@ const TextEdit = ({
         value={value}
         hide={() => setModalVisible(false)}
         onChange={onChange}
-        multiline={multiline}
-        rich={rich}
         type={type}
       />
     </Suspense>
   ) : (
     <FontAwesomeIcon
-      style={{ marginLeft: 10 }}
+      style={{ marginLeft: 10, ...style }}
       icon={faPencilAlt}
       onClick={() => setModalVisible(true)}
     />
   );
 };
 
-export default TextEdit;
+export default ImageEdit;

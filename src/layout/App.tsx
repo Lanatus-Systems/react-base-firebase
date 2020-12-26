@@ -3,9 +3,21 @@ import Content from "./content";
 import Footer from "./footer";
 import Header from "./header";
 
+import { css, Global } from "@emotion/react";
+
 const App = () => {
   return (
     <BrowserRouter>
+      <Global
+        styles={css`
+          ::-moz-selection {
+            background: red;
+          }
+          ::selection {
+            background: red;
+          }
+        `}
+      />
       <Header />
       <Content />
       <Footer />

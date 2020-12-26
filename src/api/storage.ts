@@ -3,7 +3,7 @@ import { v4 } from "uuid";
 
 const IMAGE_DIRECTORY = "magazine";
 
-export const uploadImage = (file: File) => {
+export const uploadImage = (file: Blob): Promise<string> => {
   return firebaseStorage
     .ref(`${IMAGE_DIRECTORY}/${v4()}`)
     .put(file)
