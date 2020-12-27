@@ -57,6 +57,7 @@ const TextComponent = ({ value, type, onChange, multiline, rich }: Iprops) => {
   if (multiline) {
     return (
       <textarea
+        autoFocus
         style={{ width: "100%" }}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -66,6 +67,7 @@ const TextComponent = ({ value, type, onChange, multiline, rich }: Iprops) => {
   console.log({ type, value });
   return (
     <input
+      autoFocus
       type={type}
       style={{ width: "100%" }}
       value={value}

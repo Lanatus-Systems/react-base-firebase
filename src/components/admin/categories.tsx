@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
-import { useAsync } from "src/hooks";
+import { useState } from "react";
+import { useAsync, useMultiLanguage } from "src/hooks";
 import { Category } from "src/model/article";
 
 import * as api from "src/api/article";
+import MultiLangTextEdit from "../editables/MultiLangTextEdit";
+import { MultiLanguage } from "src/model/common";
 
 interface Iprops {
   item: Category;
@@ -10,30 +12,32 @@ interface Iprops {
   retrieve: () => void;
 }
 
-const Item = ({ item, index, retrieve }: Iprops) => {
-  const [englishValue, setEnglishValue] = useState(item.label.en);
-  const [frenchValue, setFrenchValue] = useState(item.label.fr);
-
+const Item = ({ item, retrieve }: Iprops) => {
+  const { derive } = useMultiLanguage();
+  const [order, setOrder] = useState<string>(item.order + "" || "1");
   const [updateData, updating, error] = useAsync(api.updateCategory);
 
-  useEffect(() => {
-    setEnglishValue(item.label.en);
-    setFrenchValue(item.label.fr);
-  }, [item]);
+  console.log({ item });
+  const [labelState, setLabelState] = useState<MultiLanguage>(item.label);
+
   return (
-    <tr>
+    <tr key={item.id}>
       <td>{item.id}</td>
       <td>
-        <input
-          value={englishValue}
-          onChange={(e) => setEnglishValue(e.target.value)}
-        />
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          {derive(labelState)}{" "}
+          <MultiLangTextEdit
+            title="Edit Category Label"
+            value={labelState}
+            onChange={(val) => setLabelState(val)}
+          />
+        </div>
       </td>
-
       <td>
         <input
-          value={frenchValue}
-          onChange={(e) => setFrenchValue(e.target.value)}
+          type="number"
+          value={order}
+          onChange={(e) => setOrder(e.target.value)}
         />
       </td>
 
@@ -45,7 +49,8 @@ const Item = ({ item, index, retrieve }: Iprops) => {
             onClick={() =>
               updateData({
                 ...item,
-                label: { en: englishValue, fr: frenchValue },
+                label: labelState,
+                order: +order,
               }).then(retrieve)
             }
           >
@@ -62,8 +67,6 @@ const Categories = () => {
   const [data, setData] = useState<Category[]>([]);
 
   const [newCategoryId, setNewCategoryId] = useState("");
-  const [newCategoryEnText, setNewCategoryEnText] = useState("");
-  const [newCategoryFrText, setNewCategoryFrText] = useState("");
 
   const [getAllItems, loading, getError] = useAsync<void, Category[]>(
     api.getCategories
@@ -72,6 +75,7 @@ const Categories = () => {
   const [addNewItem, adding, addError] = useAsync(api.addCategory);
 
   const retrieve = () => {
+    setData([]);
     getAllItems().then(setData);
   };
 
@@ -83,88 +87,64 @@ const Categories = () => {
       <div>
         <button onClick={retrieve}>Retrieve</button>
         <div style={{ padding: 10, border: "1px dashed lightgrey" }}>
-          <legend>Add Category</legend>
-          <table>
-            <tr>
-              <th>Id</th>
-              <th>English Label</th>
-              <th>French Label</th>
-            </tr>
-            <tr>
-              <td>
-                <input
-                  value={newCategoryId}
-                  onChange={(e) => setNewCategoryId(e.target.value)}
-                />
-              </td>
-              <td>
-                <input
-                  value={newCategoryEnText}
-                  onChange={(e) => setNewCategoryEnText(e.target.value)}
-                />
-              </td>
-              <td>
-                <input
-                  value={newCategoryFrText}
-                  onChange={(e) => setNewCategoryFrText(e.target.value)}
-                />
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-              <td style={{ textAlign: "center" }}>
-                {adding ? (
-                  "adding"
-                ) : (
-                  <button
-                    onClick={() => {
-                      newCategoryId &&
-                        addNewItem({
-                          id: newCategoryId,
-                          label: {
-                            en: newCategoryEnText,
-                            fr: newCategoryFrText,
-                          },
-                        }).then(() => retrieve());
-                      setNewCategoryId("");
-                      setNewCategoryEnText("");
-                      setNewCategoryFrText("");
-                    }}
-                  >
-                    Add
-                  </button>
-                )}
-              </td>
-            </tr>
-            {addError && <div>{addError.message}</div>}
-          </table>
+          <b>Add Category</b>
+          <div style={{ display: "flex", marginTop: 10 }}>
+            <span>Category ID :</span>
+            <div>
+              <input
+                value={newCategoryId}
+                onChange={(e) => setNewCategoryId(e.target.value)}
+              />
+            </div>
+            <div>
+              {adding ? (
+                "adding"
+              ) : (
+                <button
+                  onClick={() => {
+                    newCategoryId &&
+                      addNewItem({
+                        id: newCategoryId,
+                        order: 1,
+                      } as Category).then(() => retrieve());
+                    setNewCategoryId("");
+                  }}
+                >
+                  Add
+                </button>
+              )}
+            </div>
+          </div>
+          <div>{addError && <div>{addError.message}</div>}</div>
         </div>
       </div>
 
       <div>
-        <table>
-          <tr>
-            <th>Id</th>
-            <th>English Label</th>
-            <th>French Label</th>
-          </tr>
+        <table style={{ border: "1px solid lightgrey" }}>
+          <tbody>
+            <tr>
+              <th>Id</th>
+              <th>Label</th>
+              <th>Order</th>
+            </tr>
 
-          {loading ? (
-            "Loading..."
-          ) : (
-            <>
-              {data.length
-                ? data.map((item, index) => (
-                    <Item
-                      key={index}
-                      index={index}
-                      item={item}
-                      retrieve={retrieve}
-                    />
-                  ))
-                : "RetrieveData"}
-            </>
-          )}
+            {loading ? (
+              <tr>"Loading..."</tr>
+            ) : (
+              <>
+                {data.length
+                  ? data.map((item, index) => (
+                      <Item
+                        key={index}
+                        index={index}
+                        item={item}
+                        retrieve={retrieve}
+                      />
+                    ))
+                  : "RetrieveData"}
+              </>
+            )}
+          </tbody>
         </table>
       </div>
 

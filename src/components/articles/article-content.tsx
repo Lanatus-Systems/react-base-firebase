@@ -10,6 +10,7 @@ import { GlobalContext } from "src/context";
 
 import dayjs from "dayjs";
 
+import parseHtml from "html-react-parser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFacebook,
@@ -119,44 +120,24 @@ const ArticleContent = (props: Iprops) => {
           updateArticleContent(finalContent);
         }
       );
-
-      // Promise.all(
-      //   articleContent.stories
-      //     .map((story) => story.image)
-      //     .map((url) =>
-      //       url.startsWith("blob:")
-      //         ? fetch(url)
-      //             .then((r) => r.blob())
-      //             .then((file) => uploadImageData(file))
-      //         : new Promise<string>((resolve) => resolve(url))
-      //     )
-      // ).then((urls) => {
-      //   const finalContent = {
-      //     ...articleContent,
-      //     stories: articleContent.stories.map((story, index) => ({
-      //       ...story,
-      //       image: urls[index] || "-",
-      //     })),
-      //   };
-      //   updateArticleContent(finalContent);
-      // });
     }
   };
 
   return (
-    <div key={id} css={{ padding: 50 }}>
-      <div css={{ display: "flex", borderBottom: "1px solid lightgrey" }}>
+    <div key={id} css={{ padding: "5vw" }}>
+      <div css={{ display: "flex", borderBottom: "2px solid lightgrey" }}>
         <div
           css={{
             display: "flex",
             // flexDirection: "column",
             width: "50vw",
             justifyContent: "center",
+            padding: 30,
           }}
         >
           <div
             css={{
-              width: "80%",
+              width: "100%",
               position: "relative",
             }}
           >
@@ -177,7 +158,14 @@ const ArticleContent = (props: Iprops) => {
             />
           </div>
         </div>
-        <div css={{ display: "flex ", flexDirection: "column", width: "50vw" }}>
+        <div
+          css={{
+            display: "flex ",
+            flexDirection: "column",
+            width: "50vw",
+            padding: 30,
+          }}
+        >
           {article && (
             <div
               css={{
@@ -207,7 +195,7 @@ const ArticleContent = (props: Iprops) => {
                   ))}
                 </select>
               </div>
-              <div style={{ padding: 10, fontSize: 30 }}>
+              <div style={{ padding: 10, fontSize: 40 }}>
                 {derive(article.title)}
                 <MultiLangTextEdit
                   multiline
@@ -242,10 +230,9 @@ const ArticleContent = (props: Iprops) => {
               {articleContent && (
                 <div>
                   <div style={{ margin: 10 }}>
-                    {derive(articleContent.detail)}
+                    {parseHtml(derive(articleContent.detail))}
                     <MultiLangTextEdit
-                      multiline
-                      // rich
+                      rich
                       title="Edit Detail"
                       value={articleContent.detail}
                       onChange={(updated) =>
@@ -299,8 +286,14 @@ const ArticleContent = (props: Iprops) => {
         </div>
       </div>
 
-      <div>
-        <div>
+      <div
+        css={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div css={{ paddingRight: "10vw", paddingLeft: "10vw" }}>
           {articleContent?.content?.map((item, index) => (
             <ContentItem
               value={item}

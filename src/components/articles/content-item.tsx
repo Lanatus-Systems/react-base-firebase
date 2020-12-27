@@ -28,7 +28,14 @@ const ContentItem = ({ value, onChange }: Iprops) => {
   }, [value.id]);
 
   return (
-    <div style={{ padding: 10 }}>
+    <div
+      style={{
+        padding: 10,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
       <div>
         <select
           value={value.type}
@@ -42,7 +49,7 @@ const ContentItem = ({ value, onChange }: Iprops) => {
         </select>
       </div>
       {value.type === "text" && (
-        <div>
+        <div style={{ width: "70%" }}>
           {parseHtml(derive(value.content as MultiLanguage))}
           <MultiLangTextEdit
             rich

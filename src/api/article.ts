@@ -5,6 +5,7 @@ import { ARTICLES, ARTICLE_DETAIL, CATEGORIES } from "./collections";
 export const getCategories = () => {
   return firestore
     .collection(CATEGORIES)
+    .orderBy("order")
     .get()
     .then((querySnapshot) => {
       const list = querySnapshot.docs.map((doc) => {
@@ -26,22 +27,38 @@ export const addCategory = (item: Category) => {
   return firestore.collection(CATEGORIES).doc(item.id).set(finalData);
 };
 
-export const getArticles = (categories: string[]) => {
-  return firestore
-    .collection(ARTICLES)
-    .where("category", "in", categories)
-    .get()
-    .then((querySnapshot) => {
-      const list = querySnapshot.docs.map((doc) => {
-        const value = doc.data();
-        return {
-          id: doc.id,
-          ...value,
-          date: value.date && value.date.toDate(),
-        } as Article;
-      });
-      return list;
+// let lastDoc: unknown = null;
+
+const articleByCategoriesQuery = (categories: string[]) => {
+  return firestore.collection(ARTICLES).where("category", "in", categories);
+};
+
+const lastDocMap: Record<string, unknown> = {};
+
+export const resetPagingFor = (categories: string[]) => {
+  delete lastDocMap[JSON.stringify(categories)];
+};
+
+export const getArticles = (categories: string[], pageSize: number) => {
+  let query = articleByCategoriesQuery(categories).limit(pageSize);
+  const key = JSON.stringify(categories);
+  if (lastDocMap[key] != null) {
+    query = query.startAfter(lastDocMap[key]);
+  }
+  return query.get().then((querySnapshot) => {
+    const list = querySnapshot.docs.map((doc, index, all) => {
+      const value = doc.data();
+      if (index === all.length - 1) {
+        lastDocMap[key] = doc;
+      }
+      return {
+        id: doc.id,
+        ...value,
+        date: value.date && value.date.toDate(),
+      } as Article;
     });
+    return list;
+  });
 };
 
 export const getArticle = (id: string) => {
@@ -89,7 +106,13 @@ export const getArticleContent = (id: string) => {
     .doc(id)
     .get()
     .then((doc) => {
-      return { id: doc.id, ...doc.data() } as ArticleDetail;
+      const value = doc.data() || {};
+      return {
+        id: doc.id,
+        ...value,
+        content: value.content || [],
+        stories: value.stories || [],
+      } as ArticleDetail;
     });
 };
 
