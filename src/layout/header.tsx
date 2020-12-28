@@ -19,7 +19,7 @@ import { ENGLISH, FRENCH } from "src/i18n/languages";
 
 const Header = () => {
   const { user, logout } = useContext(AuthContext);
-  const { categories } = useContext(GlobalContext);
+  const { rootCategories } = useContext(GlobalContext);
 
   const { isMobile } = useContext(LayoutContext);
 
@@ -117,8 +117,8 @@ const Header = () => {
           }}
         >
           {
-            categories.length
-              ? categories.map((item) => (
+            rootCategories.length
+              ? rootCategories.map((item) => (
                   <PlainLink key={item.id} to={`/articles/${item.id}`}>
                     <div
                       key={item.id}

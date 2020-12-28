@@ -1,7 +1,9 @@
-import { useContext } from "react";
-import { useTranslation } from "react-i18next";
+/** @jsxImportSource @emotion/react */
+import { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
+import { PlainLink } from "src/base";
 import { GlobalContext } from "src/context";
+import { useMultiLanguage } from "src/hooks";
 import ArticleList from "./article-list";
 
 interface Iprops {
@@ -10,19 +12,73 @@ interface Iprops {
 const ArticlePage = (props: Iprops) => {
   const { category } = useParams<Iprops>();
 
-  const { categoryMap } = useContext(GlobalContext);
+  const { categoryMap, subCategoryMap } = useContext(GlobalContext);
 
-  const { i18n } = useTranslation();
+  const { derive } = useMultiLanguage();
 
-  return (
-    <div>
-      <div style={{ padding: 10, fontSize: 40, textAlign: "center" }}>
-        {categoryMap[category]?.label[i18n.language]}
+  const [selectedCategory, setSelectedCategory] = useState<string>(category);
+
+  const subcategories = subCategoryMap[category];
+
+  if (subcategories == null || subcategories.length === 0) {
+    return (
+      <div>
+        <div css={{ padding: 10, fontSize: 40, textAlign: "center" }}>
+          {derive(categoryMap[category]?.label)}
+        </div>
+        <hr css={{ margin: 0 }} />
+        <ArticleList category={category} />
       </div>
-      <hr style={{ margin: 0 }} />
-      <ArticleList category={category} />
-    </div>
-  );
+    );
+  } else {
+    return (
+      <div>
+        <div css={{ padding: 10, fontSize: 40, textAlign: "center" }}>
+          {derive(categoryMap[category]?.label)}
+        </div>
+        <hr css={{ margin: 0 }} />
+        <div css={{ display: "flex" }}>
+          <div
+            css={{
+              fontWeight: 600,
+              fontSize: 14,
+              fontFamily: "Sniglet",
+              margin: 5,
+              padding: 5,
+              ":hover": {
+                color: "#fa0000",
+              },
+              cursor: "pointer",
+            }}
+            onClick={() => setSelectedCategory(category)}
+          >
+            All
+          </div>
+          {subcategories.map((item) => (
+            <div
+              key={item.id}
+              css={{
+                fontWeight: 600,
+                fontSize: 14,
+                fontFamily: "Sniglet",
+                margin: 5,
+                padding: 5,
+                ":hover": {
+                  color: "#fa0000",
+                },
+                cursor: "pointer",
+              }}
+              onClick={() => setSelectedCategory(item.id)}
+            >
+              {derive(item.label).toLocaleUpperCase()}
+            </div>
+          ))}
+        </div>
+        <hr css={{ margin: 0 }} />
+        <ArticleList category={selectedCategory} />
+      </div>
+    );
+  }
 };
 
 export default ArticlePage;

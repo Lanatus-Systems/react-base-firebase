@@ -4,6 +4,7 @@ export interface Category {
   id: string;
   label: MultiLanguage;
   order: number;
+  parent?: string;
 }
 
 export type ContentType = "text" | "image" | "article";

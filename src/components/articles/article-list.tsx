@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Article } from "src/model/article";
 import * as api from "src/api/article";
 import ArticleSummary from "./article-summary";
 import { useHistory } from "react-router-dom";
+import { GlobalContext } from "src/context";
 
 interface Iprops {
   category: string;
@@ -41,33 +42,55 @@ const clearCache = (categories: string[]) => {
   delete pagingCache[key];
 };
 
+const PAGE_SIZE = 3;
+
 const ArticleList = ({ category }: Iprops) => {
   const [articles, setArticles] = useState<Article[]>([]);
+
+  const { subCategoryMap } = useContext(GlobalContext);
+
+  const derivedCategories = useMemo(() => {
+    const subcategories =
+      Object.keys(subCategoryMap).length > 0
+        ? subCategoryMap[category]?.map((item) => item.id)
+        : undefined;
+
+    return [category, ...(subcategories || [])];
+  }, [category, subCategoryMap]);
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   const history = useHistory();
 
   useEffect(() => {
     console.log("loading.... ");
-    const categories = [category];
-    api.resetPagingFor(categories);
-    clearCache(categories);
-    api.getArticles(categories, 1).then(setArticles);
-  }, [category]);
+
+    // console.log({ derivedCategories });
+    api.resetPagingFor(derivedCategories);
+
+    clearCache(derivedCategories);
+
+    api.getArticles(derivedCategories, PAGE_SIZE).then(setArticles);
+
+    setCurrentPage(1);
+  }, [derivedCategories]);
 
   const nextPage = () => {
-    storePrevPage([category], articles);
-    const cachedNext = getCachedNextPage([category]);
+    storePrevPage(derivedCategories, articles);
+    const cachedNext = getCachedNextPage(derivedCategories);
     console.log({ cachedNext, pagingCache });
     if (cachedNext) {
       setArticles(cachedNext);
     } else {
-      api.getArticles([category], 1).then(setArticles);
+      api.getArticles(derivedCategories, PAGE_SIZE).then(setArticles);
     }
+    setCurrentPage((p) => p + 1);
   };
 
   const prevPage = () => {
-    storeNextPage([category], articles);
-    setArticles(getCachedPrevPage([category]));
+    storeNextPage(derivedCategories, articles);
+    setArticles(getCachedPrevPage(derivedCategories));
+    setCurrentPage((p) => p - 1);
   };
 
   const addItem = () => {
@@ -84,8 +107,13 @@ const ArticleList = ({ category }: Iprops) => {
           <ArticleSummary key={item.id} article={item} />
         ))}
       </div>
-      <button onClick={prevPage}>prev page</button>
-      <button onClick={nextPage}>next page</button>
+      <button onClick={prevPage} disabled={currentPage <= 1}>
+        prev page
+      </button>
+      {currentPage}
+      <button onClick={nextPage} disabled={articles.length === 0}>
+        next page
+      </button>
     </div>
   );
 };

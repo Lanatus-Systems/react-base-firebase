@@ -10,16 +10,20 @@ interface Iprops {
   item: Category;
   index: number;
   retrieve: () => void;
+  allCategories: Category[];
 }
 
-const Item = ({ item, retrieve }: Iprops) => {
+const Item = ({ item, retrieve, allCategories }: Iprops) => {
   const { derive } = useMultiLanguage();
   const [order, setOrder] = useState<string>(item.order + "" || "1");
   const [updateData, updating, error] = useAsync(api.updateCategory);
 
-  console.log({ item });
   const [labelState, setLabelState] = useState<MultiLanguage>(item.label);
 
+  const [parentCategory, setParentCategory] = useState(item.parent);
+
+  console.log({ parentCategory });
+  const parentOptions = allCategories.filter((c) => c.id !== item.id);
   return (
     <tr key={item.id}>
       <td>{item.id}</td>
@@ -40,6 +44,19 @@ const Item = ({ item, retrieve }: Iprops) => {
           onChange={(e) => setOrder(e.target.value)}
         />
       </td>
+      <td>
+        <select
+          value={parentCategory}
+          onChange={(e) => setParentCategory(e.target.value)}
+        >
+          <option value={""}></option>
+          {parentOptions.map((val) => (
+            <option key={val.id} value={val.id}>
+              {val.id}
+            </option>
+          ))}
+        </select>
+      </td>
 
       <td>
         {updating ? (
@@ -51,6 +68,7 @@ const Item = ({ item, retrieve }: Iprops) => {
                 ...item,
                 label: labelState,
                 order: +order,
+                parent: parentCategory,
               }).then(retrieve)
             }
           >
@@ -126,6 +144,7 @@ const Categories = () => {
               <th>Id</th>
               <th>Label</th>
               <th>Order</th>
+              <th>Parent</th>
             </tr>
 
             {loading ? (
@@ -139,6 +158,7 @@ const Categories = () => {
                         index={index}
                         item={item}
                         retrieve={retrieve}
+                        allCategories={data}
                       />
                     ))
                   : "RetrieveData"}
