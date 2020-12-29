@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import { useContext } from "react";
 import { PlainLink } from "src/base";
 import { GlobalContext } from "src/context";
@@ -8,8 +9,9 @@ interface Iprops {
   article: Article;
   height?: number;
   width?: number;
+  variant: string;
 }
-const ArticleSummary = ({ article, height = 200, width = 200 }: Iprops) => {
+const ArticleSummary = ({ article, height = 300, variant }: Iprops) => {
   const { derive } = useMultiLanguage();
 
   const { categoryMap } = useContext(GlobalContext);
@@ -18,9 +20,9 @@ const ArticleSummary = ({ article, height = 200, width = 200 }: Iprops) => {
     <div
       key={article.id}
       style={{
-        margin: 10,
+        margin: 15,
         height,
-        width,
+        // width,
         border: "1px dashed lightgrey",
         position: "relative",
       }}
@@ -43,11 +45,12 @@ const ArticleSummary = ({ article, height = 200, width = 200 }: Iprops) => {
             state: { article },
           }}
         >
-          <button style={{ cursor : 'pointer'}}>Edit</button>
+          <button style={{ cursor: "pointer" }}>Edit</button>
         </PlainLink>
         {/* <div>{article.id}</div> */}
         <div>{derive(article.title)}</div>
         <div>{derive(categoryMap[article.category]?.label)}</div>
+        <div>{variant}</div>
       </div>
     </div>
   );

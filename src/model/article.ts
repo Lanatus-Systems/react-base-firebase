@@ -28,6 +28,7 @@ export interface Article {
   image: string;
   date: Date;
   author: string;
+  storyCount: number;
 }
 
 export interface ArticleDetail {

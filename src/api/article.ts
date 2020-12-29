@@ -30,7 +30,10 @@ export const addCategory = (item: Category) => {
 // let lastDoc: unknown = null;
 
 const articleByCategoriesQuery = (categories: string[]) => {
-  return firestore.collection(ARTICLES).where("category", "in", categories);
+  return firestore
+    .collection(ARTICLES)
+    .where("category", "in", categories)
+    .orderBy("date", "desc");
 };
 
 const lastDocMap: Record<string, unknown> = {};

@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
-import { PlainLink } from "src/base";
 import { GlobalContext } from "src/context";
 import { useMultiLanguage } from "src/hooks";
 import ArticleList from "./article-list";
@@ -14,7 +13,7 @@ const ArticlePage = (props: Iprops) => {
 
   const { categoryMap, subCategoryMap } = useContext(GlobalContext);
 
-  const { derive } = useMultiLanguage();
+  const { derive, localize } = useMultiLanguage();
 
   const [selectedCategory, setSelectedCategory] = useState<string>(category);
 
@@ -52,7 +51,7 @@ const ArticlePage = (props: Iprops) => {
             }}
             onClick={() => setSelectedCategory(category)}
           >
-            All
+            {localize("all_topics").toLocaleUpperCase()}
           </div>
           {subcategories.map((item) => (
             <div

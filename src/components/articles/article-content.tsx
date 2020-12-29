@@ -57,21 +57,25 @@ const ArticleContent = (props: Iprops) => {
 
   console.log({ article, articleContent });
   const saveData = () => {
-    console.log({ article, articleContent });
-
-    let imageUrl = new Promise<string>((resolve) => resolve(article.image));
-
-    if (article.image && article.image.startsWith("blob:")) {
-      imageUrl = fetch(article.image)
-        .then((r) => r.blob())
-        .then((file) => uploadImageData(file));
-    }
-    imageUrl.then((url) => {
-      console.log({ url });
-      updateArticle({ ...article, image: url });
-    });
-
     if (articleContent != null) {
+      console.log({ article, articleContent });
+
+      let imageUrl = new Promise<string>((resolve) => resolve(article.image));
+
+      if (article.image && article.image.startsWith("blob:")) {
+        imageUrl = fetch(article.image)
+          .then((r) => r.blob())
+          .then((file) => uploadImageData(file));
+      }
+      imageUrl.then((url) => {
+        console.log({ url });
+        updateArticle({
+          ...article,
+          storyCount: articleContent.stories.length,
+          image: url,
+        });
+      });
+
       const uploadedContent = Promise.all(
         articleContent.content
           .map((content) => content.image)
