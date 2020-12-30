@@ -12,7 +12,7 @@ interface Iprops {
   variant: string;
 }
 const ArticleSummary = ({ article, height = 300, variant }: Iprops) => {
-  const { derive } = useMultiLanguage();
+  const { derive, deriveImage } = useMultiLanguage();
 
   const { categoryMap } = useContext(GlobalContext);
 
@@ -30,7 +30,7 @@ const ArticleSummary = ({ article, height = 300, variant }: Iprops) => {
       {article.image && (
         <div style={{ height: "100%", position: "absolute" }}>
           <img
-            src={article.image}
+            src={deriveImage(article.image)}
             alt="Not Present"
             height="100%"
             width="100%"

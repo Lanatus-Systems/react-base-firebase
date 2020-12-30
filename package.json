@@ -22,6 +22,7 @@
     "html-react-parser": "^1.1.0",
     "i18next": "^19.8.4",
     "i18next-browser-languagedetector": "^6.0.1",
+    "ramda": "^0.27.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-headroom": "^3.1.0",
@@ -63,6 +64,7 @@
   "devDependencies": {
     "@craco/craco": "^6.0.0",
     "@emotion/babel-plugin": "^11.1.2",
+    "@types/ramda": "^0.27.34",
     "@types/react-modal": "^3.10.6",
     "@types/react-router-dom": "^5.1.6",
     "@types/uuid": "^8.3.0"

@@ -45,8 +45,18 @@ const EditableInputModal = ({
     >
       {rich && (
         <div>
-          <button onClick={() => setActiveTab(ENGLISH)}>English</button>
-          <button onClick={() => setActiveTab(FRENCH)}>French</button>
+          <button
+            disabled={activeTab === ENGLISH}
+            onClick={() => setActiveTab(ENGLISH)}
+          >
+            English
+          </button>
+          <button
+            disabled={activeTab === FRENCH}
+            onClick={() => setActiveTab(FRENCH)}
+          >
+            French
+          </button>
         </div>
       )}
       {!rich && <div>English</div>}

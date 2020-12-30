@@ -21,6 +21,8 @@ import StoryItem from "./story-item";
 import ContentItem from "./content-item";
 import TextEdit from "../editables/TextEdit";
 import ImageEdit from "../editables/ImageEdit";
+import { MultiLanguage } from "src/model/common";
+import { zipObj } from "ramda";
 
 interface Iparams {
   id: string;
@@ -30,12 +32,30 @@ interface IrouteState {
 }
 
 interface Iprops {}
+
+const mapImageToPromise = (
+  image: MultiLanguage,
+  uploadImage: (img: Blob) => Promise<string>
+) => {
+  return Promise.all(
+    Object.values(image).map((item) =>
+      item && item.startsWith("blob:")
+        ? fetch(item)
+            .then((r) => r.blob())
+            .then((file) => uploadImage(file))
+        : Promise.resolve(item)
+    )
+  ).then((results) => {
+    return zipObj(Object.keys(image), results);
+  });
+};
+
 const ArticleContent = (props: Iprops) => {
   const { id } = useParams<Iparams>();
 
   const location = useLocation<IrouteState>();
 
-  const { derive } = useMultiLanguage();
+  const { derive, deriveImage } = useMultiLanguage();
 
   const { categoryMap, categories } = useContext(GlobalContext);
 
@@ -49,7 +69,7 @@ const ArticleContent = (props: Iprops) => {
     api.getArticleContent(id).then(setArticleContent);
   }, [id, location]);
 
-  const [uploadImageData, loadingImg] = useAsync(uploadImage);
+  const [uploadImageData, uploadingImg] = useAsync(uploadImage);
   const [updateArticle, loadingArt] = useAsync(api.updateArticle);
   const [updateArticleContent, loadingArtC] = useAsync(
     api.updateArticleContent
@@ -60,32 +80,21 @@ const ArticleContent = (props: Iprops) => {
     if (articleContent != null) {
       console.log({ article, articleContent });
 
-      let imageUrl = new Promise<string>((resolve) => resolve(article.image));
-
-      if (article.image && article.image.startsWith("blob:")) {
-        imageUrl = fetch(article.image)
-          .then((r) => r.blob())
-          .then((file) => uploadImageData(file));
-      }
-      imageUrl.then((url) => {
-        console.log({ url });
-        updateArticle({
-          ...article,
-          storyCount: articleContent.stories.length,
-          image: url,
-        });
-      });
+      mapImageToPromise(article.image, uploadImageData).then(
+        (resolvedImage) => {
+          console.log({ resolvedImage });
+          updateArticle({
+            ...article,
+            storyCount: articleContent.stories.length,
+            image: resolvedImage,
+          });
+        }
+      );
 
       const uploadedContent = Promise.all(
         articleContent.content
           .map((content) => content.image)
-          .map((url) =>
-            url && url.startsWith("blob:")
-              ? fetch(url)
-                  .then((r) => r.blob())
-                  .then((file) => uploadImageData(file))
-              : new Promise<string | undefined>((resolve) => resolve(url))
-          )
+          .map((image) => image && mapImageToPromise(image, uploadImageData))
       ).then((urls) => {
         return articleContent.content.map((item, index) =>
           urls[index]
@@ -100,17 +109,11 @@ const ArticleContent = (props: Iprops) => {
       const uploadedStories = Promise.all(
         articleContent.stories
           .map((story) => story.image)
-          .map((url) =>
-            url.startsWith("blob:")
-              ? fetch(url)
-                  .then((r) => r.blob())
-                  .then((file) => uploadImageData(file))
-              : new Promise<string>((resolve) => resolve(url))
-          )
+          .map((image) => image && mapImageToPromise(image, uploadImageData))
       ).then((urls) => {
-        return articleContent.stories.map((story, index) => ({
-          ...story,
-          image: urls[index] || "-",
+        return articleContent.stories.map((item, index) => ({
+          ...item,
+          image: urls[index] || {},
         }));
       });
 
@@ -147,7 +150,7 @@ const ArticleContent = (props: Iprops) => {
           >
             {article?.image && (
               <img
-                src={article.image}
+                src={deriveImage(article.image)}
                 alt="welcome"
                 width="100%"
                 height="100%"
@@ -363,7 +366,7 @@ const ArticleContent = (props: Iprops) => {
       </div>
 
       <div style={{ margin: 20 }}>
-        {loadingImg || loadingArt || loadingArtC ? (
+        {uploadingImg || loadingArt || loadingArtC ? (
           "Saving...."
         ) : (
           <button onClick={saveData}>Save</button>

@@ -11,7 +11,7 @@ interface Iprops {
 }
 
 const StoryItem = ({ value, onChange }: Iprops) => {
-  const { derive } = useMultiLanguage();
+  const { derive, deriveImage } = useMultiLanguage();
 
   return (
     <div
@@ -36,7 +36,12 @@ const StoryItem = ({ value, onChange }: Iprops) => {
           }}
         >
           {value?.image && (
-            <img src={value.image} alt="welcome" width="100%" height="100%" />
+            <img
+              src={deriveImage(value.image)}
+              alt="welcome"
+              width="100%"
+              height="100%"
+            />
           )}
 
           <ImageEdit

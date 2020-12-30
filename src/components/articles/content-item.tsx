@@ -17,7 +17,7 @@ interface Iprops {
 }
 
 const ContentItem = ({ value, onChange }: Iprops) => {
-  const { derive } = useMultiLanguage();
+  const { derive, deriveImage } = useMultiLanguage();
 
   const [article, setArticle] = useState<Article>();
 
@@ -69,7 +69,7 @@ const ContentItem = ({ value, onChange }: Iprops) => {
                 <div>By {article.author}</div>
               </div>
               <img
-                src={article.image}
+                src={deriveImage(article.image)}
                 width="100px"
                 height="100px"
                 alt="resource"
@@ -98,13 +98,18 @@ const ContentItem = ({ value, onChange }: Iprops) => {
             }}
           >
             {value?.image && (
-              <img src={value.image} alt="welcome" width="100%" height="100%" />
+              <img
+                src={deriveImage(value.image)}
+                alt="welcome"
+                width="100%"
+                height="100%"
+              />
             )}
 
             <ImageEdit
               style={{ position: "absolute", right: 10, cursor: "pointer" }}
               title="Edit Story Image"
-              value={value.image || ""}
+              value={value.image || {}}
               onChange={(url) => onChange({ ...value, image: url })}
             />
           </div>

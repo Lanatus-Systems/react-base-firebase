@@ -46,6 +46,16 @@ export const resetPagingFor = (categories: string[]) => {
   delete lastDocMap[JSON.stringify(categories)];
 };
 
+const mapToArticle = (doc: any) => {
+  const value = doc.data();
+  return {
+    id: doc.id,
+    ...value,
+    date: value.date && value.date.toDate(),
+    image: value.image || {},
+  } as Article;
+};
+
 export const getArticles = (categories: string[], pageSize: number) => {
   let query = articleByCategoriesQuery(categories).limit(pageSize);
   const key = JSON.stringify(categories);
@@ -54,15 +64,10 @@ export const getArticles = (categories: string[], pageSize: number) => {
   }
   return query.get().then((querySnapshot) => {
     const list = querySnapshot.docs.map((doc, index, all) => {
-      const value = doc.data();
       if (index === all.length - 1) {
         lastDocMap[key] = doc;
       }
-      return {
-        id: doc.id,
-        ...value,
-        date: value.date && value.date.toDate(),
-      } as Article;
+      return mapToArticle(doc);
     });
     return list;
   });
@@ -75,12 +80,7 @@ export const getArticle = (id: string) => {
     .get()
     .then((doc) => {
       if (doc.exists) {
-        const value = doc.data() || {};
-        return {
-          id: doc.id,
-          ...value,
-          date: value.date && value.date.toDate(),
-        } as Article;
+        return mapToArticle(doc);
       } else {
         throw new Error("Article Does not exists");
       }

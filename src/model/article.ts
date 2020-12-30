@@ -11,21 +11,21 @@ export type ContentType = "text" | "image" | "article";
 export interface Content {
   type: ContentType;
   content?: MultiLanguage;
-  image?: string;
+  image?: MultiLanguage;
   id?: string;
   align: "left" | "right" | "center";
 }
 
 export interface Story {
   content: MultiLanguage;
-  image: string;
+  image: MultiLanguage;
 }
 
 export interface Article {
   id: string;
   title: MultiLanguage;
   category: string;
-  image: string;
+  image: MultiLanguage;
   date: Date;
   author: string;
   storyCount: number;

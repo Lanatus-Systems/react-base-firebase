@@ -1,13 +1,14 @@
 import React, { CSSProperties, Suspense, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import { MultiLanguage } from "src/model/common";
 
-const InputModal = React.lazy(() => import("./ImageEditModal"));
+const ImageEditModal = React.lazy(() => import("./MultiLangImageEditModal"));
 
 interface Iprops {
   title: string;
-  value: string;
-  onChange: (val: string) => void;
+  value: MultiLanguage;
+  onChange: (val: MultiLanguage) => void;
   type?: string;
   style?: CSSProperties;
 }
@@ -17,7 +18,7 @@ const ImageEdit = ({ title, value, type, onChange, style = {} }: Iprops) => {
 
   return modalVisible ? (
     <Suspense fallback={<div>Loading...</div>}>
-      <InputModal
+      <ImageEditModal
         title={title}
         value={value}
         hide={() => setModalVisible(false)}

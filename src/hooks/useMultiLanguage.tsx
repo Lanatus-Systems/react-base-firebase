@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { ENGLISH } from "src/i18n/languages";
 import { MultiLanguage } from "src/model/common";
 
 const useMultiLanguage = () => {
@@ -20,7 +21,15 @@ const useMultiLanguage = () => {
     [t]
   );
 
-  return { derive, localize, i18n };
+  const deriveImage = useCallback(
+    (value: MultiLanguage): string => {
+      if (value == null) return "-";
+      return value[i18n.language] || value[ENGLISH] || "-";
+    },
+    [i18n]
+  );
+
+  return { derive, deriveImage, localize, i18n };
 };
 
 export default useMultiLanguage;
