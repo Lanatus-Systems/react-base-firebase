@@ -8,7 +8,6 @@ import { MultiLanguage } from "src/model/common";
 
 interface Iprops {
   item: Category;
-  index: number;
   retrieve: () => void;
   allCategories: Category[];
 }
@@ -17,67 +16,89 @@ const Item = ({ item, retrieve, allCategories }: Iprops) => {
   const { derive } = useMultiLanguage();
   const [order, setOrder] = useState<string>(item.order + "" || "1");
   const [updateData, updating, error] = useAsync(api.updateCategory);
+  const [removeData, removing, deleteError] = useAsync(api.removeCategory);
 
-  const [labelState, setLabelState] = useState<MultiLanguage>(item.label);
+  const [labelState, setLabelState] = useState<MultiLanguage>(item.label || {});
 
-  const [parentCategory, setParentCategory] = useState(item.parent);
+  const [parentCategory, setParentCategory] = useState(item.parent || "");
 
   console.log({ parentCategory });
   const parentOptions = allCategories.filter((c) => c.id !== item.id);
   return (
-    <tr key={item.id}>
-      <td>{item.id}</td>
-      <td>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          {derive(labelState)}{" "}
-          <MultiLangTextEdit
-            title="Edit Category Label"
-            value={labelState}
-            onChange={(val) => setLabelState(val)}
+    <>
+      <div
+        key={item.id}
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+          margin: "5px 0px",
+        }}
+      >
+        <div style={{ width: 100 }}>{item.id}</div>
+        <div style={{ width: 150 }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            {derive(labelState)}{" "}
+            <MultiLangTextEdit
+              title="Edit Category Label"
+              value={labelState}
+              onChange={(val) => setLabelState(val)}
+            />
+          </div>
+        </div>
+        <div style={{ width: 50 }}>
+          <input
+            style={{ width: 50 }}
+            type="number"
+            value={order}
+            onChange={(e) => setOrder(e.target.value)}
           />
         </div>
-      </td>
-      <td>
-        <input
-          type="number"
-          value={order}
-          onChange={(e) => setOrder(e.target.value)}
-        />
-      </td>
-      <td>
-        <select
-          value={parentCategory}
-          onChange={(e) => setParentCategory(e.target.value)}
-        >
-          <option value={""}></option>
-          {parentOptions.map((val) => (
-            <option key={val.id} value={val.id}>
-              {val.id}
-            </option>
-          ))}
-        </select>
-      </td>
-
-      <td>
-        {updating ? (
-          "updating ..."
-        ) : (
-          <button
-            onClick={() =>
-              updateData({
-                ...item,
-                label: labelState,
-                order: +order,
-                parent: parentCategory,
-              }).then(retrieve)
-            }
+        <div style={{ width: 100 }}>
+          <select
+            value={parentCategory}
+            onChange={(e) => setParentCategory(e.target.value)}
+            style={{ width: "100%" }}
           >
-            Update
-          </button>
-        )}
-      </td>
-      <td>{error && <div>{error.message}</div>}</td>
-    </tr>
+            <option value={""}></option>
+            {parentOptions.map((val) => (
+              <option key={val.id} value={val.id}>
+                {val.id}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ width: 50 }}>
+          {updating ? (
+            "delete ..."
+          ) : (
+            <button
+              onClick={() =>
+                updateData({
+                  ...item,
+                  label: labelState,
+                  order: +order,
+                  parent: parentCategory,
+                }).then(retrieve)
+              }
+            >
+              Update
+            </button>
+          )}
+        </div>
+        <div style={{ width: 50 }}>
+          {removing ? (
+            "deleting ..."
+          ) : (
+            <button onClick={() => removeData(item).then(retrieve)}>
+              Delete
+            </button>
+          )}
+        </div>
+      </div>
+      {error && <div>{error.message}</div>}
+      {deleteError && <div>{deleteError.message}</div>}
+    </>
   );
 };
 
@@ -96,6 +117,17 @@ const Categories = () => {
     setData([]);
     getAllItems().then(setData);
   };
+
+  const categoriesGroupedByParent = data.reduce(
+    (acc: Record<string, Category[]>, val) => {
+      const parent = val.parent || "";
+      const group = acc[parent] || [];
+      group.push(val);
+      acc[parent] = group;
+      return acc;
+    },
+    { "": [] }
+  );
 
   return (
     <div>
@@ -138,34 +170,54 @@ const Categories = () => {
       </div>
 
       <div>
-        <table style={{ border: "1px solid lightgrey" }}>
-          <tbody>
-            <tr>
-              <th>Id</th>
-              <th>Label</th>
-              <th>Order</th>
-              <th>Parent</th>
-            </tr>
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-around" }}>
+            <div style={{ width: 100 }}>Id</div>
+            <div style={{ width: 150, textAlign: "center" }}>Label</div>
+            <div style={{ width: 50 }}>Order</div>
+            <div style={{ width: 100 }}>Parent</div>
+            <div style={{ width: 50 }}>Update</div>
+            <div style={{ width: 50 }}>Delete</div>
+          </div>
 
-            {loading ? (
-              <tr>"Loading..."</tr>
-            ) : (
-              <>
-                {data.length
-                  ? data.map((item, index) => (
-                      <Item
-                        key={index}
-                        index={index}
-                        item={item}
-                        retrieve={retrieve}
-                        allCategories={data}
-                      />
-                    ))
-                  : "RetrieveData"}
-              </>
-            )}
-          </tbody>
-        </table>
+          {loading ? (
+            <div>"Loading..."</div>
+          ) : (
+            <div>
+              {data.length
+                ? categoriesGroupedByParent[""].map((parent) => {
+                    const child = categoriesGroupedByParent[parent.id];
+                    return (
+                      <div
+                        style={{
+                          padding: "10px 0px",
+                        }}
+                      >
+                        <div style={{ background: "lightgrey" }}>
+                          <Item
+                            item={parent}
+                            retrieve={retrieve}
+                            allCategories={data}
+                          />
+                        </div>
+                        {child && (
+                          <div>
+                            {child.map((item) => (
+                              <Item
+                                item={item}
+                                retrieve={retrieve}
+                                allCategories={data}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                : "RetrieveData"}
+            </div>
+          )}
+        </div>
       </div>
 
       {getError && <div>{getError.message}</div>}

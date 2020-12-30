@@ -27,6 +27,10 @@ export const addCategory = (item: Category) => {
   return firestore.collection(CATEGORIES).doc(item.id).set(finalData);
 };
 
+export const removeCategory = (item: Category) => {
+  return firestore.collection(CATEGORIES).doc(item.id).delete();
+};
+
 // let lastDoc: unknown = null;
 
 const articleByCategoriesQuery = (categories: string[]) => {
