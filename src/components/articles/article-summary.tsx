@@ -31,7 +31,7 @@ const ArticleSummary = ({ article, height = 300, variant }: Iprops) => {
         <div style={{ height: "100%", position: "absolute" }}>
           <img
             src={deriveImage(article.image)}
-            alt="Not Present"
+            alt="Not Available"
             height="100%"
             width="100%"
           />

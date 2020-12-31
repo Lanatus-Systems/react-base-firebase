@@ -7,6 +7,7 @@ import { v4 } from "uuid";
 import TextEdit from "./TextEdit";
 import { MultiLanguage } from "src/model/common";
 import { ENGLISH, FRENCH } from "src/i18n/languages";
+import ImagePlaceholder from "../image-placeholder";
 
 interface Iprops {
   title: string;
@@ -57,12 +58,16 @@ const ImageEditModal = ({ title, type, value, onChange, hide }: Iprops) => {
       </div>
       <div style={{ display: "flex" }}>
         <div style={{ width: "40%", maxHeight: "80vh" }}>
-          <img
-            src={effectiveUrl}
-            alt="pick a file"
-            width="100%"
-            height="100%"
-          />
+          {effectiveUrl ? (
+            <img
+              src={effectiveUrl}
+              alt="pick a file"
+              width="100%"
+              height="100%"
+            />
+          ) : (
+            <ImagePlaceholder />
+          )}
         </div>
         Choose Image
         <label htmlFor={effectiveUniqueId}>

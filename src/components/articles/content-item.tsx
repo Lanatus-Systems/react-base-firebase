@@ -10,6 +10,7 @@ import { Article } from "src/model/article";
 import * as api from "src/api/article";
 import { MultiLanguage } from "src/model/common";
 import ImageEdit from "../editables/ImageEdit";
+import ImagePlaceholder from "../image-placeholder";
 
 interface Iprops {
   value: Content;
@@ -34,6 +35,8 @@ const ContentItem = ({ value, onChange }: Iprops) => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        minHeight: 300,
+        width: "70vw",
       }}
     >
       <div>
@@ -89,21 +92,24 @@ const ContentItem = ({ value, onChange }: Iprops) => {
           style={{
             display: "flex",
             padding: 30,
+            width: "100%",
           }}
         >
           <div
             style={{
-              width: "80%",
+              width: "70%",
               position: "relative",
             }}
           >
-            {value?.image && (
+            {value.image ? (
               <img
                 src={deriveImage(value.image)}
-                alt="welcome"
+                alt="Not Available"
                 width="100%"
                 height="100%"
               />
+            ) : (
+              <ImagePlaceholder style={{ position: "absolute" }} />
             )}
 
             <ImageEdit

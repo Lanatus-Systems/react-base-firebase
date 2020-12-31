@@ -23,6 +23,7 @@ import TextEdit from "../editables/TextEdit";
 import ImageEdit from "../editables/ImageEdit";
 import { MultiLanguage } from "src/model/common";
 import { zipObj } from "ramda";
+import ImagePlaceholder from "../image-placeholder";
 
 interface Iparams {
   id: string;
@@ -132,7 +133,13 @@ const ArticleContent = (props: Iprops) => {
 
   return (
     <div key={id} css={{ padding: "5vw" }}>
-      <div css={{ display: "flex", borderBottom: "2px solid lightgrey" }}>
+      <div
+        css={{
+          display: "flex",
+          borderBottom: "2px solid lightgrey",
+          minHeight: 300,
+        }}
+      >
         <div
           css={{
             display: "flex",
@@ -148,13 +155,15 @@ const ArticleContent = (props: Iprops) => {
               position: "relative",
             }}
           >
-            {article?.image && (
+            {deriveImage(article?.image) ? (
               <img
                 src={deriveImage(article.image)}
-                alt="welcome"
+                alt="Not Available"
                 width="100%"
                 height="100%"
               />
+            ) : (
+              <ImagePlaceholder style={{ position: "absolute" }} />
             )}
 
             <ImageEdit

@@ -23,8 +23,8 @@ const useMultiLanguage = () => {
 
   const deriveImage = useCallback(
     (value: MultiLanguage): string => {
-      if (value == null) return "-";
-      return value[i18n.language] || value[ENGLISH] || "-";
+      if (value == null) return value;
+      return value[i18n.language] || value[ENGLISH];
     },
     [i18n]
   );

@@ -4,6 +4,7 @@ import MultiLangTextEdit from "../editables/MultiLangTextEdit";
 
 import parseHtml from "html-react-parser";
 import ImageEdit from "../editables/ImageEdit";
+import ImagePlaceholder from "../image-placeholder";
 
 interface Iprops {
   value: Story;
@@ -18,6 +19,7 @@ const StoryItem = ({ value, onChange }: Iprops) => {
       style={{
         borderBottom: "1px solid lightgrey",
         paddingBottom: 30,
+        minHeight: 300,
       }}
     >
       <div
@@ -29,28 +31,6 @@ const StoryItem = ({ value, onChange }: Iprops) => {
           flexDirection: "column",
         }}
       >
-        <div
-          style={{
-            width: "80%",
-            position: "relative",
-          }}
-        >
-          {value?.image && (
-            <img
-              src={deriveImage(value.image)}
-              alt="welcome"
-              width="100%"
-              height="100%"
-            />
-          )}
-
-          <ImageEdit
-            style={{ position: "absolute", right: 10, cursor: "pointer" }}
-            title="Edit Story Image"
-            value={value.image}
-            onChange={(url) => onChange({ ...value, image: url })}
-          />
-        </div>
         <div>
           {parseHtml(derive(value.content))}
           <MultiLangTextEdit
@@ -58,6 +38,30 @@ const StoryItem = ({ value, onChange }: Iprops) => {
             title="Edit Detail"
             value={value.content}
             onChange={(updated) => onChange({ ...value, content: updated })}
+          />
+        </div>
+        <div
+          style={{
+            width: "80%",
+            position: "relative",
+          }}
+        >
+          {value.image ? (
+            <img
+              src={deriveImage(value.image)}
+              alt="Not Available"
+              width="100%"
+              height="100%"
+            />
+          ) : (
+            <ImagePlaceholder style={{ position: "absolute" }} />
+          )}
+
+          <ImageEdit
+            style={{ position: "absolute", right: 10, cursor: "pointer" }}
+            title="Edit Story Image"
+            value={value.image}
+            onChange={(url) => onChange({ ...value, image: url })}
           />
         </div>
       </div>
