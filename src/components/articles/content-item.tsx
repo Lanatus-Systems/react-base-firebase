@@ -11,6 +11,7 @@ import * as api from "src/api/article";
 import { MultiLanguage } from "src/model/common";
 import ImageEdit from "../editables/ImageEdit";
 import ImagePlaceholder from "../image-placeholder";
+import TextPlaceholder from "../text-placeholder";
 
 interface Iprops {
   value: Content;
@@ -35,7 +36,7 @@ const ContentItem = ({ value, onChange }: Iprops) => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        minHeight: 300,
+        minHeight: 250,
         width: "70vw",
       }}
     >
@@ -52,8 +53,12 @@ const ContentItem = ({ value, onChange }: Iprops) => {
         </select>
       </div>
       {value.type === "text" && (
-        <div style={{ width: "70%" }}>
-          {parseHtml(derive(value.content as MultiLanguage))}
+        <div style={{ width: "70%", position: "relative" }}>
+          {value.content ? (
+            parseHtml(derive(value.content as MultiLanguage))
+          ) : (
+            <TextPlaceholder />
+          )}
           <MultiLangTextEdit
             rich
             title="Edit Content"
@@ -64,7 +69,7 @@ const ContentItem = ({ value, onChange }: Iprops) => {
       )}
 
       {value.type === "article" && (
-        <div>
+        <div style={{ position: "relative" }}>
           {article && (
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div>
@@ -119,8 +124,12 @@ const ContentItem = ({ value, onChange }: Iprops) => {
               onChange={(url) => onChange({ ...value, image: url })}
             />
           </div>
-          <div>
-            {parseHtml(derive(value.content as MultiLanguage))}
+          <div style={{ position: "relative" }}>
+            {value.content ? (
+              parseHtml(derive(value.content as MultiLanguage))
+            ) : (
+              <TextPlaceholder />
+            )}
             <MultiLangTextEdit
               rich
               title="Edit Detail"

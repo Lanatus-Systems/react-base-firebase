@@ -69,7 +69,6 @@ const ImageEditModal = ({ title, type, value, onChange, hide }: Iprops) => {
             <ImagePlaceholder />
           )}
         </div>
-        Choose Image
         <label htmlFor={effectiveUniqueId}>
           <FontAwesomeIcon
             icon={faEdit}

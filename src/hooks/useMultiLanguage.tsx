@@ -24,6 +24,7 @@ const useMultiLanguage = () => {
   const deriveImage = useCallback(
     (value: MultiLanguage): string => {
       if (value == null) return value;
+      console.log({value})
       return value[i18n.language] || value[ENGLISH];
     },
     [i18n]

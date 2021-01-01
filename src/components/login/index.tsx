@@ -15,19 +15,32 @@ const LoginPage = () => {
   };
 
   return (
-    <div>
-      <div>
-        {" "}
-        <label>Email : </label>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        justifyContent: "center",
+        height: 200,
+      }}
+    >
+      <div style={{ display: "flex", margin: 5 }}>
+        <div style={{ width: 80 }}>Email :</div>
+
         <input value={email} onChange={(e) => setEmail(e.target.value)} />
       </div>
-      <div>
-        {" "}
-        <label>Password : </label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+      <div style={{ display: "flex", margin: 5 }}>
+        <div style={{ width: 80 }}>Password :</div>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
       </div>
       <div>
-        <button onClick={login}>Login</button>
+        <button style={{ width: "100%" }} onClick={login}>
+          Login
+        </button>
       </div>
     </div>
   );

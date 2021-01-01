@@ -5,6 +5,8 @@ import { GlobalContext } from "src/context";
 import { useMultiLanguage } from "src/hooks";
 import { Article } from "src/model/article";
 
+import dayjs from "dayjs";
+
 interface Iprops {
   article: Article;
   height?: number;
@@ -13,46 +15,80 @@ interface Iprops {
 }
 const ArticleSummary = ({ article, height = 300, variant }: Iprops) => {
   const { derive, deriveImage } = useMultiLanguage();
-
   const { categoryMap } = useContext(GlobalContext);
 
   return (
-    <div
-      key={article.id}
-      style={{
-        margin: 15,
-        height,
-        // width,
-        border: "1px dashed lightgrey",
-        position: "relative",
+    <PlainLink
+      to={{
+        pathname: `/article-content/${article.id}`,
+        state: { article },
       }}
     >
-      {article.image && (
-        <div style={{ height: "100%", position: "absolute" }}>
-          <img
-            src={deriveImage(article.image)}
-            alt="Not Available"
-            height="100%"
-            width="100%"
-          />
-        </div>
-      )}
-      <div style={{ position: "absolute" }}>
-        <PlainLink
-          // style={{ cursor: "pointer" }}
-          to={{
-            pathname: `/article-content/${article.id}`,
-            state: { article },
+      <div
+        key={article.id}
+        css={{
+          margin: 15,
+          height,
+          // width,
+          // border: "1px dashed lightgrey",
+          position: "relative",
+        }}
+      >
+        <div
+          css={{
+            width: "100%",
+            height: "70%",
+            position: "absolute",
+            zIndex: 2,
+            ":hover": {
+              backgroundColor: "red",
+              opacity: 0.5,
+            },
+          }}
+        />
+        {article.image && (
+          <div
+            css={{
+              height: "70%",
+              position: "absolute",
+              zIndex: 1,
+            }}
+          >
+            <img
+              src={deriveImage(article.image)}
+              alt="Not Available"
+              height="100%"
+              width="100%"
+            />
+          </div>
+        )}
+
+        <div
+          css={{
+            position: "absolute",
+            left: "10%",
+            width: "80%",
+            top: "55%",
+            height: "45%",
+            backgroundColor: "white",
+            padding: "5%",
+            zIndex: 3,
           }}
         >
-          <button style={{ cursor: "pointer" }}>Edit</button>
-        </PlainLink>
-        {/* <div>{article.id}</div> */}
-        <div>{derive(article.title)}</div>
-        <div>{derive(categoryMap[article.category]?.label)}</div>
-        <div>{variant}</div>
+          <div css={{ padding: 5 }}>
+            {derive(categoryMap[article.category]?.label)}
+          </div>
+
+          <div css={{ fontSize: 30, padding: 5 }}>{derive(article.title)}</div>
+
+          <div css={{ padding: 5 }}>By {article.author}</div>
+          <div css={{ padding: 5 }}>
+            {dayjs(article.date).format("DD MMMM YYYY")}
+          </div>
+          <div>{variant}</div>
+        </div>
       </div>
-    </div>
+    </PlainLink>
   );
 };
 

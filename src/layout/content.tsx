@@ -8,7 +8,7 @@ import LoginPage from "src/components/login";
 
 const Content = () => {
   return (
-    <div style={{ minHeight: "80vh", marginTop: "175px", background: "white" }}>
+    <div style={{ minHeight: "70vh", marginTop: "175px", background: "white" }}>
       <Route exact path="/login" component={LoginPage} />
       <Route exact path="/categories" component={Categories} />
       <Route exact path="/articles/:category" component={ArticlePage} />

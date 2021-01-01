@@ -1,6 +1,5 @@
 import React, { Suspense, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import EditIcon from "./EditIcon";
 
 const InputModal = React.lazy(() => import("./InputEditModal"));
 
@@ -36,9 +35,8 @@ const TextEdit = ({
       />
     </Suspense>
   ) : (
-    <FontAwesomeIcon
+    <EditIcon
       style={{ marginLeft: 10 }}
-      icon={faPencilAlt}
       onClick={() => setModalVisible(true)}
     />
   );

@@ -6,7 +6,7 @@ import * as api from "src/api/article";
 import { uploadImage } from "src/api/storage";
 import { useAsync, useMultiLanguage } from "src/hooks";
 import MultiLangTextEdit from "../editables/MultiLangTextEdit";
-import { GlobalContext } from "src/context";
+import { AuthContext, GlobalContext } from "src/context";
 
 import dayjs from "dayjs";
 
@@ -24,6 +24,7 @@ import ImageEdit from "../editables/ImageEdit";
 import { MultiLanguage } from "src/model/common";
 import { zipObj } from "ramda";
 import ImagePlaceholder from "../image-placeholder";
+import TextPlaceholder from "../text-placeholder";
 
 interface Iparams {
   id: string;
@@ -44,7 +45,7 @@ const mapImageToPromise = (
         ? fetch(item)
             .then((r) => r.blob())
             .then((file) => uploadImage(file))
-        : Promise.resolve(item)
+        : Promise.resolve(item || "")
     )
   ).then((results) => {
     return zipObj(Object.keys(image), results);
@@ -59,6 +60,8 @@ const ArticleContent = (props: Iprops) => {
   const { derive, deriveImage } = useMultiLanguage();
 
   const { categoryMap, categories } = useContext(GlobalContext);
+
+  const { roles } = useContext(AuthContext);
 
   const [article, setArticle] = useState<Article>(location.state?.article);
   const [articleContent, setArticleContent] = useState<ArticleDetail>();
@@ -167,7 +170,6 @@ const ArticleContent = (props: Iprops) => {
             )}
 
             <ImageEdit
-              style={{ position: "absolute", right: 10, cursor: "pointer" }}
               title="Edit Cover Image"
               value={article?.image}
               onChange={(url) => setArticle((val) => ({ ...val, image: url }))}
@@ -194,25 +196,28 @@ const ArticleContent = (props: Iprops) => {
               }}
             >
               <div style={{ margin: 10 }}>
-                {derive(categoryMap[article.category]?.label)}
-                <select
-                  value={article.category}
-                  onChange={(e) =>
-                    setArticle((val) => ({
-                      ...val,
-                      category: e.target.value,
-                    }))
-                  }
-                >
-                  {categories.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {derive(categoryMap[item.id]?.label)}
-                    </option>
-                  ))}
-                </select>
+                {roles.editor ? (
+                  <select
+                    value={article.category}
+                    onChange={(e) =>
+                      setArticle((val) => ({
+                        ...val,
+                        category: e.target.value,
+                      }))
+                    }
+                  >
+                    {categories.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {derive(categoryMap[item.id]?.label)}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  derive(categoryMap[article.category]?.label)
+                )}
               </div>
-              <div style={{ padding: 10, fontSize: 40 }}>
-                {derive(article.title)}
+              <div style={{ padding: 10, position: "relative" }}>
+                <span css={{ fontsize: 40 }}>{derive(article.title)}</span>
                 <MultiLangTextEdit
                   multiline
                   title="Edit Title"
@@ -222,7 +227,7 @@ const ArticleContent = (props: Iprops) => {
                   }
                 />
               </div>
-              <div>
+              <div css={{ position: "relative", padding: 5 }}>
                 {`By ${article.author || "-"}`}{" "}
                 <TextEdit
                   title="Edit Author"
@@ -232,7 +237,7 @@ const ArticleContent = (props: Iprops) => {
                   }
                 />
               </div>
-              <div>
+              <div css={{ position: "relative", padding: 5 }}>
                 {dayjs(article.date).format("DD MMMM YYYY")}
                 <TextEdit
                   title="Edit Date"
@@ -245,8 +250,18 @@ const ArticleContent = (props: Iprops) => {
               </div>
               {articleContent && (
                 <div>
-                  <div style={{ margin: 10 }}>
-                    {parseHtml(derive(articleContent.detail))}
+                  <div
+                    css={{
+                      display: "flex",
+                      justifyContent: "center",
+                      position: "relative",
+                    }}
+                  >
+                    {articleContent.detail ? (
+                      parseHtml(derive(articleContent.detail))
+                    ) : (
+                      <TextPlaceholder style={{ height: 50 }} />
+                    )}
                     <MultiLangTextEdit
                       rich
                       title="Edit Detail"
@@ -326,19 +341,24 @@ const ArticleContent = (props: Iprops) => {
             />
           ))}
         </div>
-        <button
-          onClick={() =>
-            setArticleContent((val) => {
-              if (val == null) return val;
-              return {
-                ...val,
-                content: [...(val.content || []), { type: "text" } as Content],
-              };
-            })
-          }
-        >
-          Add Content
-        </button>
+        {roles.editor && (
+          <button
+            onClick={() =>
+              setArticleContent((val) => {
+                if (val == null) return val;
+                return {
+                  ...val,
+                  content: [
+                    ...(val.content || []),
+                    { type: "text" } as Content,
+                  ],
+                };
+              })
+            }
+          >
+            Add Content
+          </button>
+        )}
       </div>
 
       <div>
@@ -359,28 +379,32 @@ const ArticleContent = (props: Iprops) => {
             />
           ))}
         </div>
-        <button
-          onClick={() =>
-            setArticleContent((val) => {
-              if (val == null) return val;
-              return {
-                ...val,
-                stories: [...(val.stories || []), {} as Story],
-              };
-            })
-          }
-        >
-          Add Story
-        </button>
-      </div>
-
-      <div style={{ margin: 20 }}>
-        {uploadingImg || loadingArt || loadingArtC ? (
-          "Saving...."
-        ) : (
-          <button onClick={saveData}>Save</button>
+        {roles.editor && (
+          <button
+            onClick={() =>
+              setArticleContent((val) => {
+                if (val == null) return val;
+                return {
+                  ...val,
+                  stories: [...(val.stories || []), {} as Story],
+                };
+              })
+            }
+          >
+            Add Story
+          </button>
         )}
       </div>
+
+      {roles.editor && (
+        <div style={{ margin: 20 }}>
+          {uploadingImg || loadingArt || loadingArtC ? (
+            "Saving...."
+          ) : (
+            <button onClick={saveData}>Save</button>
+          )}
+        </div>
+      )}
     </div>
   );
 };

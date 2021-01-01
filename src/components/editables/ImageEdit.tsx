@@ -1,7 +1,6 @@
 import React, { CSSProperties, Suspense, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { MultiLanguage } from "src/model/common";
+import EditIcon from "./EditIcon";
 
 const ImageEditModal = React.lazy(() => import("./MultiLangImageEditModal"));
 
@@ -27,11 +26,7 @@ const ImageEdit = ({ title, value, type, onChange, style = {} }: Iprops) => {
       />
     </Suspense>
   ) : (
-    <FontAwesomeIcon
-      style={{ marginLeft: 10, ...style }}
-      icon={faPencilAlt}
-      onClick={() => setModalVisible(true)}
-    />
+    <EditIcon style={style} onClick={() => setModalVisible(true)} />
   );
 };
 

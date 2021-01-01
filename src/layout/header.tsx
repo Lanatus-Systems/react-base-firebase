@@ -18,7 +18,7 @@ import { ENGLISH, FRENCH } from "src/i18n/languages";
 // ];
 
 const Header = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, roles, logout } = useContext(AuthContext);
   const { rootCategories } = useContext(GlobalContext);
 
   const { isMobile } = useContext(LayoutContext);
@@ -87,7 +87,7 @@ const Header = () => {
                 <button>Login</button>
               </Link>
             )}
-            {user && (
+            {roles.admin && (
               <div css={{ display: "flex" }}>
                 <Link to="/categories" css={{ margin: 10 }}>
                   Categories

@@ -5,6 +5,7 @@ import MultiLangTextEdit from "../editables/MultiLangTextEdit";
 import parseHtml from "html-react-parser";
 import ImageEdit from "../editables/ImageEdit";
 import ImagePlaceholder from "../image-placeholder";
+import TextPlaceholder from "../text-placeholder";
 
 interface Iprops {
   value: Story;
@@ -19,7 +20,7 @@ const StoryItem = ({ value, onChange }: Iprops) => {
       style={{
         borderBottom: "1px solid lightgrey",
         paddingBottom: 30,
-        minHeight: 300,
+        minHeight: 400,
       }}
     >
       <div
@@ -31,8 +32,12 @@ const StoryItem = ({ value, onChange }: Iprops) => {
           flexDirection: "column",
         }}
       >
-        <div>
-          {parseHtml(derive(value.content))}
+        <div style={{ position: "relative" }}>
+          {value.content ? (
+            parseHtml(derive(value.content))
+          ) : (
+            <TextPlaceholder />
+          )}
           <MultiLangTextEdit
             rich
             title="Edit Detail"
