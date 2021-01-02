@@ -89,15 +89,13 @@ const ImageEditModal = ({ title, type, value, onChange, hide }: Iprops) => {
             }}
           />
         </label>
-        <div>
-          <div>
-            Or Specify Remote Url
-            <TextEdit
-              title="Custom Remote URL"
-              value={effectiveUrl}
-              onChange={setEffectiveUrl}
-            />
-          </div>
+        <div style={{ position: "relative", width: 200 }}>
+          Or Specify Remote Url
+          <TextEdit
+            title="Custom Remote URL"
+            value={effectiveUrl}
+            onChange={setEffectiveUrl}
+          />
         </div>
       </div>
     </Modal>

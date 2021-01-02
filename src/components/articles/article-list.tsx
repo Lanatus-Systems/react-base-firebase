@@ -128,7 +128,7 @@ const ArticleList = ({ category }: Iprops) => {
           <button onClick={addItem}>Add New</button>
         </div>
       )}
-      <div css={{ minHeight: "50vh" }}>
+      <div css={{ minHeight: "50vh", margin: "0px 10vw" }}>
         {nextPageDisabled ? (
           <div
             css={{
@@ -171,7 +171,7 @@ const ArticleList = ({ category }: Iprops) => {
                   <div
                     css={{
                       display: "flex",
-                      width: "40vw",
+                      width: "34vw",
                       flexDirection: "column",
                     }}
                   >
@@ -179,7 +179,6 @@ const ArticleList = ({ category }: Iprops) => {
                       <ArticleSummary
                         key={item.id}
                         article={item}
-                        height={600}
                         variant="lg"
                       />
                     ))}
@@ -187,7 +186,7 @@ const ArticleList = ({ category }: Iprops) => {
                   <div
                     css={{
                       display: "flex",
-                      width: "20vw",
+                      width: "23vw",
                       flexDirection: "column",
                     }}
                   >
@@ -195,14 +194,14 @@ const ArticleList = ({ category }: Iprops) => {
                       <ArticleSummary
                         key={item.id}
                         article={item}
-                        variant={index === 2 ? "md" : "sm"}
+                        variant={index === 1 ? "md" : "sm"}
                       />
                     ))}
                   </div>
                   <div
                     css={{
                       display: "flex",
-                      width: "20vw",
+                      width: "23vw",
                       flexDirection: "column",
                     }}
                   >

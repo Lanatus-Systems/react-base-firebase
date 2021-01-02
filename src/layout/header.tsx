@@ -61,6 +61,7 @@ const Header = () => {
         position: "absolute",
         top: 0,
         width: "100%",
+        zIndex: 4,
       }}
     >
       <div css={{ boxShadow: "2px 2px lightgrey", background: "white" }}>
