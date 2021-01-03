@@ -7,6 +7,7 @@
     "@emotion/styled": "^11.0.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
     "@fortawesome/free-brands-svg-icons": "^5.15.1",
+    "@fortawesome/free-regular-svg-icons": "^5.15.1",
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@testing-library/jest-dom": "^5.11.4",
@@ -32,7 +33,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
     "react-slick": "^0.27.13",
-    "react-sticky": "^6.0.3",
+    "react-sticky-el": "^2.0.5",
     "typescript": "^4.0.3",
     "uuid": "^8.3.2",
     "web-vitals": "^0.2.4"
@@ -67,6 +68,7 @@
     "@types/ramda": "^0.27.34",
     "@types/react-modal": "^3.10.6",
     "@types/react-router-dom": "^5.1.6",
+    "@types/react-sticky-el": "^1.0.2",
     "@types/uuid": "^8.3.0"
   }
 }

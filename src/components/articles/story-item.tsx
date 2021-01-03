@@ -32,42 +32,47 @@ const StoryItem = ({ value, onChange }: Iprops) => {
           flexDirection: "column",
         }}
       >
-        <div style={{ position: "relative" }}>
-          {value.content ? (
-            parseHtml(derive(value.content))
-          ) : (
-            <TextPlaceholder />
-          )}
-          <MultiLangTextEdit
-            rich
-            title="Edit Detail"
-            value={value.content}
-            onChange={(updated) => onChange({ ...value, content: updated })}
-          />
-        </div>
         <div
           style={{
-            width: "80%",
-            position: "relative",
+            width: "75%",
           }}
         >
-          {value.image ? (
-            <img
-              src={deriveImage(value.image)}
-              alt="Not Available"
-              width="100%"
-              height="100%"
-            />
-          ) : (
-            <ImagePlaceholder style={{ position: "absolute" }} />
-          )}
+          <div
+            style={{
+              position: "relative",
+              minHeight: 250,
+            }}
+          >
+            {value.image ? (
+              <img
+                style={{ maxHeight: "90vh", maxWidth: "100%" }}
+                src={deriveImage(value.image)}
+                alt="Not Available"
+              />
+            ) : (
+              <ImagePlaceholder style={{ position: "absolute" }} />
+            )}
 
-          <ImageEdit
-            style={{ position: "absolute", right: 10, cursor: "pointer" }}
-            title="Edit Story Image"
-            value={value.image}
-            onChange={(url) => onChange({ ...value, image: url })}
-          />
+            <ImageEdit
+              style={{ position: "absolute", right: 10, cursor: "pointer" }}
+              title="Edit Story Image"
+              value={value.image}
+              onChange={(url) => onChange({ ...value, image: url })}
+            />
+          </div>
+          <div style={{ position: "relative" }}>
+            {value.content ? (
+              parseHtml(derive(value.content))
+            ) : (
+              <TextPlaceholder />
+            )}
+            <MultiLangTextEdit
+              rich
+              title="Edit Detail"
+              value={value.content}
+              onChange={(updated) => onChange({ ...value, content: updated })}
+            />
+          </div>
         </div>
       </div>
     </div>
