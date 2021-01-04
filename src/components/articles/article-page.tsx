@@ -1,8 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
-import { GlobalContext } from "src/context";
+import { GlobalContext, LayoutContext } from "src/context";
 import { useMultiLanguage } from "src/hooks";
+import { StyledMenuItem } from "src/layout/header";
 import ArticleList from "./article-list";
 
 interface Iprops {
@@ -13,6 +14,8 @@ const ArticlePage = (props: Iprops) => {
 
   const { categoryMap, subCategoryMap } = useContext(GlobalContext);
 
+  const { isMobile } = useContext(LayoutContext);
+
   const { derive, localize } = useMultiLanguage();
 
   const [selectedCategory, setSelectedCategory] = useState<string>(category);
@@ -22,58 +25,70 @@ const ArticlePage = (props: Iprops) => {
   if (subcategories == null || subcategories.length === 0) {
     return (
       <div>
-        <div css={{ padding: 10, fontSize: 40, textAlign: "center" }}>
+        <div
+          css={{
+            padding: isMobile ? 40 : 20,
+            fontSize: isMobile ? 30 : 40,
+            textAlign: "center",
+          }}
+        >
           {derive(categoryMap[category]?.label)}
         </div>
-        <hr css={{ margin: 0 }} />
+        <div
+          css={{
+            margin: "0px 5%",
+            width: "90%",
+            borderBottom: "1px solid lightgrey",
+          }}
+        />
         <ArticleList category={category} />
       </div>
     );
   } else {
     return (
       <div>
-        <div css={{ padding: 10, fontSize: 40, textAlign: "center" }}>
+        <div
+          css={{
+            padding: isMobile ? 40 : 20,
+            fontSize: isMobile ? 30 : 40,
+            textAlign: "center",
+          }}
+        >
           {derive(categoryMap[category]?.label)}
         </div>
-        <hr css={{ margin: 0 }} />
-        <div css={{ display: "flex" }}>
-          <div
-            css={{
-              fontWeight: 600,
-              fontSize: 14,
-              fontFamily: "Sniglet",
-              margin: 5,
-              padding: 5,
-              ":hover": {
-                color: "#fa0000",
-              },
-              cursor: "pointer",
-            }}
-            onClick={() => setSelectedCategory(category)}
-          >
-            {localize("all_topics").toLocaleUpperCase()}
-          </div>
-          {subcategories.map((item) => (
-            <div
-              key={item.id}
+        <div
+          css={{
+            width: "90%",
+            borderBottom: "1px solid lightgrey",
+            borderTop: "1px solid lightgrey",
+            margin: "0px 5%",
+          }}
+        >
+          <div css={{ display: "flex" }}>
+            <StyledMenuItem
               css={{
-                fontWeight: 600,
-                fontSize: 14,
-                fontFamily: "Sniglet",
-                margin: 5,
-                padding: 5,
-                ":hover": {
-                  color: "#fa0000",
-                },
-                cursor: "pointer",
+                color: isMobile && selectedCategory === category ? "red" : "",
+                borderBottom:
+                  selectedCategory === category ? "5px solid red" : "",
               }}
-              onClick={() => setSelectedCategory(item.id)}
+              onClick={() => setSelectedCategory(category)}
             >
-              {derive(item.label).toLocaleUpperCase()}
-            </div>
-          ))}
+              {localize("all_topics").toLocaleUpperCase()}
+            </StyledMenuItem>
+            {subcategories.map((item) => (
+              <StyledMenuItem
+                css={{
+                  borderBottom:
+                    selectedCategory === item.id ? "5px solid red" : "",
+                }}
+                key={item.id}
+                onClick={() => setSelectedCategory(item.id)}
+              >
+                {derive(item.label).toLocaleUpperCase()}
+              </StyledMenuItem>
+            ))}
+          </div>
         </div>
-        <hr css={{ margin: 0 }} />
         <ArticleList category={selectedCategory} />
       </div>
     );

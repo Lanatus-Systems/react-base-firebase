@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { CSSProperties, useContext } from "react";
 import { PlainLink } from "src/base";
-import { GlobalContext } from "src/context";
+import { GlobalContext, LayoutContext } from "src/context";
 import { useMultiLanguage } from "src/hooks";
 import { Article } from "src/model/article";
 
@@ -12,11 +12,12 @@ import { faClone } from "@fortawesome/free-regular-svg-icons";
 interface Iprops {
   article: Article;
   width?: number;
-  variant?: "sm" | "md" | "lg" | "xl" | "sticky";
+  variant?: "sm" | "md" | "lg" | "xl" | "sticky" | "mobile";
   style?: CSSProperties;
 }
 
 const fontSizeMap = {
+  mobile: 15,
   sm: 18,
   md: 25,
   lg: 30,
@@ -25,6 +26,7 @@ const fontSizeMap = {
 };
 
 const imageHeightMap = {
+  mobile: 100,
   sm: 300,
   md: 400,
   lg: 600,
@@ -35,6 +37,8 @@ const imageHeightMap = {
 const ArticleSummary = ({ article, variant = "md", style = {} }: Iprops) => {
   const { derive, deriveImage } = useMultiLanguage();
   const { categoryMap } = useContext(GlobalContext);
+
+  const isMobile = variant === "mobile";
 
   if (variant === "sticky") {
     return (
@@ -162,17 +166,19 @@ const ArticleSummary = ({ article, variant = "md", style = {} }: Iprops) => {
       <div
         key={article.id}
         css={{
-          margin: 20,
+          margin: "1vw",
           // boxShadow: "0px 0px 2px grey",
           display: "flex",
-          flexDirection: "column",
+          flexDirection: isMobile ? "row" : "column",
+          justifyContent: isMobile ? "space-between" : "unset",
           ...style,
         }}
       >
         {article.image && (
           <div
             css={{
-              height: imageHeightMap[variant],
+              height: isMobile ? "" : imageHeightMap[variant],
+              width: isMobile ? "30vw" : "",
               position: "relative",
               backgroundColor: "rgb(242, 242, 242)",
             }}
@@ -212,8 +218,9 @@ const ArticleSummary = ({ article, variant = "md", style = {} }: Iprops) => {
         {article.storyCount ? (
           <div
             css={{
-              marginTop: "-35%",
-              marginLeft: "10%",
+              marginTop: isMobile ? "37%" : "-35%",
+              marginBottom: isMobile ? "3%" : "",
+              marginLeft: isMobile ? "-40%" : "10%",
               zIndex: 2,
               display: "flex",
             }}
@@ -236,11 +243,12 @@ const ArticleSummary = ({ article, variant = "md", style = {} }: Iprops) => {
         ) : null}
         <div
           css={{
-            marginLeft: "10%",
-            marginTop: article.storyCount ? "4%" : "-20%",
+            marginLeft: isMobile ? "" : "10%",
+            marginTop: isMobile ? "" : article.storyCount ? "4%" : "-20%",
             backgroundColor: "white",
             zIndex: 3,
-            boxShadow: "-1px -1px 5px lightgrey",
+            // boxShadow: "-1px -1px 5px lightgrey",
+            width: isMobile ? "65vw" : "",
           }}
         >
           <div css={{ padding: "5%" }}>

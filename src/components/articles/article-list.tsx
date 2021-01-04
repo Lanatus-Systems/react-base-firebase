@@ -4,7 +4,7 @@ import { Article } from "src/model/article";
 import * as api from "src/api/article";
 import ArticleSummary from "./article-summary";
 import { useHistory } from "react-router-dom";
-import { AuthContext, GlobalContext } from "src/context";
+import { AuthContext, GlobalContext, LayoutContext } from "src/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
@@ -57,9 +57,11 @@ const ArticleList = ({ category }: Iprops) => {
 
   const { roles } = useContext(AuthContext);
 
-  const [currentPage, setCurrentPage] = useState(1);
-
   const { subCategoryMap } = useContext(GlobalContext);
+
+  const { isMobile } = useContext(LayoutContext);
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   const derivedCategories = useMemo(() => {
     const subcategories =
@@ -128,7 +130,7 @@ const ArticleList = ({ category }: Iprops) => {
           <button onClick={addItem}>Add New</button>
         </div>
       )}
-      <div css={{ minHeight: "50vh", margin: "0px 10vw" }}>
+      <div css={{ minHeight: "50vh", margin: isMobile ? 0 : "0px 10vw" }}>
         {nextPageDisabled ? (
           <div
             css={{
@@ -164,14 +166,15 @@ const ArticleList = ({ category }: Iprops) => {
                   key={index}
                   css={{
                     display: "flex",
-                    margin: 20,
+                    margin: isMobile ? "5vw 0vw" : "2vw",
+                    flexDirection: isMobile ? "column" : "row",
                     justifyContent: "center",
                   }}
                 >
                   <div
                     css={{
                       display: "flex",
-                      width: "34vw",
+                      width: isMobile ? "100vw" : "34vw",
                       flexDirection: "column",
                     }}
                   >
@@ -179,38 +182,54 @@ const ArticleList = ({ category }: Iprops) => {
                       <ArticleSummary
                         key={item.id}
                         article={item}
-                        variant="lg"
+                        variant={isMobile ? "md" : "lg"}
                       />
                     ))}
                   </div>
                   <div
                     css={{
                       display: "flex",
-                      width: "23vw",
+                      width: isMobile ? "100vw" : "23vw",
                       flexDirection: "column",
                     }}
                   >
                     {secondColumn.map((item, index) => (
-                      <ArticleSummary
-                        key={item.id}
-                        article={item}
-                        variant={index === 1 ? "md" : "sm"}
-                      />
+                      <div
+                        css={{
+                          borderBottom: isMobile ? "1px solid lightgrey" : "",
+                          padding: isMobile ? "2vw" : 0,
+                        }}
+                      >
+                        <ArticleSummary
+                          key={item.id}
+                          article={item}
+                          variant={
+                            isMobile ? "mobile" : index === 1 ? "md" : "sm"
+                          }
+                        />
+                      </div>
                     ))}
                   </div>
                   <div
                     css={{
                       display: "flex",
-                      width: "23vw",
+                      width: isMobile ? "100vw" : "23vw",
                       flexDirection: "column",
                     }}
                   >
                     {thirdColumn.map((item) => (
-                      <ArticleSummary
-                        key={item.id}
-                        article={item}
-                        variant="md"
-                      />
+                      <div
+                        css={{
+                          borderBottom: isMobile ? "1px solid lightgrey" : "",
+                          padding: isMobile ? "2vw" : 0,
+                        }}
+                      >
+                        <ArticleSummary
+                          key={item.id}
+                          article={item}
+                          variant={isMobile ? "mobile" : "md"}
+                        />
+                      </div>
                     ))}
                   </div>
                 </div>

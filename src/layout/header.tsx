@@ -8,6 +8,21 @@ import { PlainLink } from "src/base";
 import { useMultiLanguage } from "src/hooks";
 import { ENGLISH, FRENCH } from "src/i18n/languages";
 
+import styled from "@emotion/styled";
+
+export const StyledMenuItem = styled.div({
+  fontWeight: 600,
+  fontSize: 14,
+  fontFamily: "Sniglet",
+  // margin: 5,
+  padding: 10,
+  ":hover": {
+    color: "#fa0000",
+  },
+  cursor: "pointer",
+  whiteSpace: "nowrap",
+});
+
 // const defaultCategories = [
 //   "fashion",
 //   "beauty",
@@ -82,8 +97,8 @@ const Header = () => {
           </PlainLink>
 
           <Filler />
-          <div css={{ padding: 10, border: "1px dashed lightgrey" }}>
-            {user == null && (
+          <div css={{ padding: 10 }}>
+            {!isMobile && user == null && (
               <Link to="/login">
                 <button>Login</button>
               </Link>
@@ -112,53 +127,47 @@ const Header = () => {
         </div>
         <div
           css={{
-            display: "flex",
-            padding: 8,
+            width: "100%",
+            overflow: "auto",
             borderTop: "1px solid lightgrey",
           }}
         >
-          {
-            rootCategories.length
-              ? rootCategories.map((item) => (
-                  <PlainLink key={item.id} to={`/articles/${item.id}`}>
-                    <div
-                      key={item.id}
-                      css={{
-                        fontWeight: 600,
-                        fontSize: 14,
-                        fontFamily: "Sniglet",
-                        margin: 5,
-                        padding: 5,
-                        ":hover": {
-                          color: "#fa0000",
-                        },
-                        cursor: "pointer",
-                      }}
-                    >
-                      {derive(item.label).toLocaleUpperCase()}
-                    </div>
-                  </PlainLink>
-                ))
-              : "Loading..."
-            // defaultCategories.map((item) => (
-            //     <div
-            //       key={item}
-            //       css={{
-            //         fontWeight: 600,
-            //         fontSize: 14,
-            //         fontFamily: "Sniglet",
-            //         margin: 5,
-            //         padding: 5,
-            //         ":hover": {
-            //           color: "#fa0000",
-            //         },
-            //         cursor: "pointer",
-            //       }}
-            //     >
-            //       {item.toUpperCase()}
-            //     </div>
-            //   ))
-          }
+          <div
+            css={{
+              display: "flex",
+              padding: 8,
+            }}
+          >
+            {
+              rootCategories.length
+                ? rootCategories.map((item) => (
+                    <PlainLink key={item.id} to={`/articles/${item.id}`}>
+                      <StyledMenuItem>
+                        {derive(item.label).toLocaleUpperCase()}
+                      </StyledMenuItem>
+                    </PlainLink>
+                  ))
+                : "Loading..."
+              // defaultCategories.map((item) => (
+              //     <div
+              //       key={item}
+              //       css={{
+              //         fontWeight: 600,
+              //         fontSize: 14,
+              //         fontFamily: "Sniglet",
+              //         margin: 5,
+              //         padding: 5,
+              //         ":hover": {
+              //           color: "#fa0000",
+              //         },
+              //         cursor: "pointer",
+              //       }}
+              //     >
+              //       {item.toUpperCase()}
+              //     </div>
+              //   ))
+            }
+          </div>
         </div>
       </div>
     </Headroom>
