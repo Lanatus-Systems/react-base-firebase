@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "src/context";
+import { useAsync } from "src/hooks";
 
 const LoginPage = () => {
   const { emailPasswordLogin } = useContext(AuthContext);
@@ -10,8 +11,10 @@ const LoginPage = () => {
   const [email, setEmail] = useState<string>("test@test.com");
   const [password, setPassword] = useState<string>("test123");
 
+  const [loginUser, loggingIn, error] = useAsync(emailPasswordLogin);
+
   const login = () => {
-    emailPasswordLogin(email, password).then(() => history.push("/"));
+    loginUser({ email, password }).then(() => history.push("/"));
   };
 
   return (
@@ -38,10 +41,15 @@ const LoginPage = () => {
         />
       </div>
       <div>
-        <button style={{ width: "100%" }} onClick={login}>
-          Login
-        </button>
+        {loggingIn ? (
+          "Logging in ..."
+        ) : (
+          <button style={{ width: "100%" }} onClick={login}>
+            Login
+          </button>
+        )}
       </div>
+      {error && <div>{error.message}</div>}
     </div>
   );
 };

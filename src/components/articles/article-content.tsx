@@ -6,17 +6,11 @@ import * as api from "src/api/article";
 import { uploadImage } from "src/api/storage";
 import { useAsync, useMultiLanguage } from "src/hooks";
 import MultiLangTextEdit from "../editables/MultiLangTextEdit";
-import { AuthContext, GlobalContext } from "src/context";
+import { AuthContext, GlobalContext, LayoutContext } from "src/context";
 
 import dayjs from "dayjs";
 
 import parseHtml from "html-react-parser";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFacebook,
-  faTwitter,
-  faPinterest,
-} from "@fortawesome/free-brands-svg-icons";
 import StoryItem from "./story-item";
 import ContentItem from "./content-item";
 import TextEdit from "../editables/TextEdit";
@@ -25,6 +19,7 @@ import { MultiLanguage } from "src/model/common";
 import { zipObj } from "ramda";
 import ImagePlaceholder from "../image-placeholder";
 import TextPlaceholder from "../text-placeholder";
+import SocialMediaLinks from "../social-media-links";
 
 interface Iparams {
   id: string;
@@ -60,6 +55,8 @@ const ArticleContent = (props: Iprops) => {
   const { derive, deriveImage } = useMultiLanguage();
 
   const { categoryMap, categories } = useContext(GlobalContext);
+
+  const { isMobile } = useContext(LayoutContext);
 
   const { roles } = useContext(AuthContext);
 
@@ -135,26 +132,29 @@ const ArticleContent = (props: Iprops) => {
   };
 
   return (
-    <div key={id} css={{ padding: "5vw" }}>
+    <div key={id} css={{ padding: isMobile ? "5vw 0vw" : "5vw" }}>
       <div
         css={{
           display: "flex",
           borderBottom: "2px solid lightgrey",
-          minHeight: 300,
+          flexDirection: isMobile ? "column" : "row",
+          padding: isMobile ? "5vw 0vw" : "",
         }}
       >
         <div
           css={{
             display: "flex",
-            // flexDirection: "column",
-            width: "50vw",
+            flexDirection: "column",
+            width: isMobile ? "100vw" : "50vw",
+            minHeight: 300,
             justifyContent: "center",
-            padding: 30,
+            padding: isMobile ? 0 : "5vw",
           }}
         >
           <div
             css={{
               width: "100%",
+              height: "100%",
               position: "relative",
             }}
           >
@@ -166,9 +166,8 @@ const ArticleContent = (props: Iprops) => {
                 height="100%"
               />
             ) : (
-              <ImagePlaceholder style={{ position: "absolute" }} />
+              <ImagePlaceholder />
             )}
-
             <ImageEdit
               title="Edit Cover Image"
               value={article?.image}
@@ -178,10 +177,10 @@ const ArticleContent = (props: Iprops) => {
         </div>
         <div
           css={{
-            display: "flex ",
+            display: "flex",
             flexDirection: "column",
-            width: "50vw",
-            padding: 30,
+            width: isMobile ? "96vw" : "50vw",
+            padding: isMobile ? "2vw" : "2vw",
           }}
         >
           {article && (
@@ -250,32 +249,34 @@ const ArticleContent = (props: Iprops) => {
               </div>
               {articleContent && (
                 <div>
+                  {(articleContent.detail || roles.editor) && (
+                    <div
+                      css={{
+                        display: "flex",
+                        justifyContent: "center",
+                        position: "relative",
+                      }}
+                    >
+                      {articleContent.detail ? (
+                        parseHtml(derive(articleContent.detail))
+                      ) : (
+                        <TextPlaceholder style={{ height: 50 }} />
+                      )}
+                      <MultiLangTextEdit
+                        rich
+                        title="Edit Detail"
+                        value={articleContent.detail}
+                        onChange={(updated) =>
+                          setArticleContent(
+                            (val) => val && { ...val, detail: updated }
+                          )
+                        }
+                      />
+                    </div>
+                  )}
                   <div
                     css={{
-                      display: "flex",
-                      justifyContent: "center",
-                      position: "relative",
-                    }}
-                  >
-                    {articleContent.detail ? (
-                      parseHtml(derive(articleContent.detail))
-                    ) : (
-                      <TextPlaceholder style={{ height: 50 }} />
-                    )}
-                    <MultiLangTextEdit
-                      rich
-                      title="Edit Detail"
-                      value={articleContent.detail}
-                      onChange={(updated) =>
-                        setArticleContent(
-                          (val) => val && { ...val, detail: updated }
-                        )
-                      }
-                    />
-                  </div>
-                  <div
-                    css={{
-                      marginTop: 50,
+                      marginTop: isMobile ? 20 : 50,
                       textAlign: "center",
                       display: "flex",
                       justifyContent: "center",
@@ -289,25 +290,7 @@ const ArticleContent = (props: Iprops) => {
                         justifyContent: "space-around",
                       }}
                     >
-                      <FontAwesomeIcon
-                        icon={faFacebook}
-                        size="3x"
-                        css={{
-                          backgroundColor: "black",
-                          color: "white",
-                          borderRadius: 25,
-                        }}
-                      />
-                      <FontAwesomeIcon icon={faTwitter} size="3x" />
-                      <FontAwesomeIcon
-                        icon={faPinterest}
-                        size="3x"
-                        css={{
-                          backgroundColor: "black",
-                          color: "white",
-                          borderRadius: 25,
-                        }}
-                      />
+                      <SocialMediaLinks />
                     </div>
                   </div>
                 </div>
@@ -322,11 +305,13 @@ const ArticleContent = (props: Iprops) => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          borderBottom: "2px solid lightgrey",
         }}
       >
-        <div css={{ paddingRight: "10vw", paddingLeft: "10vw" }}>
+        <div css={{ padding: isMobile ? "" : "0vw 10vw" }}>
           {articleContent?.content?.map((item, index) => (
             <ContentItem
+              key={index}
               value={item}
               onChange={(item) =>
                 setArticleContent((val) => {
@@ -362,9 +347,12 @@ const ArticleContent = (props: Iprops) => {
       </div>
 
       <div>
-        <div style={{ padding: 20 }}>
-          {articleContent?.stories?.map((item, index) => (
+        <div style={{ padding: isMobile ? 0 : 20, margin: "5vh 0vw" }}>
+          {articleContent?.stories?.map((item, index, all) => (
             <StoryItem
+              key={index}
+              storyIndex={index + 1}
+              storyCount={all.length}
               value={item}
               onChange={(item) =>
                 setArticleContent((val) => {

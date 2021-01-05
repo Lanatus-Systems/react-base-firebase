@@ -11,11 +11,13 @@ const ImagePlaceholder = ({ style = {} }: Iprops) => {
     <div
       style={{
         display: "flex",
-        width: 200,
-        height: 200,
+        // width: 200,
+        // height: 200,
+        width: "98%",
+        height: "98%",
         justifyContent: "center",
         alignItems: "center",
-        border: "2px dashed black",
+        border: "dashed black",
         ...style,
       }}
     >

@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import ReactQuill from "react-quill";
+import { LayoutContext } from "src/context";
 
 interface IeditorProps {
   value: string;
@@ -25,6 +26,8 @@ const toolbarOptions = [
 export const ContentEditor = ({ value, onChange }: IeditorProps) => {
   const ref = useRef<any>(null);
 
+  const { isMobile } = useContext(LayoutContext);
+
   // Disable spellcheck as component is mounted
   useEffect(() => {
     ref.current?.editor.root.setAttribute("spellcheck", "false");
@@ -34,7 +37,7 @@ export const ContentEditor = ({ value, onChange }: IeditorProps) => {
     <ReactQuill
       // set the ref to access to quill editor
       ref={ref}
-      style={{ height: 200, marginBottom: 80 }}
+      style={{ height: 300, marginBottom: isMobile ? 120 : 80 }}
       placeholder="Enter content here..."
       value={value}
       onChange={onChange}

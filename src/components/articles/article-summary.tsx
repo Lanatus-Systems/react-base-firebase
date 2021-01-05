@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { CSSProperties, useContext } from "react";
 import { PlainLink } from "src/base";
-import { GlobalContext, LayoutContext } from "src/context";
+import { GlobalContext } from "src/context";
 import { useMultiLanguage } from "src/hooks";
 import { Article } from "src/model/article";
 

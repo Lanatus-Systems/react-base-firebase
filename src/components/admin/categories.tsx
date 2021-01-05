@@ -32,11 +32,12 @@ const Item = ({ item, retrieve, allCategories }: Iprops) => {
           display: "flex",
           justifyContent: "space-around",
           margin: "5px 0px",
+          height : 40
         }}
       >
         <div style={{ width: 100 }}>{item.id}</div>
         <div style={{ width: 150 }}>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ position: "relative" }}>
             {derive(labelState)}{" "}
             <MultiLangTextEdit
               title="Edit Category Label"
@@ -189,6 +190,7 @@ const Categories = () => {
                     const child = categoriesGroupedByParent[parent.id];
                     return (
                       <div
+                        key={parent.id}
                         style={{
                           padding: "10px 0px",
                         }}

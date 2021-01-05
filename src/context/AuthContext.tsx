@@ -3,10 +3,14 @@ import { firebaseAuth } from "src/firebase";
 import { AppUser, Roles } from "src/model/auth";
 import { getUserRoles } from "src/api/auth";
 
+interface Icredentials {
+  email: string;
+  password: string;
+}
 interface IauthContext {
   user?: AppUser;
   roles: Roles;
-  emailPasswordLogin: (email: string, password: string) => Promise<unknown>;
+  emailPasswordLogin: (props: Icredentials) => Promise<unknown>;
   logout: () => Promise<unknown>;
 }
 
@@ -38,14 +42,17 @@ export const AuthContextProvider = ({ children }: Iprops) => {
     }
   }, [user]);
 
-  const emailPasswordLogin = useCallback((email: string, password: string) => {
-    return firebaseAuth
-      .signInWithEmailAndPassword(email, password)
-      .then((result) => {
-        setUser((result.user as unknown) as AppUser);
-        return result;
-      });
-  }, []);
+  const emailPasswordLogin = useCallback(
+    ({ email, password }: Icredentials) => {
+      return firebaseAuth
+        .signInWithEmailAndPassword(email, password)
+        .then((result) => {
+          setUser((result.user as unknown) as AppUser);
+          return result;
+        });
+    },
+    []
+  );
 
   const logout = useCallback(() => {
     return firebaseAuth.signOut().then(() => setUser(undefined));

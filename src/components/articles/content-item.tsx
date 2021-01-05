@@ -13,7 +13,7 @@ import { MultiLanguage } from "src/model/common";
 import ImageEdit from "../editables/ImageEdit";
 import ImagePlaceholder from "../image-placeholder";
 import TextPlaceholder from "../text-placeholder";
-import { AuthContext } from "src/context";
+import { AuthContext, LayoutContext } from "src/context";
 import { PlainLink } from "src/base";
 
 interface Iprops {
@@ -26,6 +26,8 @@ const ContentItem = ({ value, onChange }: Iprops) => {
 
   const { roles } = useContext(AuthContext);
 
+  const { isMobile } = useContext(LayoutContext);
+
   const [article, setArticle] = useState<Article>();
 
   useEffect(() => {
@@ -37,12 +39,12 @@ const ContentItem = ({ value, onChange }: Iprops) => {
   return (
     <div
       style={{
-        padding: 10,
+        padding: isMobile ? "2vw 0vw" : 10,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         minHeight: value.type === "article" ? 100 : 250,
-        width: "70vw",
+        width: isMobile ? "90vw" : "70vw",
       }}
     >
       {roles.editor && (
@@ -60,7 +62,7 @@ const ContentItem = ({ value, onChange }: Iprops) => {
         </div>
       )}
       {value.type === "text" && (
-        <div style={{ width: "70%", position: "relative" }}>
+        <div style={{ width: isMobile ? "100%" : "70%", position: "relative" }}>
           {value.content ? (
             parseHtml(derive(value.content as MultiLanguage))
           ) : (
@@ -78,7 +80,7 @@ const ContentItem = ({ value, onChange }: Iprops) => {
       {value.type === "article" && (
         <div
           style={{
-            width: "70%",
+            width: isMobile ? "" : "70%",
             position: "relative",
           }}
         >
@@ -90,7 +92,7 @@ const ContentItem = ({ value, onChange }: Iprops) => {
                   justifyContent: "space-between",
                   borderTop: "1px solid lightgrey",
                   borderBottom: "1px solid lightgrey",
-                  width: "100%",
+                  width: isMobile ? "" : "100%",
                   padding: 10,
                 }}
               >
@@ -127,13 +129,15 @@ const ContentItem = ({ value, onChange }: Iprops) => {
         <div
           style={{
             display: "flex",
-            padding: 30,
+            padding: isMobile ? "" : "2vw",
+            flexDirection: isMobile ? "column" : "row",
             width: "100%",
           }}
         >
           <div
             style={{
-              width: "70%",
+              maxWidth: isMobile ? "90vw" : "50vw",
+              maxHeight: "90vh",
               position: "relative",
               display: "flex",
               justifyContent: "space-between",
