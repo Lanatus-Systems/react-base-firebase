@@ -33,7 +33,12 @@ export const removeCategory = (item: Category) => {
 
 // let lastDoc: unknown = null;
 
+export const ALL_ARTICLES_KEY = "__all__aRt__";
+
 const articleByCategoriesQuery = (categories: string[]) => {
+  if (categories[0] === ALL_ARTICLES_KEY) {
+    return firestore.collection(ARTICLES).orderBy("date", "desc");
+  }
   return firestore
     .collection(ARTICLES)
     .where("category", "in", categories)

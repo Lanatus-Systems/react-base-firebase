@@ -81,11 +81,12 @@ const ArticleGroup = ({
 
   useEffect(() => {
     const categories = JSON.parse(categoryQueryString) as string[];
-
-    if (categories.length !== 0) {
-      console.log({ categoryQueryString });
-      api.resetPagingFor(categories);
-      api.getArticles(categories, pageSize).then(setArticles);
+    if (categories.length > 0) {
+      if (categories.length <= 10) {
+        console.log({ categoryQueryString });
+        api.resetPagingFor(categories);
+        api.getArticles(categories, pageSize).then(setArticles);
+      }
     }
   }, [categoryQueryString, pageSize]);
 
@@ -243,13 +244,13 @@ const ArticleGroup = ({
 };
 
 const Home = () => {
-  const { subCategoryMap, categories, categoryMap } = useContext(GlobalContext);
+  const { subCategoryMap, categoryMap } = useContext(GlobalContext);
 
   const { derive, localize } = useMultiLanguage();
 
   const getDerivedCategories = (category: string) => {
-    if (category === "__all__") {
-      return JSON.stringify(categories.map((item) => item.id));
+    if (category === api.ALL_ARTICLES_KEY) {
+      return JSON.stringify([api.ALL_ARTICLES_KEY]);
     }
     const subcategories =
       Object.keys(subCategoryMap).length > 0
@@ -261,11 +262,11 @@ const Home = () => {
   return (
     <div>
       <ArticleGroup
-        categoryQueryString={getDerivedCategories("__all__")}
+        categoryQueryString={getDerivedCategories(api.ALL_ARTICLES_KEY)}
         pageSize={7}
         variant="vertical"
         label={localize("top_stories")}
-        category={"__all__"}
+        category={api.ALL_ARTICLES_KEY}
       />
       {Object.keys(subCategoryMap).map((category, i) => {
         return (

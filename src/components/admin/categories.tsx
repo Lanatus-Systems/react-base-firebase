@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useAsync, useMultiLanguage } from "src/hooks";
+import { useAsync } from "src/hooks";
 import { Category } from "src/model/article";
 
 import * as api from "src/api/article";
-import MultiLangTextEdit from "../editables/MultiLangTextEdit";
 import { MultiLanguage } from "src/model/common";
+import { ENGLISH, FRENCH } from "src/i18n/languages";
 
 interface Iprops {
   item: Category;
@@ -13,12 +13,16 @@ interface Iprops {
 }
 
 const Item = ({ item, retrieve, allCategories }: Iprops) => {
-  const { derive } = useMultiLanguage();
   const [order, setOrder] = useState<string>(item.order + "" || "1");
   const [updateData, updating, error] = useAsync(api.updateCategory);
   const [removeData, removing, deleteError] = useAsync(api.removeCategory);
 
-  const [labelState, setLabelState] = useState<MultiLanguage>(item.label || {});
+  const [labelState, setLabelState] = useState<MultiLanguage>(
+    item.label || {
+      [ENGLISH]: "",
+      [FRENCH]: "",
+    }
+  );
 
   const [parentCategory, setParentCategory] = useState(item.parent || "");
 
@@ -32,19 +36,27 @@ const Item = ({ item, retrieve, allCategories }: Iprops) => {
           display: "flex",
           justifyContent: "space-around",
           margin: "5px 0px",
-          height : 40
+          height: 40,
         }}
       >
         <div style={{ width: 100 }}>{item.id}</div>
         <div style={{ width: 150 }}>
-          <div style={{ position: "relative" }}>
-            {derive(labelState)}{" "}
-            <MultiLangTextEdit
-              title="Edit Category Label"
-              value={labelState}
-              onChange={(val) => setLabelState(val)}
-            />
-          </div>
+          <input
+            style={{ width: 150 }}
+            value={labelState[ENGLISH]}
+            onChange={(e) =>
+              setLabelState((val) => ({ ...val, [ENGLISH]: e.target.value }))
+            }
+          />
+        </div>
+        <div style={{ width: 150 }}>
+          <input
+            style={{ width: 150 }}
+            value={labelState[FRENCH]}
+            onChange={(e) =>
+              setLabelState((val) => ({ ...val, [FRENCH]: e.target.value }))
+            }
+          />
         </div>
         <div style={{ width: 50 }}>
           <input
@@ -71,7 +83,7 @@ const Item = ({ item, retrieve, allCategories }: Iprops) => {
 
         <div style={{ width: 50 }}>
           {updating ? (
-            "delete ..."
+            "updating ..."
           ) : (
             <button
               onClick={() =>
@@ -174,7 +186,8 @@ const Categories = () => {
         <div>
           <div style={{ display: "flex", justifyContent: "space-around" }}>
             <div style={{ width: 100 }}>Id</div>
-            <div style={{ width: 150, textAlign: "center" }}>Label</div>
+            <div style={{ width: 150, textAlign: "center" }}>Label(EN)</div>
+            <div style={{ width: 150, textAlign: "center" }}>Label(FR)</div>
             <div style={{ width: 50 }}>Order</div>
             <div style={{ width: 100 }}>Parent</div>
             <div style={{ width: 50 }}>Update</div>
