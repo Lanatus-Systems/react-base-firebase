@@ -68,6 +68,7 @@ const ArticleContent = (props: Iprops) => {
       api.getArticle(id).then(setArticle);
     }
     api.getArticleContent(id).then(setArticleContent);
+    window.scrollTo(0, 0);
   }, [id, location]);
 
   const [uploadImageData, uploadingImg] = useAsync(uploadImage);
@@ -132,7 +133,7 @@ const ArticleContent = (props: Iprops) => {
   };
 
   return (
-    <div key={id} css={{ padding: isMobile ? "5vw 0vw" : "5vw" }}>
+    <div key={id} css={{ padding: isMobile ? "5vw 0vw" : "3vw 5vw" }}>
       <div
         css={{
           display: "flex",
@@ -148,7 +149,7 @@ const ArticleContent = (props: Iprops) => {
             width: isMobile ? "100vw" : "50vw",
             minHeight: 300,
             justifyContent: "center",
-            padding: isMobile ? 0 : "5vw",
+            padding: isMobile ? 0 : "2vw",
           }}
         >
           <div
@@ -194,7 +195,14 @@ const ArticleContent = (props: Iprops) => {
                 height: "100%",
               }}
             >
-              <div style={{ margin: 10 }}>
+              <div
+                style={{
+                  margin: 10,
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontWeight: "bold",
+                  color: "rgb(108, 110, 112)",
+                }}
+              >
                 {roles.editor ? (
                   <select
                     value={article.category}
@@ -212,7 +220,9 @@ const ArticleContent = (props: Iprops) => {
                     ))}
                   </select>
                 ) : (
-                  derive(categoryMap[article.category]?.label)
+                  derive(
+                    categoryMap[article.category]?.label
+                  ).toLocaleUpperCase()
                 )}
               </div>
               <div style={{ padding: 10, position: "relative" }}>
@@ -323,23 +333,38 @@ const ArticleContent = (props: Iprops) => {
                   return { ...val, content: current };
                 })
               }
+              onRemove={() =>
+                setArticleContent((val) => {
+                  if (val == null) {
+                    return val;
+                  }
+                  const current = val.content || [];
+                  const updated = current.filter((_, i) => i !== index);
+                  return { ...val, content: updated };
+                })
+              }
             />
           ))}
         </div>
         {roles.editor && (
           <button
-            onClick={() =>
+            onClick={() => {
+              console.log("clicked....");
+              // setArticleContent(val => {
+
+              //   console.log({val})
+              //   return val
+              // })
               setArticleContent((val) => {
                 if (val == null) return val;
+                const current = val.content || [];
+                const updated = current.concat({ type: "text" } as Content);
                 return {
                   ...val,
-                  content: [
-                    ...(val.content || []),
-                    { type: "text" } as Content,
-                  ],
+                  content: updated,
                 };
-              })
-            }
+              });
+            }}
           >
             Add Content
           </button>
@@ -364,6 +389,16 @@ const ArticleContent = (props: Iprops) => {
                   return { ...val, stories: current };
                 })
               }
+              onRemove={() =>
+                setArticleContent((val) => {
+                  if (val == null) {
+                    return val;
+                  }
+                  const current = val.stories || [];
+                  const updated = current.filter((_, i) => i !== index);
+                  return { ...val, stories: updated };
+                })
+              }
             />
           ))}
         </div>
@@ -372,9 +407,11 @@ const ArticleContent = (props: Iprops) => {
             onClick={() =>
               setArticleContent((val) => {
                 if (val == null) return val;
+                const current = val.stories || [];
+                const updated = current.concat({} as Story);
                 return {
                   ...val,
-                  stories: [...(val.stories || []), {} as Story],
+                  stories: updated,
                 };
               })
             }

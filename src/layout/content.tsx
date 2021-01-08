@@ -14,7 +14,7 @@ const Content = () => {
     <div
       style={{
         minHeight: "70vh",
-        marginTop: isMobile ? 130 : 175,
+        marginTop: isMobile ? 135 : 185,
         background: "white",
       }}
     >

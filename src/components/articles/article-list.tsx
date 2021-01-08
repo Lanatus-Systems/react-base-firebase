@@ -72,10 +72,11 @@ const ArticleList = ({ category }: Iprops) => {
     return [category, ...(subcategories || [])];
   }, [category, subCategoryMap]);
 
+  // console.log({derivedCategories , category})
   useEffect(() => {
     console.log("loading.... ");
 
-    // console.log({ derivedCategories });
+    console.log({ derivedCategories });
     api.resetPagingFor(derivedCategories);
 
     clearCache(derivedCategories);

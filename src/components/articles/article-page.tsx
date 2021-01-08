@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { GlobalContext, LayoutContext } from "src/context";
 import { useMultiLanguage } from "src/hooks";
@@ -21,6 +21,11 @@ const ArticlePage = (props: Iprops) => {
   const [selectedCategory, setSelectedCategory] = useState<string>(category);
 
   const subcategories = subCategoryMap[category];
+
+  useEffect(() => {
+    setSelectedCategory(category);
+    window.scrollTo(0, 0);
+  }, [category]);
 
   if (subcategories == null || subcategories.length === 0) {
     return (

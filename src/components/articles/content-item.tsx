@@ -19,9 +19,10 @@ import { PlainLink } from "src/base";
 interface Iprops {
   value: Content;
   onChange: (item: Content) => void;
+  onRemove: () => void;
 }
 
-const ContentItem = ({ value, onChange }: Iprops) => {
+const ContentItem = ({ value, onChange, onRemove }: Iprops) => {
   const { derive, deriveImage, localize } = useMultiLanguage();
 
   const { roles } = useContext(AuthContext);
@@ -59,6 +60,14 @@ const ContentItem = ({ value, onChange }: Iprops) => {
             <option value="image">Image</option>
             <option value="article">Article</option>
           </select>
+          <button
+            onClick={() => {
+              window.confirm("Are you sure you want to remove content?") &&
+                onRemove();
+            }}
+          >
+            remove
+          </button>
         </div>
       )}
       {value.type === "text" && (

@@ -14,11 +14,18 @@ import { faShareAlt } from "@fortawesome/free-solid-svg-icons";
 interface Iprops {
   value: Story;
   onChange: (item: Story) => void;
+  onRemove: () => void;
   storyIndex: number;
   storyCount: number;
 }
 
-const StoryItem = ({ value, onChange, storyIndex, storyCount }: Iprops) => {
+const StoryItem = ({
+  value,
+  onChange,
+  onRemove,
+  storyIndex,
+  storyCount,
+}: Iprops) => {
   const { derive, deriveImage } = useMultiLanguage();
 
   const { isMobile } = useContext(LayoutContext);
@@ -31,6 +38,14 @@ const StoryItem = ({ value, onChange, storyIndex, storyCount }: Iprops) => {
         minHeight: 400,
       }}
     >
+      <button
+        onClick={() => {
+          window.confirm("Are you sure you want to remove story?") &&
+            onRemove();
+        }}
+      >
+        Remove
+      </button>
       <div
         css={{
           display: "flex",

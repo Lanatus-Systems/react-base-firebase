@@ -10,6 +10,9 @@ const App = () => {
     <BrowserRouter>
       <Global
         styles={css`
+          body {
+            font-family: "Sniglet";
+          }
           ::-moz-selection {
             background: red;
           }

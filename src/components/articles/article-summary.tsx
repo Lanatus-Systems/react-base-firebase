@@ -252,8 +252,14 @@ const ArticleSummary = ({ article, variant = "md", style = {} }: Iprops) => {
           }}
         >
           <div css={{ padding: "5%" }}>
-            <div css={{ padding: 3 }}>
-              {derive(categoryMap[article.category]?.label)}
+            <div
+              css={{
+                padding: 3,
+                fontFamily: "'Montserrat', sans-serif",
+                color: "rgb(108, 110, 112)",
+              }}
+            >
+              {derive(categoryMap[article.category]?.label).toLocaleUpperCase()}
             </div>
 
             <div css={{ fontSize: fontSizeMap[variant], padding: 3 }}>
