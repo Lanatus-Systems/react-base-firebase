@@ -70,8 +70,8 @@ const ArticleSummary = ({ article, variant = "md", style = {} }: Iprops) => {
                   position: "absolute",
                   width: "100%",
                   height: "100%",
-                  backgroundColor: "lightgrey",
-                  opacity: 0.1,
+                  backgroundColor: "black",
+                  opacity: 0.3,
                   ":hover": {
                     backgroundColor: "red",
                     opacity: 0.5,
@@ -125,7 +125,7 @@ const ArticleSummary = ({ article, variant = "md", style = {} }: Iprops) => {
           <div
             css={{
               position: "absolute",
-              top: "55%",
+              top: "45%",
               zIndex: 2,
               display: "flex",
               justifyContent: "center",
@@ -137,16 +137,53 @@ const ArticleSummary = ({ article, variant = "md", style = {} }: Iprops) => {
             }}
           >
             <div css={{ padding: "5%" }}>
-              <div css={{ padding: 3 }}>
+              <div
+                css={{
+                  padding: 3,
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontSize: 15,
+                }}
+              >
                 {derive(categoryMap[article.category]?.label)}
               </div>
 
-              <div css={{ fontSize: fontSizeMap[variant], padding: 3 }}>
+              <div
+                css={{
+                  fontSize: fontSizeMap[variant],
+                  padding: 3,
+                  fontFamily: "serif",
+                }}
+              >
                 {derive(article.title)}
               </div>
 
-              <div css={{ padding: 3 }}>By {article.author}</div>
-              <div css={{ padding: 3 }}>
+              <div css={{ display: "flex", justifyContent: "center" }}>
+                <div
+                  css={{
+                    borderTop: "6px solid white",
+                    width: "20%",
+                    marginTop: 15,
+                    marginBottom: 10,
+                  }}
+                />
+              </div>
+
+              <div
+                css={{
+                  padding: 1,
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontSize: 25,
+                }}
+              >
+                By {article.author}
+              </div>
+              <div
+                css={{
+                  padding: 1,
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontSize: 20,
+                }}
+              >
                 {dayjs(article.date).format("DD MMMM YYYY")}
               </div>
             </div>
@@ -266,9 +303,28 @@ const ArticleSummary = ({ article, variant = "md", style = {} }: Iprops) => {
               {derive(article.title)}
             </div>
 
-            <div css={{ padding: 3 }}>By {article.author}</div>
-            <div css={{ padding: 3 }}>
-              {dayjs(article.date).format("DD MMMM YYYY")}
+            <div
+              css={{ borderTop: "4px solid red", width: "20%", marginTop: 15 }}
+            />
+            <div
+              css={{
+                padding: 1,
+                fontFamily: "'Montserrat', sans-serif",
+                color: "rgb(108, 110, 112)",
+                fontSize: 14,
+              }}
+            >
+              By {article.author}
+            </div>
+            <div
+              css={{
+                padding: 1,
+                fontFamily: "'Montserrat', sans-serif",
+                color: "rgb(108, 110, 112)",
+                fontSize: 14,
+              }}
+            >
+              {dayjs(article.date).format("DD MMMM YYYY").toLocaleUpperCase()}
             </div>
           </div>
         </div>

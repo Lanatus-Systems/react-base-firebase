@@ -159,6 +159,28 @@ const ArticleContent = (props: Iprops) => {
               position: "relative",
             }}
           >
+            {!isMobile && (
+              <div
+                css={{
+                  height: "10%",
+                  width: "100%",
+                  position: "absolute",
+                  top: "-3%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  css={{
+                    backgroundColor: "rgb(238, 0, 0)",
+                    width: "30%",
+                    height: "100%",
+                    mixBlendMode: "multiply",
+                    opacity: 1,
+                  }}
+                />
+              </div>
+            )}
             {deriveImage(article?.image) ? (
               <img
                 src={deriveImage(article.image)}
@@ -226,7 +248,7 @@ const ArticleContent = (props: Iprops) => {
                 )}
               </div>
               <div style={{ padding: 10, position: "relative" }}>
-                <span css={{ fontsize: 40 }}>{derive(article.title)}</span>
+                <span css={{ fontSize: 40 }}>{derive(article.title)}</span>
                 <MultiLangTextEdit
                   multiline
                   title="Edit Title"
@@ -236,8 +258,28 @@ const ArticleContent = (props: Iprops) => {
                   }
                 />
               </div>
+              <div css={{ display: "flex", justifyContent: "center" }}>
+                <div
+                  css={{
+                    borderTop: "4px solid red",
+                    width: "10%",
+                    marginTop: 15,
+                  }}
+                />
+              </div>
               <div css={{ position: "relative", padding: 5 }}>
-                {`By ${article.author || "-"}`}{" "}
+                <div
+                  css={{
+                    padding: 1,
+                    fontFamily: "'Montserrat', sans-serif",
+                    color: "rgb(108, 110, 112)",
+                    fontSize: 14,
+
+                    fontWeight: "bold",
+                  }}
+                >
+                  {`By ${article.author || "-"}`}{" "}
+                </div>
                 <TextEdit
                   title="Edit Author"
                   value={article.author}
@@ -247,7 +289,18 @@ const ArticleContent = (props: Iprops) => {
                 />
               </div>
               <div css={{ position: "relative", padding: 5 }}>
-                {dayjs(article.date).format("DD MMMM YYYY")}
+                <div
+                  css={{
+                    padding: 1,
+                    fontFamily: "'Montserrat', sans-serif",
+                    color: "rgb(108, 110, 112)",
+                    fontSize: 14,
+                  }}
+                >
+                  {dayjs(article.date)
+                    .format("DD MMMM YYYY")
+                    .toLocaleUpperCase()}
+                </div>
                 <TextEdit
                   title="Edit Date"
                   type="datetime-local"

@@ -34,7 +34,7 @@ export const StyledMenuItem = styled.div({
 // ];
 
 const Header = () => {
-  const { user, roles, logout } = useContext(AuthContext);
+  const { roles, logout } = useContext(AuthContext);
   const { rootCategories } = useContext(GlobalContext);
 
   const { isMobile } = useContext(LayoutContext);
@@ -90,6 +90,7 @@ const Header = () => {
                 fontSize: isMobile ? 40 : headerFontRef.current,
                 cursor: "pointer",
                 transition: "1s",
+                fontFamily: "serif",
               }}
             >
               {" "}
@@ -99,11 +100,6 @@ const Header = () => {
 
           <Filler />
           <div css={{ padding: 10 }}>
-            {!isMobile && user == null && (
-              <Link to="/login">
-                <button>Login</button>
-              </Link>
-            )}
             {roles.admin && (
               <div css={{ display: "flex" }}>
                 <Link to="/categories" css={{ margin: 10 }}>

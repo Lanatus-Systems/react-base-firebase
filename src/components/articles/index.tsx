@@ -93,10 +93,10 @@ const ArticleGroup = ({
     }
   }, [categoryQueryString, getArticles, pageSize]);
 
+  console.log({ variant, loading });
   if (articles.length === 0) {
     return null;
   }
-  console.log({ variant });
   if (variant === "horizontal") {
     return (
       <GroupWrapper>
@@ -254,7 +254,7 @@ const ArticleGroup = ({
 };
 
 const Home = () => {
-  const { subCategoryMap, categoryMap } = useContext(GlobalContext);
+  const { subCategoryMap, categoryMap, categories } = useContext(GlobalContext);
 
   const { derive, localize } = useMultiLanguage();
 
@@ -268,6 +268,10 @@ const Home = () => {
         : undefined;
     return JSON.stringify([category, ...(subcategories || [])]);
   };
+
+  if (categories.length === 0) {
+    return <Loading />;
+  }
 
   return (
     <div>

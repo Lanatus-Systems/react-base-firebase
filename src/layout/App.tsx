@@ -14,9 +14,11 @@ const App = () => {
             font-family: "Sniglet";
           }
           ::-moz-selection {
+            color: white;
             background: red;
           }
           ::selection {
+            color: white;
             background: red;
           }
         `}
@@ -28,7 +30,7 @@ const App = () => {
             position: relative;
             width: 80px;
             min-height: 30px;
-            height : 100%;
+            height: 100%;
           }
           .lds-ellipsis div {
             position: absolute;
