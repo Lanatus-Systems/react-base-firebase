@@ -5,6 +5,7 @@ import { Category } from "src/model/article";
 import * as api from "src/api/article";
 import { MultiLanguage } from "src/model/common";
 import { ENGLISH, FRENCH } from "src/i18n/languages";
+import Loading from "../Loading";
 
 interface Iprops {
   item: Category;
@@ -105,8 +106,9 @@ const Item = ({ item, retrieve, allCategories }: Iprops) => {
           ) : (
             <button
               onClick={() => {
-                window.confirm(`Are you sure you want to remove category "${item.id}" ?`) &&
-                  removeData(item).then(retrieve);
+                window.confirm(
+                  `Are you sure you want to remove category "${item.id}" ?`
+                ) && removeData(item).then(retrieve);
               }}
             >
               Delete
@@ -200,7 +202,7 @@ const Categories = () => {
           </div>
 
           {loading ? (
-            <div>"Loading..."</div>
+            <Loading />
           ) : (
             <div>
               {data.length

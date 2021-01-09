@@ -61,7 +61,12 @@ const mapToArticle = (doc: any) => {
   } as Article;
 };
 
-export const getArticles = (categories: string[], pageSize: number) => {
+interface IgetArticlesProps {
+  categories: string[];
+  pageSize: number;
+}
+
+export const getArticles = ({ categories, pageSize }: IgetArticlesProps) => {
   let query = articleByCategoriesQuery(categories).limit(pageSize);
   const key = JSON.stringify(categories);
   if (lastDocMap[key] != null) {

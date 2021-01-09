@@ -7,10 +7,11 @@ import Sticky from "react-sticky-el";
 import * as api from "src/api/article";
 import { GlobalContext, LayoutContext } from "src/context";
 import ArticleSummary from "./article-summary";
-import { useMultiLanguage } from "src/hooks";
+import { useAsync, useMultiLanguage } from "src/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
 import { PlainLink } from "src/base";
+import Loading from "../Loading";
 
 interface ItitleProps {
   label: string;
@@ -79,51 +80,56 @@ const ArticleGroup = ({
 
   const { localize } = useMultiLanguage();
 
+  const [getArticles, loading] = useAsync(api.getArticles);
+
   useEffect(() => {
     const categories = JSON.parse(categoryQueryString) as string[];
     if (categories.length > 0) {
       if (categories.length <= 10) {
         console.log({ categoryQueryString });
         api.resetPagingFor(categories);
-        api.getArticles(categories, pageSize).then(setArticles);
+        getArticles({ categories, pageSize }).then(setArticles);
       }
     }
-  }, [categoryQueryString, pageSize]);
+  }, [categoryQueryString, getArticles, pageSize]);
 
   if (articles.length === 0) {
     return null;
   }
-
   console.log({ variant });
   if (variant === "horizontal") {
     return (
       <GroupWrapper>
         <ArticleGroupTitle label={label} />
-        <GroupInnerWrapper
-          isMobile={isMobile}
-          css={{
-            flexWrap: "wrap",
-          }}
-        >
-          {articles.map((article, index) => {
-            return (
-              <div css={{ width: isMobile ? "100vw" : "22vw" }}>
-                <div
-                  css={{
-                    borderBottom: isMobile ? "1px solid lightgrey" : "",
-                    padding: isMobile ? "2vw" : 0,
-                  }}
-                >
-                  <ArticleSummary
-                    key={article.id}
-                    article={article}
-                    variant={index % 2 === 0 ? "md" : "sm"}
-                  />
+        {loading ? (
+          <Loading />
+        ) : (
+          <GroupInnerWrapper
+            isMobile={isMobile}
+            css={{
+              flexWrap: "wrap",
+            }}
+          >
+            {articles.map((article, index) => {
+              return (
+                <div css={{ width: isMobile ? "100vw" : "22vw" }}>
+                  <div
+                    css={{
+                      borderBottom: isMobile ? "1px solid lightgrey" : "",
+                      padding: isMobile ? "2vw" : 0,
+                    }}
+                  >
+                    <ArticleSummary
+                      key={article.id}
+                      article={article}
+                      variant={index % 2 === 0 ? "md" : "sm"}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </GroupInnerWrapper>
+              );
+            })}
+          </GroupInnerWrapper>
+        )}
         <div
           css={{
             position: isMobile ? "unset" : "absolute",
@@ -172,73 +178,77 @@ const ArticleGroup = ({
   return (
     <GroupWrapper>
       <ArticleGroupTitle label={label} />
-      <GroupInnerWrapper isMobile={isMobile}>
-        <div
-          className="block"
-          css={{
-            position: "relative",
-            display: "flex",
-            width: isMobile ? "100vw" : "45vw",
-            flexDirection: "column",
-            margin: isMobile ? 0 : "1vw",
-          }}
-        >
-          <Sticky boundaryElement=".block" hideOnBoundaryHit={false}>
-            {firstColumn.map((item) => (
-              <ArticleSummary
-                key={item.id}
-                article={item}
-                variant="sticky"
-                style={{ margin: 0 }}
-              />
+      {loading ? (
+        <Loading />
+      ) : (
+        <GroupInnerWrapper isMobile={isMobile}>
+          <div
+            className="block"
+            css={{
+              position: "relative",
+              display: "flex",
+              width: isMobile ? "100vw" : "45vw",
+              flexDirection: "column",
+              margin: isMobile ? 0 : "1vw",
+            }}
+          >
+            <Sticky boundaryElement=".block" hideOnBoundaryHit={false}>
+              {firstColumn.map((item) => (
+                <ArticleSummary
+                  key={item.id}
+                  article={item}
+                  variant="sticky"
+                  style={{ margin: 0 }}
+                />
+              ))}
+            </Sticky>
+          </div>
+          <div
+            css={{
+              display: "flex",
+              width: isMobile ? "100vw" : "23vw",
+              flexDirection: "column",
+            }}
+          >
+            {secondColumn.map((item, index) => (
+              <div
+                css={{
+                  borderBottom: isMobile ? "1px solid lightgrey" : "",
+                  padding: isMobile ? "2vw" : 0,
+                }}
+              >
+                <ArticleSummary
+                  key={item.id}
+                  article={item}
+                  variant={isMobile ? "mobile" : index % 2 === 0 ? "sm" : "md"}
+                />
+              </div>
             ))}
-          </Sticky>
-        </div>
-        <div
-          css={{
-            display: "flex",
-            width: isMobile ? "100vw" : "23vw",
-            flexDirection: "column",
-          }}
-        >
-          {secondColumn.map((item, index) => (
-            <div
-              css={{
-                borderBottom: isMobile ? "1px solid lightgrey" : "",
-                padding: isMobile ? "2vw" : 0,
-              }}
-            >
-              <ArticleSummary
-                key={item.id}
-                article={item}
-                variant={isMobile ? "mobile" : index % 2 === 0 ? "sm" : "md"}
-              />
-            </div>
-          ))}
-        </div>
-        <div
-          css={{
-            display: "flex",
-            width: isMobile ? "100vw" : "23vw",
-            flexDirection: "column",
-          }}
-        >
-          {thirdColumn.map((item) => (
-            <div
-              css={{
-                borderBottom: isMobile ? "1px solid lightgrey" : "",
-                padding: isMobile ? "2vw" : 0,
-              }}
-            >
-              <ArticleSummary
-                key={item.id}
-                article={item}
-                variant={isMobile ? "mobile" : "md"}
-              />
-            </div>
-          ))}
-        </div>
-      </GroupInnerWrapper>
+          </div>
+          <div
+            css={{
+              display: "flex",
+              width: isMobile ? "100vw" : "23vw",
+              flexDirection: "column",
+            }}
+          >
+            {thirdColumn.map((item) => (
+              <div
+                css={{
+                  borderBottom: isMobile ? "1px solid lightgrey" : "",
+                  padding: isMobile ? "2vw" : 0,
+                }}
+              >
+                <ArticleSummary
+                  key={item.id}
+                  article={item}
+                  variant={isMobile ? "mobile" : "md"}
+                />
+              </div>
+            ))}
+          </div>
+        </GroupInnerWrapper>
+      )}
     </GroupWrapper>
   );
 };

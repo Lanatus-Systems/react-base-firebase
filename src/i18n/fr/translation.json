@@ -3,5 +3,6 @@
   "all_topics": "Tous les sujets",
   "top_stories": "Meilleures histoires",
   "more": "plus",
-  "read_more": "Lire la suite"
+  "read_more": "Lire la suite",
+  "no-stories-available": "Aucune histoire disponible"
 }

@@ -11,6 +11,8 @@ import {
   faChevronCircleLeft,
   faChevronCircleRight,
 } from "@fortawesome/free-solid-svg-icons";
+import { useAsync, useMultiLanguage } from "src/hooks";
+import Loading from "../Loading";
 
 interface Iprops {
   category: string;
@@ -61,6 +63,10 @@ const ArticleList = ({ category }: Iprops) => {
 
   const { isMobile } = useContext(LayoutContext);
 
+  const { localize } = useMultiLanguage();
+
+  const [getArticles, loading] = useAsync(api.getArticles);
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const derivedCategories = useMemo(() => {
@@ -81,10 +87,12 @@ const ArticleList = ({ category }: Iprops) => {
 
     clearCache(derivedCategories);
 
-    api.getArticles(derivedCategories, PAGE_SIZE).then(setArticles);
+    getArticles({ categories: derivedCategories, pageSize: PAGE_SIZE }).then(
+      setArticles
+    );
 
     setCurrentPage(1);
-  }, [derivedCategories]);
+  }, [derivedCategories, getArticles]);
 
   const nextPage = () => {
     storePrevPage(derivedCategories, articles);
@@ -93,15 +101,19 @@ const ArticleList = ({ category }: Iprops) => {
     if (cachedNext) {
       setArticles(cachedNext);
     } else {
-      api.getArticles(derivedCategories, PAGE_SIZE).then(setArticles);
+      getArticles({ categories: derivedCategories, pageSize: PAGE_SIZE }).then(
+        setArticles
+      );
     }
     setCurrentPage((p) => p + 1);
+    window.scrollTo(0, 0);
   };
 
   const prevPage = () => {
     storeNextPage(derivedCategories, articles);
     setArticles(getCachedPrevPage(derivedCategories));
     setCurrentPage((p) => p - 1);
+    window.scrollTo(0, 0);
   };
 
   const addItem = () => {
@@ -124,6 +136,7 @@ const ArticleList = ({ category }: Iprops) => {
 
   const prevPageDisabled = currentPage <= 1;
   const nextPageDisabled = articles.length === 0;
+
   return (
     <div>
       {roles.editor && (
@@ -132,14 +145,16 @@ const ArticleList = ({ category }: Iprops) => {
         </div>
       )}
       <div css={{ minHeight: "50vh", margin: isMobile ? 0 : "0px 10vw" }}>
-        {nextPageDisabled ? (
+        {loading ? (
+          <Loading />
+        ) : nextPageDisabled ? (
           <div
             css={{
               display: "flex",
               justifyContent: "center",
             }}
           >
-            <h1>No Stories Available</h1>
+            <h1>{localize("no-stories-available")}</h1>
           </div>
         ) : (
           <div

@@ -9,6 +9,7 @@ import { useMultiLanguage } from "src/hooks";
 import { ENGLISH, FRENCH } from "src/i18n/languages";
 
 import styled from "@emotion/styled";
+import Loading from "src/components/Loading";
 
 export const StyledMenuItem = styled.div({
   fontWeight: 600,
@@ -139,15 +140,17 @@ const Header = () => {
             }}
           >
             {
-              rootCategories.length
-                ? rootCategories.map((item) => (
-                    <PlainLink key={item.id} to={`/articles/${item.id}`}>
-                      <StyledMenuItem>
-                        {derive(item.label).toLocaleUpperCase()}
-                      </StyledMenuItem>
-                    </PlainLink>
-                  ))
-                : "Loading..."
+              rootCategories.length ? (
+                rootCategories.map((item) => (
+                  <PlainLink key={item.id} to={`/articles/${item.id}`}>
+                    <StyledMenuItem>
+                      {derive(item.label).toLocaleUpperCase()}
+                    </StyledMenuItem>
+                  </PlainLink>
+                ))
+              ) : (
+                <Loading />
+              )
               // defaultCategories.map((item) => (
               //     <div
               //       key={item}

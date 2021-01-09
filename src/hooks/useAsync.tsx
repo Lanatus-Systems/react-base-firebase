@@ -13,6 +13,7 @@ const useAsync = <T, R>(
       setLoading(true);
       return asyncFunction(req)
         .catch((err: Error) => {
+          console.log({err})
           setError(err);
           throw err;
         })
