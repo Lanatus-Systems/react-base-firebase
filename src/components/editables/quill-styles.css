@@ -1,0 +1,22 @@
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="Sniglet"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Sniglet"]::before {
+  content: "Sniglet";
+  font-family: "Sniglet";
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="Montserrat"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Montserrat"]::before {
+  content: "Montserrat";
+  font-family: "Montserrat";
+}
+/****************************************************
+Set the font-family content used for the HTML content.
+*****************************************************/
+
+.ql-font-Sniglet {
+  font-family: "Sniglet";
+}
+
+.ql-font-Montserrat {
+  font-family: "Montserrat";
+}

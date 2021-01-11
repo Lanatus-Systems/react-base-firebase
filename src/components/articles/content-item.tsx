@@ -16,6 +16,9 @@ import TextPlaceholder from "../text-placeholder";
 import { AuthContext, LayoutContext } from "src/context";
 import { PlainLink } from "src/base";
 
+import ReactPlayer from "react-player/lazy";
+import VideoPlaceholder from "../video-placeholder";
+
 interface Iprops {
   value: Content;
   onChange: (item: Content) => void;
@@ -23,7 +26,7 @@ interface Iprops {
 }
 
 const ContentItem = ({ value, onChange, onRemove }: Iprops) => {
-  const { derive, deriveImage, localize } = useMultiLanguage();
+  const { derive, deriveImage, deriveVideo, localize } = useMultiLanguage();
 
   const { roles } = useContext(AuthContext);
 
@@ -58,6 +61,7 @@ const ContentItem = ({ value, onChange, onRemove }: Iprops) => {
           >
             <option value="text">Text</option>
             <option value="image">Image</option>
+            <option value="video">Video</option>
             <option value="article">Article</option>
           </select>
           <button
@@ -186,6 +190,28 @@ const ContentItem = ({ value, onChange, onRemove }: Iprops) => {
               />
             </div>
           </div>
+        </div>
+      )}
+
+      {value.type === "video" && (
+        <div style={{ width: isMobile ? "100%" : "70%", position: "relative" }}>
+          {value.video &&
+          deriveVideo(value.video as MultiLanguage).startsWith("http") ? (
+            // Lazy load the YouTube player
+            <ReactPlayer
+              url={deriveVideo(value.video as MultiLanguage)}
+              controls
+              width="100%"
+              height={isMobile ? "60vw" : "30vw"}
+            />
+          ) : (
+            <VideoPlaceholder />
+          )}
+          <MultiLangTextEdit
+            title="Provide Video links"
+            value={value.video as MultiLanguage}
+            onChange={(updated) => onChange({ ...value, video: updated })}
+          />
         </div>
       )}
     </div>

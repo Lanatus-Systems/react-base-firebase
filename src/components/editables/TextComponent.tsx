@@ -1,6 +1,12 @@
 import { useContext, useEffect, useRef } from "react";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
 import { LayoutContext } from "src/context";
+
+import "./quill-styles.css";
+
+const Font = Quill.import("formats/font");
+Font.whitelist = ["", "serif", "monospace", "Sniglet", "Montserrat"];
+Quill.register(Font, true);
 
 interface IeditorProps {
   value: string;
@@ -18,7 +24,7 @@ const toolbarOptions = [
   [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
   [{ direction: "rtl" }], // text direction
   [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-  [{ font: [] }],
+  [{ font: Font.whitelist }],
   [{ align: [] }],
   ["clean"], // remove formatting button
 ];
@@ -41,6 +47,7 @@ export const ContentEditor = ({ value, onChange }: IeditorProps) => {
       placeholder="Enter content here..."
       value={value}
       onChange={onChange}
+      theme="snow"
       modules={{
         toolbar: toolbarOptions,
       }}

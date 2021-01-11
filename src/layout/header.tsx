@@ -14,7 +14,6 @@ import Loading from "src/components/Loading";
 export const StyledMenuItem = styled.div({
   fontWeight: 600,
   fontSize: 14,
-  fontFamily: "Sniglet",
   // margin: 5,
   padding: 10,
   ":hover": {
@@ -42,7 +41,7 @@ const Header = () => {
   const { localize, derive, i18n } = useMultiLanguage();
 
   const headerFontRef = useRef(80);
-  const [_, setReRenderHeader] = useState(false);
+  const [, setReRenderHeader] = useState(false);
 
   useEffect(() => {
     const scrollHandler = () => {
@@ -147,24 +146,6 @@ const Header = () => {
               ) : (
                 <Loading />
               )
-              // defaultCategories.map((item) => (
-              //     <div
-              //       key={item}
-              //       css={{
-              //         fontWeight: 600,
-              //         fontSize: 14,
-              //         fontFamily: "Sniglet",
-              //         margin: 5,
-              //         padding: 5,
-              //         ":hover": {
-              //           color: "#fa0000",
-              //         },
-              //         cursor: "pointer",
-              //       }}
-              //     >
-              //       {item.toUpperCase()}
-              //     </div>
-              //   ))
             }
           </div>
         </div>

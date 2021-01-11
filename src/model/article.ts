@@ -7,11 +7,12 @@ export interface Category {
   parent?: string;
 }
 
-export type ContentType = "text" | "image" | "article";
+export type ContentType = "text" | "image" | "video" | "article";
 export interface Content {
   type: ContentType;
   content?: MultiLanguage;
   image?: MultiLanguage;
+  video?: MultiLanguage;
   id?: string;
   align: "left" | "right" | "center";
 }

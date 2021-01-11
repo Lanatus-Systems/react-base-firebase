@@ -24,13 +24,22 @@ const useMultiLanguage = () => {
   const deriveImage = useCallback(
     (value: MultiLanguage): string => {
       if (value == null) return value;
-      console.log({value})
+      // console.log({value})
       return value[i18n.language] || value[ENGLISH];
     },
     [i18n]
   );
 
-  return { derive, deriveImage, localize, i18n };
+  const deriveVideo = useCallback(
+    (value: MultiLanguage): string => {
+      if (value == null) return value;
+      // console.log({value})
+      return value[i18n.language] || value[ENGLISH];
+    },
+    [i18n]
+  );
+
+  return { derive, deriveImage, deriveVideo, localize, i18n };
 };
 
 export default useMultiLanguage;
