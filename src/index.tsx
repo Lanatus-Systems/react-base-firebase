@@ -12,7 +12,10 @@ import App from "./layout/App";
 import reportWebVitals from "./reportWebVitals";
 
 import "./i18n/config";
+import 'react-quill/dist/quill.core.css'; 
 import 'react-quill/dist/quill.snow.css'; 
+import "src/style-utils/styles/quill-styles-overrides.css";
+
 
 const ReactApp = () => {
   return (

@@ -1,6 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import { Content, ContentType } from "src/model/article";
-import parseHtml from "html-react-parser";
 import MultiLangTextEdit from "../editables/MultiLangTextEdit";
 import { useMultiLanguage } from "src/hooks";
 import TextEdit from "../editables/TextEdit";
@@ -18,6 +17,7 @@ import { PlainLink } from "src/base";
 
 import ReactPlayer from "react-player/lazy";
 import VideoPlaceholder from "../video-placeholder";
+import parseQuillHtml from "src/utils/quill-parser";
 
 interface Iprops {
   value: Content;
@@ -77,7 +77,7 @@ const ContentItem = ({ value, onChange, onRemove }: Iprops) => {
       {value.type === "text" && (
         <div style={{ width: isMobile ? "100%" : "70%", position: "relative" }}>
           {value.content ? (
-            parseHtml(derive(value.content as MultiLanguage))
+            parseQuillHtml(derive(value.content as MultiLanguage))
           ) : (
             <TextPlaceholder />
           )}
@@ -178,7 +178,7 @@ const ContentItem = ({ value, onChange, onRemove }: Iprops) => {
             <div css={{ width: "5vw", borderTop: "5px solid red" }} />
             <div>
               {value.content ? (
-                parseHtml(derive(value.content as MultiLanguage))
+                parseQuillHtml(derive(value.content as MultiLanguage))
               ) : (
                 <TextPlaceholder />
               )}

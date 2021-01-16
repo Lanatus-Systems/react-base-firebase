@@ -3,7 +3,6 @@ import { useMultiLanguage } from "src/hooks";
 import { Story } from "src/model/article";
 import MultiLangTextEdit from "../editables/MultiLangTextEdit";
 
-import parseHtml from "html-react-parser";
 import ImageEdit from "../editables/ImageEdit";
 import ImagePlaceholder from "../image-placeholder";
 import TextPlaceholder from "../text-placeholder";
@@ -11,6 +10,7 @@ import { useContext } from "react";
 import { LayoutContext } from "src/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShareAlt } from "@fortawesome/free-solid-svg-icons";
+import parseQuillHtml from "src/utils/quill-parser";
 interface Iprops {
   value: Story;
   onChange: (item: Story) => void;
@@ -99,7 +99,7 @@ const StoryItem = ({
           </div>
           <div css={{ position: "relative" }}>
             {value.content ? (
-              parseHtml(derive(value.content))
+              parseQuillHtml(derive(value.content))
             ) : (
               <TextPlaceholder />
             )}

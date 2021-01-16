@@ -23,15 +23,6 @@ export const StyledMenuItem = styled.div({
   whiteSpace: "nowrap",
 });
 
-// const defaultCategories = [
-//   "fashion",
-//   "beauty",
-//   "arts & lifestyle",
-//   "runway",
-//   "news",
-//   "video",
-// ];
-
 const Header = () => {
   const { roles, logout } = useContext(AuthContext);
   const { rootCategories } = useContext(GlobalContext);
@@ -108,17 +99,42 @@ const Header = () => {
               </div>
             )}
           </div>
-          <div>
-            <select
-              css={{ height: 30 }}
-              value={i18n.language}
-              onChange={(e) => {
-                changeLanguage(e.target.value);
+          <div css={{ padding: "15px 0px", display: "flex", height: 30 }}>
+            <div>
+              <select
+                css={{
+                  height: 30,
+                  border: "0px",
+                  width: 80,
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontWeight: 600,
+                }}
+                value={i18n.language}
+                onChange={(e) => {
+                  changeLanguage(e.target.value);
+                }}
+              >
+                <option value={ENGLISH}>English</option>
+                <option value={FRENCH}>French</option>
+              </select>
+            </div>
+            <div
+              css={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "0px 15px",
+                padding: "0px 15px",
+                borderLeft: "1px solid lightgrey",
+                borderRight: "1px solid lightgrey",
+                cursor: "pointer",
+                color: "red",
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: 600,
               }}
             >
-              <option value={ENGLISH}>English</option>
-              <option value={FRENCH}>French</option>
-            </select>
+              <PlainLink to="/subscribe">{localize("subscribe")}</PlainLink>
+            </div>
           </div>
         </div>
         <div
@@ -134,19 +150,17 @@ const Header = () => {
               padding: 8,
             }}
           >
-            {
-              rootCategories.length ? (
-                rootCategories.map((item) => (
-                  <PlainLink key={item.id} to={`/articles/${item.id}`}>
-                    <StyledMenuItem>
-                      {derive(item.label).toLocaleUpperCase()}
-                    </StyledMenuItem>
-                  </PlainLink>
-                ))
-              ) : (
-                <Loading />
-              )
-            }
+            {rootCategories.length ? (
+              rootCategories.map((item) => (
+                <PlainLink key={item.id} to={`/articles/${item.id}`}>
+                  <StyledMenuItem>
+                    {derive(item.label).toLocaleUpperCase()}
+                  </StyledMenuItem>
+                </PlainLink>
+              ))
+            ) : (
+              <Loading />
+            )}
           </div>
         </div>
       </div>

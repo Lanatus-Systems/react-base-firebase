@@ -7,6 +7,7 @@ import ArticleContent from "src/components/articles/article-content";
 import LoginPage from "src/components/login";
 import { LayoutContext } from "src/context";
 import { useContext } from "react";
+import Subscribe from "src/components/subscribe";
 
 const Content = () => {
   const { isMobile } = useContext(LayoutContext);
@@ -20,6 +21,7 @@ const Content = () => {
     >
       <Route exact path="/login" component={LoginPage} />
       <Route exact path="/categories" component={Categories} />
+      <Route exact path="/subscribe" component={Subscribe} />
       <Route exact path="/articles/:category" component={ArticlePage} />
       <Route exact path="/article-content/:id" component={ArticleContent} />
       <Route exact path="/" component={Home} />

@@ -10,7 +10,6 @@ import { AuthContext, GlobalContext, LayoutContext } from "src/context";
 
 import dayjs from "dayjs";
 
-import parseHtml from "html-react-parser";
 import StoryItem from "./story-item";
 import ContentItem from "./content-item";
 import TextEdit from "../editables/TextEdit";
@@ -20,6 +19,7 @@ import { zipObj } from "ramda";
 import ImagePlaceholder from "../image-placeholder";
 import TextPlaceholder from "../text-placeholder";
 import SocialMediaLinks from "../social-media-links";
+import parseQuillHtml from "src/utils/quill-parser";
 
 interface Iparams {
   id: string;
@@ -30,7 +30,7 @@ interface IrouteState {
 
 interface Iprops {}
 
-const mapImageToPromise = (
+export const mapImageToPromise = (
   image: MultiLanguage,
   uploadImage: (img: Blob) => Promise<string>
 ) => {
@@ -321,7 +321,7 @@ const ArticleContent = (props: Iprops) => {
                       }}
                     >
                       {articleContent.detail ? (
-                        parseHtml(derive(articleContent.detail))
+                        parseQuillHtml(derive(articleContent.detail))
                       ) : (
                         <TextPlaceholder style={{ height: 50 }} />
                       )}
