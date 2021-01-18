@@ -2,16 +2,17 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext, LayoutContext } from "src/context";
 import { useAsync, useMultiLanguage } from "src/hooks";
-import { SubscribePage } from "src/model/app-pages";
+import { SubscribePage, SubscriptionPackage } from "src/model/app-pages";
 import * as api from "../../api/app-pages";
 import ImageEdit from "../editables/ImageEdit";
 import ImagePlaceholder from "../image-placeholder";
-import Loading from "../Loading";
+import Loading from "../../base/Loading";
 import TextPlaceholder from "../text-placeholder";
 import MultiLangTextEdit from "../editables/MultiLangTextEdit";
 import parseQuillHtml from "src/utils/quill-parser";
 import { uploadImage } from "src/api/storage";
 import { mapImageToPromise } from "../articles/article-content";
+import SubscribePackage from "./subscribe-package";
 
 const Subscribe = () => {
   const { isMobile } = useContext(LayoutContext);
@@ -32,15 +33,28 @@ const Subscribe = () => {
   console.log({ pageData });
   const saveData = () => {
     if (pageData != null) {
-      mapImageToPromise(pageData.subHeadCoverImage, uploadImageData).then(
-        (resolvedImage) => {
-          console.log({ resolvedImage, pageData });
-          saveSubscriptionPageData({
-            ...pageData,
-            subHeadCoverImage: resolvedImage,
-          });
-        }
-      );
+      const uploadedPackages = Promise.all(
+        pageData.packages
+          .map((pkg) => pkg.image)
+          .map((image) => image && mapImageToPromise(image, uploadImageData))
+      ).then((urls) => {
+        return pageData.packages.map((item, index) => ({
+          ...item,
+          image: urls[index] || {},
+        }));
+      });
+
+      Promise.all([
+        mapImageToPromise(pageData.subHeadCoverImage, uploadImageData),
+        uploadedPackages,
+      ]).then(([resolvedImage, packages]) => {
+        console.log({ resolvedImage, pageData, packages });
+        saveSubscriptionPageData({
+          ...pageData,
+          subHeadCoverImage: resolvedImage,
+          packages: packages,
+        });
+      });
     }
   };
 
@@ -108,6 +122,65 @@ const Subscribe = () => {
             />
           </div>
         </div>
+      </div>
+      <div
+        css={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}
+      >
+        <div
+          css={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
+          {pageData.packages?.map((item, index) => (
+            <SubscribePackage
+              key={index}
+              value={item}
+              onChange={(item) =>
+                setPageData((val) => {
+                  if (val == null) {
+                    return val;
+                  }
+                  const current = val.packages || [];
+                  current[index] = item;
+                  return { ...val, packages: current };
+                })
+              }
+              onRemove={() =>
+                setPageData((val) => {
+                  if (val == null) {
+                    return val;
+                  }
+                  const current = val.packages || [];
+                  const updated = current.filter((_, i) => i !== index);
+                  return { ...val, packages: updated };
+                })
+              }
+            />
+          ))}
+        </div>
+        {roles.admin && (
+          <button
+            onClick={() =>
+              setPageData((val) => {
+                if (val == null) return val;
+                const current = val.packages || [];
+                const updated = current.concat({} as SubscriptionPackage);
+                return {
+                  ...val,
+                  packages: updated,
+                };
+              })
+            }
+          >
+            Add Package
+          </button>
+        )}
       </div>
       {roles.admin && (
         <div style={{ margin: 20 }}>

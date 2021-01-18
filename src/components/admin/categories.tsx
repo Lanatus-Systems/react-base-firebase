@@ -5,7 +5,7 @@ import { Category } from "src/model/article";
 import * as api from "src/api/article";
 import { MultiLanguage } from "src/model/common";
 import { ENGLISH, FRENCH } from "src/i18n/languages";
-import Loading from "../Loading";
+import Loading from "../../base/Loading";
 
 interface Iprops {
   item: Category;

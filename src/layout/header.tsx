@@ -9,7 +9,7 @@ import { useMultiLanguage } from "src/hooks";
 import { ENGLISH, FRENCH } from "src/i18n/languages";
 
 import styled from "@emotion/styled";
-import Loading from "src/components/Loading";
+import Loading from "src/base/Loading";
 
 export const StyledMenuItem = styled.div({
   fontWeight: 600,

@@ -11,7 +11,7 @@ import { useAsync, useMultiLanguage } from "src/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
 import { PlainLink } from "src/base";
-import Loading from "../Loading";
+import Loading from "../../base/Loading";
 
 interface ItitleProps {
   label: string;

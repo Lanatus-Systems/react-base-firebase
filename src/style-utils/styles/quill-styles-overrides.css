@@ -4,19 +4,30 @@
   font-family: "Sniglet";
 }
 
+.ql-font-Sniglet {
+  font-family: "Sniglet";
+}
+
 .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="Montserrat"]::before,
 .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Montserrat"]::before {
   content: "Montserrat";
   font-family: "Montserrat";
 }
-/****************************************************
-Set the font-family content used for the HTML content.
-*****************************************************/
-
-.ql-font-Sniglet {
-  font-family: "Sniglet";
-}
 
 .ql-font-Montserrat {
   font-family: "Montserrat";
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="medium"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="medium"]::before {
+  content: "Medium";
+}
+
+.ql-editor .ql-size-medium {
+  font-size: 1.2em;
+}
+
+.ql-editor ol,
+.ql-editor ul {
+  padding-left: 0px;
 }

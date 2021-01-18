@@ -12,7 +12,7 @@ import {
   faChevronCircleRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAsync, useMultiLanguage } from "src/hooks";
-import Loading from "../Loading";
+import Loading from "../../base/Loading";
 
 interface Iprops {
   category: string;
