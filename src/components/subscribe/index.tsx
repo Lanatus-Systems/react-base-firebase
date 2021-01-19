@@ -62,21 +62,27 @@ const Subscribe = () => {
     return <Loading />;
   }
   return (
-    <div>
+    <div css={{ paddingBottom: 50 }}>
       <div
         style={{
           display: "flex",
-          padding: isMobile ? "5vw" : "5vw 20vw",
+          padding: isMobile ? "5vw" : "5vw 10vw",
           flexDirection: isMobile ? "column" : "row",
           // width: "100%",
         }}
       >
-        <div css={{ display: "flex", justifyContent: "center" }}>
+        <div
+          css={{
+            display: "flex",
+            justifyContent: "center",
+            width: isMobile ? "90vw" : "30vw",
+          }}
+        >
           <div
             style={{
               // maxWidth: isMobile ? "50vw" : 300,
-              width: 200,
               maxHeight: "30vh",
+              minWidth: "20vh",
               position: "relative",
               display: "flex",
               justifyContent: "space-between",

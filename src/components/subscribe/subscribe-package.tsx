@@ -6,9 +6,10 @@ import ImageEdit from "../editables/ImageEdit";
 import ImagePlaceholder from "../image-placeholder";
 import TextPlaceholder from "../text-placeholder";
 import { useContext } from "react";
-import { LayoutContext } from "src/context";
+import { AuthContext, LayoutContext } from "src/context";
 import parseQuillHtml from "src/utils/quill-parser";
 import { SubscriptionPackage } from "src/model/app-pages";
+import TextEdit from "../editables/TextEdit";
 
 interface Iprops {
   value: SubscriptionPackage;
@@ -19,6 +20,7 @@ interface Iprops {
 const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
   const { derive, deriveImage } = useMultiLanguage();
 
+  const { roles } = useContext(AuthContext);
   const { isMobile } = useContext(LayoutContext);
 
   return (
@@ -43,7 +45,28 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
         Remove
       </button>
 
-      <div style={{ padding: 10, position: "relative" }}>
+      {roles.admin && (
+        <div
+          css={{
+            position: "relative",
+            height: 30,
+            marginTop: 10,
+            width: "80%",
+            textAlign: "center",
+            fontWeight: "bold",
+            border: "2px solid black",
+          }}
+        >
+          Package Id : {value.id || "Not set"}
+          <TextEdit
+            title="Edit Information"
+            value={value.id}
+            onChange={(updated) => onChange({ ...value, id: updated })}
+          />
+        </div>
+      )}
+
+      <div style={{ padding: 30, position: "relative" }}>
         <span css={{ fontSize: 30 }}>{derive(value.title)}</span>
         <MultiLangTextEdit
           title="Edit Title"
@@ -55,15 +78,16 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
       <div
         css={{
           position: "relative",
-          minHeight: 250,
+          height: 250,
+          padding: 20,
           display: "flex",
-          width: isMobile ? "80%" : "60%",
+          width: isMobile ? "80%" : "80%",
           justifyContent: "center",
         }}
       >
         {value.image ? (
           <img
-            css={{ maxHeight: "90vh", maxWidth: "100%" }}
+            css={{ height: "100%", maxWidth: "100%" }}
             src={deriveImage(value.image)}
             alt="Not Available"
           />
@@ -79,7 +103,14 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
         />
       </div>
 
-      <div css={{ position: "relative" }}>
+      <div
+        css={{
+          position: "relative",
+          padding: 20,
+          paddingBottom: 0,
+          paddingTop: 0,
+        }}
+      >
         {value.info ? parseQuillHtml(derive(value.info)) : <TextPlaceholder />}
         <MultiLangTextEdit
           rich
@@ -88,9 +119,83 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
           onChange={(updated) => onChange({ ...value, info: updated })}
         />
       </div>
-      <button onClick={() => {
-        alert("to buy page")
-      }}>buy</button>
+
+      <div
+        style={{
+          width: "80%",
+          padding: "0% 10%",
+          marginBottom: 20,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            padding: 10,
+            backgroundColor: "#eaeaea",
+            color: "#666",
+            position: "relative",
+            textAlign: "center",
+            fontFamily: "'Montserrat', sans-serif",
+          }}
+        >
+          <span css={{ fontSize: 15 }}>{derive(value.priceOffer)}</span>
+          <MultiLangTextEdit
+            title="Edit Price Offer"
+            value={value.priceOffer}
+            onChange={(updated) => onChange({ ...value, priceOffer: updated })}
+          />
+        </div>
+      </div>
+      {roles.admin && (
+        <div
+          css={{
+            position: "relative",
+            height: 30,
+            width: 200,
+            textAlign: "center",
+            fontWeight: "bold",
+            border: "2px solid black",
+          }}
+        >
+          Price : {value.price || "Not set"} (£)
+          <TextEdit
+            title="Edit Information"
+            value={value.price + ""}
+            type="number"
+            onChange={(updated) => onChange({ ...value, price: +updated })}
+          />
+        </div>
+      )}
+
+      <div
+        style={{
+          width: "100%",
+          padding: 10,
+          paddingBottom: 30,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <button
+          onClick={() => {
+            alert("to buy page");
+          }}
+          style={{
+            width: 200,
+            height: 50,
+            border: 0,
+            color: "white",
+            fontWeight: "bolder",
+            fontFamily: "'Montserrat', sans-serif",
+            backgroundColor: "#c00000",
+            cursor: "pointer",
+          }}
+        >
+          START NOW
+        </button>
+      </div>
     </div>
   );
 };

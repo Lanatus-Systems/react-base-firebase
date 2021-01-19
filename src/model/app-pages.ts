@@ -5,6 +5,7 @@ export interface SubscriptionPackage {
   title: MultiLanguage;
   image: MultiLanguage;
   info: MultiLanguage;
+  priceOffer: MultiLanguage;
   price: number;
 }
 

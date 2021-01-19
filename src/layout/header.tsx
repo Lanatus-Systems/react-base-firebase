@@ -19,6 +19,7 @@ export const StyledMenuItem = styled.div({
   ":hover": {
     color: "#fa0000",
   },
+  fontFamily: "Sniglet",
   cursor: "pointer",
   whiteSpace: "nowrap",
 });
