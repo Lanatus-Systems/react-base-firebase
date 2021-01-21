@@ -8,6 +8,7 @@ import LoginPage from "src/components/login";
 import { LayoutContext } from "src/context";
 import { useContext } from "react";
 import Subscribe from "src/components/subscribe";
+import Checkout from "src/components/subscribe/checkout";
 
 const Content = () => {
   const { isMobile } = useContext(LayoutContext);
@@ -22,6 +23,8 @@ const Content = () => {
       <Route exact path="/login" component={LoginPage} />
       <Route exact path="/categories" component={Categories} />
       <Route exact path="/subscribe" component={Subscribe} />
+      <Route exact path="/checkout" component={Checkout} />
+
       <Route exact path="/articles/:category" component={ArticlePage} />
       <Route exact path="/article-content/:id" component={ArticleContent} />
       <Route exact path="/" component={Home} />

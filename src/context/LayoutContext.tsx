@@ -12,7 +12,7 @@ interface Iprops {
   children: ReactNode;
 }
 
-const getIsMobile = () => window.innerWidth < 640;
+const getIsMobile = () => window.innerWidth < 700;
 
 export const LayoutContextProvider = ({ children }: Iprops) => {
   const [isMobile, setIsMobile] = useState<boolean>(getIsMobile());

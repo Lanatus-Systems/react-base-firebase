@@ -11,7 +11,7 @@ interface Iprops {
 const EditIcon = ({ onClick = () => {}, style }: Iprops) => {
   const { roles } = useContext(AuthContext);
 
-  return roles.editor ? (
+  return roles.editor || roles.admin ? (
     <span
       css={{
         width: 30,

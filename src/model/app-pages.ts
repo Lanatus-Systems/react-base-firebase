@@ -2,6 +2,7 @@ import { MultiLanguage } from "./common";
 
 export interface SubscriptionPackage {
   id: string;
+  type: "digital" | "print";
   title: MultiLanguage;
   image: MultiLanguage;
   info: MultiLanguage;
@@ -9,9 +10,16 @@ export interface SubscriptionPackage {
   price: number;
 }
 
-export interface SubscribePage {
+export interface AppPage {
   id: string;
+}
+export interface SubscribePage extends AppPage {
   subHeadCoverImage: MultiLanguage;
   subHeadInfo: MultiLanguage;
   packages: SubscriptionPackage[];
+}
+
+export interface CheckoutPage extends AppPage {
+  countries: MultiLanguage[];
+  subHeadInfo?: MultiLanguage;
 }

@@ -7,7 +7,7 @@ import ImageEdit from "../editables/ImageEdit";
 import ImagePlaceholder from "../image-placeholder";
 import TextPlaceholder from "../text-placeholder";
 import { useContext } from "react";
-import { LayoutContext } from "src/context";
+import { AuthContext, LayoutContext } from "src/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShareAlt } from "@fortawesome/free-solid-svg-icons";
 import parseQuillHtml from "src/utils/quill-parser";
@@ -30,6 +30,8 @@ const StoryItem = ({
 
   const { isMobile } = useContext(LayoutContext);
 
+  const { roles } = useContext(AuthContext);
+
   return (
     <div
       css={{
@@ -38,14 +40,16 @@ const StoryItem = ({
         minHeight: 400,
       }}
     >
-      <button
-        onClick={() => {
-          window.confirm("Are you sure you want to remove story?") &&
-            onRemove();
-        }}
-      >
-        Remove
-      </button>
+      {roles.editor && (
+        <button
+          onClick={() => {
+            window.confirm("Are you sure you want to remove story?") &&
+              onRemove();
+          }}
+        >
+          Remove
+        </button>
+      )}
       <div
         css={{
           display: "flex",

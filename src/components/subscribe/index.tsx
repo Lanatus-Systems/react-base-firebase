@@ -53,7 +53,7 @@ const Subscribe = () => {
           ...pageData,
           subHeadCoverImage: resolvedImage,
           packages: packages,
-        });
+        } as SubscribePage);
       });
     }
   };
@@ -109,18 +109,22 @@ const Subscribe = () => {
             />
           </div>
         </div>
-        <div style={{ position: "relative", padding: 10 }}>
-          <div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div style={{ position: "relative", padding: 10 }}>
             {pageData.subHeadInfo ? (
-              <div className="ql-editor">
-                {parseQuillHtml(derive(pageData.subHeadInfo))}
-              </div>
+              parseQuillHtml(derive(pageData.subHeadInfo))
             ) : (
               <TextPlaceholder />
             )}
             <MultiLangTextEdit
               rich
-              title="Edit Detail"
+              title="Edit Subscription Header"
               value={pageData.subHeadInfo}
               onChange={(updated) =>
                 setPageData((val) => val && { ...val, subHeadInfo: updated })
@@ -171,21 +175,34 @@ const Subscribe = () => {
           ))}
         </div>
         {roles.admin && (
-          <button
-            onClick={() =>
-              setPageData((val) => {
-                if (val == null) return val;
-                const current = val.packages || [];
-                const updated = current.concat({} as SubscriptionPackage);
-                return {
-                  ...val,
-                  packages: updated,
-                };
-              })
-            }
+          <div
+            css={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
           >
-            Add Package
-          </button>
+            <div>
+              The values you can see inside box for packages, won't be shown in
+              user mode, and will be used to perform transaction
+            </div>
+            <button
+              onClick={() =>
+                setPageData((val) => {
+                  if (val == null) return val;
+                  const current = val.packages || [];
+                  const updated = current.concat({} as SubscriptionPackage);
+                  return {
+                    ...val,
+                    packages: updated,
+                  };
+                })
+              }
+            >
+              Add Package
+            </button>
+          </div>
         )}
       </div>
       {roles.admin && (

@@ -90,16 +90,16 @@ const Header = () => {
           </PlainLink>
 
           <Filler />
-          <div css={{ padding: 10 }}>
-            {roles.admin && (
+          {roles.admin && (
+            <div css={{ padding: 10 }}>
               <div css={{ display: "flex" }}>
                 <Link to="/categories" css={{ margin: 10 }}>
                   Categories
                 </Link>
                 <button onClick={() => logout()}>Logout</button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
           <div css={{ padding: "15px 0px", display: "flex", height: 30 }}>
             <div>
               <select
@@ -124,8 +124,8 @@ const Header = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                margin: "0px 15px",
-                padding: "0px 15px",
+                margin: isMobile ? "0px 5px" : "0px 15px",
+                padding: isMobile ? "0px 5px" : "0px 15px",
                 borderLeft: "1px solid lightgrey",
                 borderRight: "1px solid lightgrey",
                 cursor: "pointer",

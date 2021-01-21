@@ -1,9 +1,10 @@
 import { firestore } from "src/firebase";
-import { SubscribePage } from "src/model/app-pages";
+import { AppPage, CheckoutPage, SubscribePage } from "src/model/app-pages";
 import { APP_PAGES } from "./collections";
 
 const pages = {
   SUBSCRIBE: "subscribe",
+  CHECKOUT: "checkout",
 };
 
 export const getSubscribePageData = () => {
@@ -25,9 +26,27 @@ export const getSubscribePageData = () => {
     });
 };
 
-export const savePageData = (data: SubscribePage) => {
+export const getCheckoutPageData = () => {
+  return firestore
+    .collection(APP_PAGES)
+    .doc(pages.CHECKOUT)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        const value = doc.data();
+        return {
+          id: doc.id,
+          ...value,
+          countries: (value && value.countries) || [],
+        } as CheckoutPage;
+      } else {
+        throw new Error("Checkout page data does not exists");
+      }
+    });
+};
+
+export const savePageData = (data: AppPage) => {
   const finalData = { ...data } as any;
-  console.log({finalData})
   delete finalData.id;
   return firestore.collection(APP_PAGES).doc(data.id).set(finalData);
 };

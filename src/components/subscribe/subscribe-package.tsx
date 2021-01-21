@@ -10,6 +10,7 @@ import { AuthContext, LayoutContext } from "src/context";
 import parseQuillHtml from "src/utils/quill-parser";
 import { SubscriptionPackage } from "src/model/app-pages";
 import TextEdit from "../editables/TextEdit";
+import { PlainLink } from "src/base";
 
 interface Iprops {
   value: SubscriptionPackage;
@@ -36,14 +37,16 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
         justifyContent: "center",
       }}
     >
-      <button
-        onClick={() => {
-          window.confirm("Are you sure you want to remove package?") &&
-            onRemove();
-        }}
-      >
-        Remove
-      </button>
+      {roles.admin && (
+        <button
+          onClick={() => {
+            window.confirm("Are you sure you want to remove package?") &&
+              onRemove();
+          }}
+        >
+          Remove
+        </button>
+      )}
 
       {roles.admin && (
         <div
@@ -59,14 +62,42 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
         >
           Package Id : {value.id || "Not set"}
           <TextEdit
-            title="Edit Information"
+            title="Edit Package ID"
             value={value.id}
             onChange={(updated) => onChange({ ...value, id: updated })}
           />
         </div>
       )}
 
-      <div style={{ padding: 30, position: "relative" }}>
+      {roles.admin && (
+        <div
+          css={{
+            position: "relative",
+            height: 30,
+            marginTop: 10,
+            width: "80%",
+            textAlign: "center",
+            fontWeight: "bold",
+            border: "2px solid black",
+          }}
+        >
+          Type :{" "}
+          <select
+            value={value.type || "digital"}
+            onChange={(e) =>
+              onChange({
+                ...value,
+                type: e.target.value === "digital" ? "digital" : "print",
+              })
+            }
+          >
+            <option value="digital">Digital</option>
+            <option value="print">Print</option>
+          </select>
+        </div>
+      )}
+
+      <div style={{ padding: 40, paddingBottom: 20, position: "relative" }}>
         <span css={{ fontSize: 30 }}>{derive(value.title)}</span>
         <MultiLangTextEdit
           title="Edit Title"
@@ -97,7 +128,7 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
 
         <ImageEdit
           css={{ position: "absolute", right: 10, cursor: "pointer" }}
-          title="Edit Story Image"
+          title="Edit Package Image"
           value={value.image}
           onChange={(url) => onChange({ ...value, image: url })}
         />
@@ -140,7 +171,9 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
             fontFamily: "'Montserrat', sans-serif",
           }}
         >
-          <span css={{ fontSize: 15 }}>{derive(value.priceOffer)}</span>
+          <span css={{ fontSize: 15, fontWeight: "bold" }}>
+            {derive(value.priceOffer)}
+          </span>
           <MultiLangTextEdit
             title="Edit Price Offer"
             value={value.priceOffer}
@@ -161,7 +194,7 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
         >
           Price : {value.price || "Not set"} (£)
           <TextEdit
-            title="Edit Information"
+            title="Edit Price"
             value={value.price + ""}
             type="number"
             onChange={(updated) => onChange({ ...value, price: +updated })}
@@ -178,23 +211,25 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
           justifyContent: "center",
         }}
       >
-        <button
-          onClick={() => {
-            alert("to buy page");
-          }}
-          style={{
-            width: 200,
-            height: 50,
-            border: 0,
-            color: "white",
-            fontWeight: "bolder",
-            fontFamily: "'Montserrat', sans-serif",
-            backgroundColor: "#c00000",
-            cursor: "pointer",
-          }}
-        >
-          START NOW
-        </button>
+        <PlainLink to={{ pathname: "/checkout", state: value }}>
+          <button
+            onClick={() => {
+              window.scrollTo(0, 0);
+            }}
+            style={{
+              width: 200,
+              height: 50,
+              border: 0,
+              color: "white",
+              fontWeight: "bolder",
+              fontFamily: "'Montserrat', sans-serif",
+              backgroundColor: "#c00000",
+              cursor: "pointer",
+            }}
+          >
+            START NOW
+          </button>
+        </PlainLink>
       </div>
     </div>
   );
