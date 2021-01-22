@@ -68,6 +68,27 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
           />
         </div>
       )}
+      {roles.admin && (
+        <div
+          css={{
+            position: "relative",
+            height: 30,
+            marginTop: 10,
+            width: "80%",
+            textAlign: "center",
+            fontWeight: "bold",
+            border: "2px solid black",
+          }}
+        >
+          Package Term : {value.term || "Not set"}
+          <TextEdit
+            multiline
+            title="Edit Package Term ( you can able see this line in list of order)"
+            value={value.term}
+            onChange={(updated) => onChange({ ...value, term: updated })}
+          />
+        </div>
+      )}
 
       {roles.admin && (
         <div

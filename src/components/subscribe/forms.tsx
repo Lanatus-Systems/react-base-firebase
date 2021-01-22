@@ -28,19 +28,22 @@ interface IfieldProps {
   as?: string;
   type?: string;
   required?: boolean;
+  confirm?: boolean;
 }
-const FormField = ({
+export const FormField = ({
   name,
   label,
   children,
   as,
   type,
   required,
+  confirm,
 }: IfieldProps) => {
-  const { errors, touched } = useFormikContext();
+  const { errors, touched, values, submitCount } = useFormikContext();
   const { isMobile } = useContext(LayoutContext);
 
-  const err = (touched as any)[name] && (errors as any)[name];
+  const err =
+    ((touched as any)[name] || submitCount > 0) && (errors as any)[name];
   return (
     <div
       style={{
@@ -48,18 +51,18 @@ const FormField = ({
         flexDirection: isMobile ? "column" : "row",
         width: "96%",
         justifyContent: "start",
-        padding: isMobile ? "2%" : "",
+        padding: isMobile ? "2%" : confirm ? 2 : "",
       }}
     >
       <div
         style={{
-          width: isMobile ? "100%" : "20%",
+          width: isMobile ? "100%" : "30%",
           display: "flex",
           alignItems: "center",
         }}
       >
         <div>
-          {required ? (
+          {!confirm && required ? (
             <span>
               <span>{label}</span>
               <span style={{ marginLeft: 5, color: "red" }}>*</span>
@@ -70,9 +73,13 @@ const FormField = ({
         </div>
       </div>
       <div style={{ width: isMobile ? "100%" : "40%" }}>
-        {children ? (
+        {confirm ? (
+          <div style={{ marginTop: isMobile ? 10 : "unset" }}>
+            {((values as any) || {})[name] || "-"}
+          </div>
+        ) : children ? (
           <StyledField
-            error={err != null}
+            error={err}
             placeholder={label}
             name={name}
             as={as}
@@ -83,7 +90,7 @@ const FormField = ({
           </StyledField>
         ) : (
           <StyledField
-            error={err != null}
+            error={err}
             placeholder={label}
             name={name}
             as={as}
@@ -110,10 +117,10 @@ const FormField = ({
 };
 
 const UserDetailSchema = Yup.object().shape({
-  title: Yup.string().required("Required"),
-  firstName: Yup.string().required("Required"),
-  lastName: Yup.string().required("Required"),
-  email: Yup.string().email("Invalid email").required("Required"),
+  title: Yup.string().required("required"),
+  firstName: Yup.string().required("required"),
+  lastName: Yup.string().required("required"),
+  email: Yup.string().email("Invalid email").required("required"),
   emailConfirm: Yup.string().oneOf(
     [Yup.ref("email"), null],
     "Emails must match"
@@ -124,9 +131,14 @@ const UserDetailSchema = Yup.object().shape({
 interface IuserDetailForm {
   userDetails: UserDetails;
   formRef: any;
+  confirm: boolean;
 }
 
-export const UserDetailsForm = ({ userDetails, formRef }: IuserDetailForm) => {
+export const UserDetailsForm = ({
+  userDetails = {} as any,
+  formRef,
+  confirm,
+}: IuserDetailForm) => {
   return (
     <div>
       <Formik
@@ -138,7 +150,13 @@ export const UserDetailsForm = ({ userDetails, formRef }: IuserDetailForm) => {
         {() => {
           return (
             <Form>
-              <FormField label="Title" as="select" name="title" required>
+              <FormField
+                label="Title"
+                as="select"
+                name="title"
+                required
+                confirm={confirm}
+              >
                 <option></option>
                 <option value="Mr">Mr</option>
                 <option value="Mrs">Mrs</option>
@@ -146,16 +164,33 @@ export const UserDetailsForm = ({ userDetails, formRef }: IuserDetailForm) => {
                 <option value="Dr">Dr</option>
                 <option value="Dr">Dr</option>
               </FormField>
-              <FormField label="First Name" name="firstName" required />
-              <FormField label="Last Name" name="lastName" required />
-              <FormField label="Email" name="email" type="email" required />
+              <FormField
+                label="First Name"
+                name="firstName"
+                required
+                confirm={confirm}
+              />
+              <FormField
+                label="Last Name"
+                name="lastName"
+                required
+                confirm={confirm}
+              />
+              <FormField
+                label="Email"
+                name="email"
+                type="email"
+                required
+                confirm={confirm}
+              />
               <FormField
                 label="Verify Email"
                 name="emailConfirm"
                 type="email"
                 required
+                confirm={confirm}
               />
-              <FormField label="Phone" name="phone" />
+              <FormField label="Phone" name="phone" confirm={confirm} />
             </Form>
           );
         }}
@@ -165,21 +200,28 @@ export const UserDetailsForm = ({ userDetails, formRef }: IuserDetailForm) => {
 };
 
 const UserAddressSchema = Yup.object().shape({
-  address1: Yup.string().required("Required"),
+  address1: Yup.string().required("required"),
   company: Yup.string(),
   address2: Yup.string(),
   address3: Yup.string(),
-  town: Yup.string().required("Required"),
+  town: Yup.string().required("required"),
   postalCode: Yup.string(),
-  country: Yup.string().required("Required"),
+  country: Yup.string().required("required"),
 });
 
 interface IuserAddressForm {
   userAddress: UserAddress;
   formRef: any;
+  countries: string[];
+  confirm: boolean;
 }
 
-export const UserAddressForm = ({ userAddress, formRef }: IuserAddressForm) => {
+export const UserAddressForm = ({
+  userAddress = {} as any,
+  countries = [],
+  formRef,
+  confirm,
+}: IuserAddressForm) => {
   return (
     <div>
       <Formik
@@ -191,20 +233,34 @@ export const UserAddressForm = ({ userAddress, formRef }: IuserAddressForm) => {
         {() => {
           return (
             <Form>
-              <FormField label="Address1" name="address1" required />
-              <FormField label="Company" name="company" />
               <FormField
-                label="Address2"
-                name="address2"
-                type="email"
+                label="Address1"
+                name="address1"
                 required
+                confirm={confirm}
               />
-              <FormField label="Address3" name="address3" />
-              <FormField label="Town" name="town" required />
-              <FormField label="Postal Code" name="postalCode" />
-              <FormField label="Country" as="select" name="country" required>
+              <FormField label="Company" name="company" confirm={confirm} />
+              <FormField label="Address2" name="address2" confirm={confirm} />
+              <FormField label="Address3" name="address3" confirm={confirm} />
+              <FormField label="Town" name="town" required confirm={confirm} />
+              <FormField
+                label="Postal Code"
+                name="postalCode"
+                confirm={confirm}
+              />
+              <FormField
+                label="Country"
+                as="select"
+                name="country"
+                required
+                confirm={confirm}
+              >
                 <option></option>
-                <option value="Mr">England</option>
+                {countries.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
               </FormField>
             </Form>
           );

@@ -1,4 +1,4 @@
-import { Route } from "react-router-dom";
+import { Route, useLocation } from "react-router-dom";
 import Categories from "src/components/admin/categories";
 import Home from "src/components/articles";
 import ArticlePage from "src/components/articles/article-page";
@@ -12,11 +12,13 @@ import Checkout from "src/components/subscribe/checkout";
 
 const Content = () => {
   const { isMobile } = useContext(LayoutContext);
+  const location = useLocation();
+
   return (
     <div
       style={{
         minHeight: "70vh",
-        marginTop: isMobile ? 135 : 180,
+        marginTop: location.pathname === "/checkout" ? 0 : isMobile ? 135 : 180,
         background: "white",
       }}
     >

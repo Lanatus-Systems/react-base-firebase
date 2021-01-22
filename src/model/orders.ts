@@ -15,3 +15,12 @@ export interface UserAddress {
   postcode?: string;
   country: string;
 }
+
+export interface MagazineInfo {
+  id: string;
+  term: string;
+  type: "digital" | "print";
+  price: number;
+  startDate: Date;
+  voucher?: string;
+}

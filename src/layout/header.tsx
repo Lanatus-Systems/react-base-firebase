@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useContext, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { AuthContext, GlobalContext, LayoutContext } from "src/context";
 import Headroom from "react-headroom";
 import { Filler } from "src/style-utils";
@@ -27,6 +27,8 @@ export const StyledMenuItem = styled.div({
 const Header = () => {
   const { roles, logout } = useContext(AuthContext);
   const { rootCategories } = useContext(GlobalContext);
+
+  const location = useLocation();
 
   const { isMobile } = useContext(LayoutContext);
 
@@ -55,6 +57,10 @@ const Header = () => {
   const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
   };
+
+  if (location.pathname === "/checkout") {
+    return null;
+  }
 
   return (
     <Headroom
