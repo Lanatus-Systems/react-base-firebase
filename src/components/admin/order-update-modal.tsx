@@ -1,0 +1,204 @@
+/** @jsxImportSource @emotion/react */
+import { useEffect, useRef, useState } from "react";
+import { Modal } from "src/base";
+import { ActiveOrder } from "src/model/orders";
+import {
+  FormField,
+  UserAddressForm,
+  UserDetailsForm,
+} from "../subscribe/forms";
+import * as api from "src/api/app-pages";
+import { Form, Formik } from "formik";
+import * as Yup from "yup";
+import dayjs from "dayjs";
+
+interface Iprops {
+  hide: () => void;
+  title: string;
+  order: ActiveOrder;
+  onOk: (updated: ActiveOrder) => void;
+}
+let countriesCache: string[];
+const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
+  console.log({ order });
+
+  const [countries, setCountries] = useState<string[]>([]);
+
+  const userDetailRef = useRef();
+  const billingDetailRef = useRef();
+  const userAddressRef = useRef();
+  const billingAddressRef = useRef();
+  const orderDetailRef = useRef();
+
+  useEffect(() => {
+    if (countriesCache == null) {
+      api.getCheckoutPageData().then((data) => {
+        countriesCache = data.countries;
+        setCountries(data.countries);
+      });
+    } else {
+      setCountries(countriesCache);
+    }
+  }, []);
+
+  const updateData = async () => {
+    await (orderDetailRef.current as any).submitForm();
+    await (userDetailRef.current as any).submitForm();
+    await (billingDetailRef.current as any).submitForm();
+    await (userAddressRef.current as any).submitForm();
+    await (billingAddressRef.current as any).submitForm();
+
+    if (
+      (orderDetailRef.current as any).isValid &&
+      (userDetailRef.current as any).isValid &&
+      (userAddressRef.current as any).isValid &&
+      (billingDetailRef.current as any).isValid &&
+      (billingAddressRef.current as any).isValid
+    ) {
+      const userDetails = (userDetailRef.current as any).values;
+      const userAddress = (userAddressRef.current as any).values;
+      const billingDetails = (billingDetailRef.current as any).values;
+      const billingAddress = (billingAddressRef.current as any).values;
+      const orderDetails = (orderDetailRef.current as any).values;
+
+      const finalData = {
+        ...order,
+        userDetails,
+        userAddress,
+        ...(billingDetails ? { billingDetails } : {}),
+        ...(billingAddress ? { billingAddress } : {}),
+        startDate: new Date(orderDetails.startDate),
+        endDate: new Date(orderDetails.endDate),
+      };
+      console.log(finalData);
+      onOk(finalData);
+    }
+  };
+
+  return (
+    <Modal title={title} onClose={hide} onOk={updateData}>
+      <div css={{ maxHeight: "80vh", overflow: "auto" }}>
+        <div css={{ margin: 10 }}>User Details</div>
+        <div css={{ marginTop: 5, padding: 10, borderTop: "4px solid black" }}>
+          <UserDetailsForm
+            formRef={userDetailRef}
+            userDetails={order.userDetails}
+            confirm={false}
+          />
+        </div>
+        {order.package.type === "print" && (
+          <>
+            <div css={{ margin: 10 }}>User Address</div>
+            <div
+              css={{ marginTop: 5, padding: 10, borderTop: "4px solid black" }}
+            >
+              <UserAddressForm
+                formRef={userAddressRef}
+                userAddress={order.userAddress}
+                confirm={false}
+                countries={countries}
+              />
+            </div>
+            <div css={{ margin: 10 }}>Delivery Details</div>
+            <div
+              css={{ marginTop: 5, padding: 10, borderTop: "4px solid black" }}
+            >
+              <UserDetailsForm
+                formRef={billingDetailRef}
+                userDetails={order.billingDetails || order.userDetails}
+                confirm={false}
+              />
+            </div>
+            <div css={{ margin: 10 }}>Delivery Address</div>
+            <div
+              css={{ marginTop: 5, padding: 10, borderTop: "4px solid black" }}
+            >
+              <UserAddressForm
+                formRef={billingAddressRef}
+                userAddress={order.billingAddress || order.userAddress}
+                confirm={false}
+                countries={countries}
+              />
+            </div>
+          </>
+        )}
+        <div css={{ margin: 10 }}>Transaction Details</div>
+        <div css={{ marginTop: 5, padding: 10, borderTop: "4px solid black" }}>
+          <pre>{JSON.stringify(order.transaction, null, 4)}</pre>
+        </div>
+        <div css={{ margin: 10 }}>Magazine Details</div>
+        <div css={{ marginTop: 5, padding: 10, borderTop: "4px solid black" }}>
+          <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
+            <div css={{ width: 200 }}>ID</div>
+            <div>{order.package.id}</div>
+          </div>
+          <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
+            <div css={{ width: 200 }}>Subscription Term</div>
+            <div>{order.package.term}</div>
+          </div>
+          <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
+            <div css={{ width: 200 }}>Subscription Type</div>
+            <div>{order.package.type}</div>
+          </div>
+          <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
+            <div css={{ width: 200 }}>Price (€)</div>
+            <div>{order.package.price}</div>
+          </div>
+          <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
+            <div css={{ width: 200 }}>Chosen Start Option</div>
+            <div>{order.package.startDate}</div>
+          </div>
+        </div>
+        <div css={{ margin: 10 }}>Provide Duration</div>
+        <div css={{ marginTop: 5, padding: 10, borderTop: "4px solid black" }}>
+          <div>
+            <Formik
+              innerRef={orderDetailRef as any}
+              initialValues={
+                order.startDate && order.endDate
+                  ? {
+                      startDate: dayjs(order.startDate).format("YYYY-MM-DD"),
+                      endDate: dayjs(order.endDate).format("YYYY-MM-DD"),
+                    }
+                  : {}
+              }
+              validationSchema={Yup.object().shape({
+                startDate: Yup.date().required("required"),
+                endDate: Yup.date()
+                  .min(
+                    Yup.ref("startDate"),
+                    "End date can't be before Start date"
+                  )
+                  .required("required"),
+              })}
+              onSubmit={(values) => {}}
+            >
+              {() => {
+                return (
+                  <Form>
+                    <FormField
+                      label="Start Date"
+                      type="date"
+                      name="startDate"
+                      required
+                      confirm={false}
+                    />
+                    <FormField
+                      label="End Date"
+                      name="endDate"
+                      required
+                      confirm={false}
+                      type="date"
+                    />
+                  </Form>
+                );
+              }}
+            </Formik>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+export default OrderUpdateModal;

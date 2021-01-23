@@ -46,7 +46,7 @@ const Footer = () => {
 
         <div css={{ margin: 10 }}>
           {user == null && (
-            <PlainLink to="/login" onClick={() => window.scrollTo(0, 0)}>
+            <PlainLink to="/admin/login" onClick={() => window.scrollTo(0, 0)}>
               Login
             </PlainLink>
           )}

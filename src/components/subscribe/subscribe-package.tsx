@@ -213,7 +213,7 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
             border: "2px solid black",
           }}
         >
-          Price : {value.price || "Not set"} (£)
+          Price : {value.price || "Not set"} (€)
           <TextEdit
             title="Edit Price"
             value={value.price + ""}

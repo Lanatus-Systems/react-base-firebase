@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useContext, useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AuthContext, GlobalContext, LayoutContext } from "src/context";
 import Headroom from "react-headroom";
 import { Filler } from "src/style-utils";
@@ -27,10 +27,7 @@ export const StyledMenuItem = styled.div({
 const Header = () => {
   const { roles, logout } = useContext(AuthContext);
   const { rootCategories } = useContext(GlobalContext);
-
-  const location = useLocation();
-
-  const { isMobile } = useContext(LayoutContext);
+  const { isMobile, isHeaderHidden } = useContext(LayoutContext);
 
   const { localize, derive, i18n } = useMultiLanguage();
 
@@ -58,7 +55,7 @@ const Header = () => {
     i18n.changeLanguage(language);
   };
 
-  if (location.pathname === "/checkout") {
+  if (isHeaderHidden) {
     return null;
   }
 
@@ -96,12 +93,14 @@ const Header = () => {
           </PlainLink>
 
           <Filler />
-          {roles.admin && (
+          {(roles.admin || roles.editor) && (
             <div css={{ padding: 10 }}>
               <div css={{ display: "flex" }}>
-                <Link to="/categories" css={{ margin: 10 }}>
-                  Categories
-                </Link>
+                {roles.admin && (
+                  <Link to="/admin" css={{ margin: 10 }}>
+                    Admin Zone
+                  </Link>
+                )}
                 <button onClick={() => logout()}>Logout</button>
               </div>
             </div>

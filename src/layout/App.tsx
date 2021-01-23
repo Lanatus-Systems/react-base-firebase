@@ -1,4 +1,3 @@
-import { BrowserRouter } from "react-router-dom";
 import Content from "./content";
 import Footer from "./footer";
 import Header from "./header";
@@ -7,7 +6,7 @@ import { css, Global } from "@emotion/react";
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <>
       <Global
         styles={css`
           ::-moz-selection {
@@ -83,7 +82,7 @@ const App = () => {
       <Header />
       <Content />
       <Footer />
-    </BrowserRouter>
+    </>
   );
 };
 

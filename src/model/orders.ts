@@ -24,3 +24,21 @@ export interface MagazineInfo {
   startDate: Date;
   voucher?: string;
 }
+
+export interface TransactionDetails {
+  id: string;
+}
+export interface OrderRequest {
+  id?: string;
+  package: MagazineInfo;
+  userDetails: UserDetails;
+  userAddress: UserAddress;
+  billingDetails?: UserDetails;
+  billingAddress?: UserAddress;
+  transaction: TransactionDetails;
+}
+
+export interface ActiveOrder extends OrderRequest {
+  startDate: Date;
+  endDate: Date;
+}

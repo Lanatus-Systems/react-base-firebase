@@ -7,3 +7,7 @@ export const ARTICLE_DETAIL = "article-detail";
 
 
 export const APP_PAGES = "app-pages"
+
+
+export const ORDER_REQUESTS = "order-requests"
+export const ACTIVE_ORDERS = "active-orders"

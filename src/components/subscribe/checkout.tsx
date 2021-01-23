@@ -21,6 +21,7 @@ import * as Yup from "yup";
 import { ENGLISH, FRENCH } from "src/i18n/languages";
 import TextEdit from "../editables/TextEdit";
 import { PlainLink } from "src/base";
+import PaymentComponent from "./payment";
 interface IstepProps {
   active: boolean;
 }
@@ -45,13 +46,16 @@ const Checkout = () => {
   const { roles } = useContext(AuthContext);
   const [pageData, setPageData] = useState<CheckoutPage>();
 
+  const [differentBillingDetails, setDifferentBillingDetails] = useState(false);
+  const [differentBillingAddress, setDifferentBillingAddress] = useState(false);
+
   const userDetailRef = useRef();
   const billingDetailRef = useRef();
   const userAddressRef = useRef();
   const billingAddressRef = useRef();
   const magazineDetailRef = useRef();
 
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(2);
   const { localize, derive, deriveImage } = useMultiLanguage();
   const [saveSubscriptionPageData, saving] = useAsync(api.savePageData);
 
@@ -83,7 +87,7 @@ const Checkout = () => {
           //   padding: 10,
         }}
       >
-        <Sticky>
+        <Sticky css={{ zIndex: 3 }}>
           <div
             css={{
               backgroundColor: "#fff",
@@ -332,7 +336,7 @@ const Checkout = () => {
                 <div>{derive(packageDetails.priceOffer)}</div>
               </div>
               <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
-                <div css={{ width: 200 }}>Price (£)</div>
+                <div css={{ width: 200 }}>Price (€)</div>
                 <div>{packageDetails.price}</div>
               </div>
             </div>
@@ -364,8 +368,10 @@ const Checkout = () => {
                       confirm={activeStep !== 0}
                     >
                       <option></option>
-                      {pageData.startOptions.map((item) => (
-                        <option value={item[ENGLISH]}>{derive(item)}</option>
+                      {pageData.startOptions.map((item, index) => (
+                        <option key={index} value={item[ENGLISH]}>
+                          {derive(item)}
+                        </option>
                       ))}
                     </FormField>
                   </Form>
@@ -373,12 +379,6 @@ const Checkout = () => {
               }}
             </Formik>
           </div>
-          {/* ) : (
-            <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
-              <div css={{ width: 100 }}>Start Date</div>
-              <div>{getValueFromFormRef(magazineDetailRef, "startDate")}</div>
-            </div>
-          )} */}
         </div>
 
         {activeStep < 2 && (
@@ -404,69 +404,151 @@ const Checkout = () => {
                 confirm={activeStep !== 0}
               />
             </div>
-            <div
-              css={{
-                marginTop: 10,
-                fontSize: 20,
-                fontWeight: "bold",
-                fontFamily: "'Montserrat', sans-serif",
-                color: "black",
-              }}
-            >
-              {isMobile ? <span css={{ marginLeft: 10 }} /> : ""}
-              {"Billing Address".toLocaleUpperCase()}
-            </div>
-            <div
-              css={{ marginTop: 5, padding: 10, borderTop: "4px solid black" }}
-            >
-              <UserAddressForm
-                formRef={userAddressRef}
-                userAddress={(userAddressRef.current as any)?.values}
-                countries={pageData.countries}
-                confirm={activeStep !== 0}
-              />
-            </div>
-            <div
-              css={{
-                marginTop: 30,
-                fontSize: 20,
-                fontWeight: "bold",
-                fontFamily: "'Montserrat', sans-serif",
-                color: "black",
-              }}
-            >
-              {isMobile ? <span css={{ marginLeft: 10 }} /> : ""}
-              {"Delivery Details".toLocaleUpperCase()}
-            </div>
-            <div
-              css={{
-                marginTop: 5,
-                padding: 10,
-                borderTop: "1px solid lightgrey",
-                backgroundColor: "#fbfbfb",
-              }}
-            >
-              <UserDetailsForm
-                formRef={billingDetailRef}
-                userDetails={(billingDetailRef.current as any)?.values}
-                confirm={activeStep !== 0}
-              />
-            </div>
-            <div
-              css={{
-                marginTop: 5,
-                padding: 10,
-                borderTop: "1px solid lightgrey",
-                backgroundColor: "#fbfbfb",
-              }}
-            >
-              <UserAddressForm
-                formRef={billingAddressRef}
-                userAddress={(billingAddressRef.current as any)?.values}
-                countries={pageData.countries}
-                confirm={activeStep !== 0}
-              />
-            </div>
+            {packageDetails.type === "print" && (
+              <>
+                <div
+                  css={{
+                    marginTop: 10,
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    fontFamily: "'Montserrat', sans-serif",
+                    color: "black",
+                  }}
+                >
+                  {isMobile ? <span css={{ marginLeft: 10 }} /> : ""}
+                  {"Billing Address".toLocaleUpperCase()}
+                </div>
+                <div
+                  css={{
+                    marginTop: 5,
+                    padding: 10,
+                    borderTop: "4px solid black",
+                  }}
+                >
+                  <UserAddressForm
+                    formRef={userAddressRef}
+                    userAddress={(userAddressRef.current as any)?.values}
+                    countries={pageData.countries}
+                    confirm={activeStep !== 0}
+                  />
+                </div>
+                <div
+                  css={{
+                    marginTop: 10,
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    fontFamily: "'Montserrat', sans-serif",
+                    color: "black",
+                  }}
+                >
+                  {isMobile ? <span css={{ marginLeft: 10 }} /> : ""}
+                  {"Delivery Details".toLocaleUpperCase()}
+                </div>
+                <div
+                  css={{
+                    marginTop: 5,
+                    padding: 10,
+                    borderTop: "1px solid lightgrey",
+                    backgroundColor: "#fbfbfb",
+                  }}
+                >
+                  <div
+                    css={{
+                      marginBottom: 10,
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {activeStep === 0 && (
+                      <input
+                        type="checkbox"
+                        checked={differentBillingDetails}
+                        onChange={(e) => {
+                          setDifferentBillingDetails(e.target.checked);
+                        }}
+                        css={{ transform: "scale(1.3)" }}
+                      />
+                    )}
+                    <div css={{ marginLeft: 10 }}>
+                      {activeStep === 0
+                        ? "Use Different Delivery Details"
+                        : differentBillingAddress
+                        ? ""
+                        : "Same Details will be used for delivery"}
+                    </div>
+                  </div>
+                  <div
+                    css={{
+                      overflow: "hidden",
+                      height: differentBillingDetails
+                        ? isMobile
+                          ? 520
+                          : 330
+                        : 0,
+                      transition: "0.5s ease-in",
+                    }}
+                  >
+                    <UserDetailsForm
+                      formRef={billingDetailRef}
+                      userDetails={(billingDetailRef.current as any)?.values}
+                      confirm={activeStep !== 0}
+                    />
+                  </div>
+                </div>
+                <div
+                  css={{
+                    marginTop: 5,
+                    padding: 10,
+                    borderTop: "1px solid lightgrey",
+                    backgroundColor: "#fbfbfb",
+                  }}
+                >
+                  <div
+                    css={{
+                      marginBottom: 10,
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {activeStep === 0 && (
+                      <input
+                        type="checkbox"
+                        checked={differentBillingAddress}
+                        onChange={(e) => {
+                          setDifferentBillingAddress(e.target.checked);
+                        }}
+                        css={{ transform: "scale(1.3)" }}
+                      />
+                    )}
+                    <div css={{ marginLeft: 10 }}>
+                      {activeStep === 0
+                        ? "Use Different Delivery Address"
+                        : differentBillingAddress
+                        ? ""
+                        : "Same Address will be used for delivery"}
+                    </div>
+                  </div>
+                  <div
+                    css={{
+                      overflow: "hidden",
+                      height: differentBillingAddress
+                        ? isMobile
+                          ? 600
+                          : 400
+                        : 0,
+                      transition: "0.5s ease-in",
+                    }}
+                  >
+                    <UserAddressForm
+                      formRef={billingAddressRef}
+                      userAddress={(billingAddressRef.current as any)?.values}
+                      countries={pageData.countries}
+                      confirm={activeStep !== 0}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
             <div
               css={{ display: "flex", justifyContent: "flex-end", margin: 20 }}
             >
@@ -493,9 +575,11 @@ const Checkout = () => {
                     if (
                       (magazineDetailRef.current as any).isValid &&
                       (userDetailRef.current as any).isValid &&
-                      (billingDetailRef.current as any).isValid &&
                       (userAddressRef.current as any).isValid &&
-                      (billingAddressRef.current as any).isValid
+                      (!differentBillingDetails ||
+                        (billingDetailRef.current as any).isValid) &&
+                      (!differentBillingAddress ||
+                        (billingAddressRef.current as any).isValid)
                     ) {
                       setActiveStep(1);
                     }
@@ -506,10 +590,29 @@ const Checkout = () => {
                   window.scrollTo(0, 400);
                 }}
               >
-                {activeStep === 0 ? "Review and Confirm" : "Confirm"}
+                {activeStep === 0 ? "Review and Confirm" : "Proceed To Pay"}
               </button>
             </div>
           </>
+        )}
+
+        {activeStep === 2 && (
+          <PaymentComponent
+            packageInfo={packageDetails}
+            userDetails={(userDetailRef.current as any)?.values}
+            userAddress={(userAddressRef.current as any)?.values}
+            billingDetails={
+              differentBillingDetails
+                ? (billingDetailRef.current as any)?.values
+                : undefined
+            }
+            billingAddress={
+              differentBillingAddress
+                ? (billingAddressRef.current as any)?.values
+                : undefined
+            }
+            magazineDetails={(magazineDetailRef.current as any)?.values}
+          />
         )}
       </div>
     </div>

@@ -8,25 +8,26 @@ import {
 
 import App from "./layout/App";
 
-
 import reportWebVitals from "./reportWebVitals";
 
 import "./i18n/config";
-import 'react-quill/dist/quill.core.css'; 
-import 'react-quill/dist/quill.snow.css'; 
+import "react-quill/dist/quill.core.css";
+import "react-quill/dist/quill.snow.css";
 import "src/style-utils/styles/quill-styles-overrides.css";
-
+import { BrowserRouter } from "react-router-dom";
 
 const ReactApp = () => {
   return (
     <React.StrictMode>
-      <AuthContextProvider>
-        <LayoutContextProvider>
-          <GlobalContextProvider>
-            <App />
-          </GlobalContextProvider>
-        </LayoutContextProvider>
-      </AuthContextProvider>
+      <BrowserRouter>
+        <AuthContextProvider>
+          <LayoutContextProvider>
+            <GlobalContextProvider>
+              <App />
+            </GlobalContextProvider>
+          </LayoutContextProvider>
+        </AuthContextProvider>
+      </BrowserRouter>
     </React.StrictMode>
   );
 };

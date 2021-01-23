@@ -1,29 +1,27 @@
-import { Route, useLocation } from "react-router-dom";
-import Categories from "src/components/admin/categories";
+import { Route } from "react-router-dom";
 import Home from "src/components/articles";
 import ArticlePage from "src/components/articles/article-page";
 import ArticleContent from "src/components/articles/article-content";
 
-import LoginPage from "src/components/login";
 import { LayoutContext } from "src/context";
 import { useContext } from "react";
 import Subscribe from "src/components/subscribe";
 import Checkout from "src/components/subscribe/checkout";
+import AdminZone from "src/components/admin/adminZone";
 
 const Content = () => {
-  const { isMobile } = useContext(LayoutContext);
-  const location = useLocation();
+  const { isMobile, isHeaderHidden } = useContext(LayoutContext);
 
   return (
     <div
       style={{
         minHeight: "70vh",
-        marginTop: location.pathname === "/checkout" ? 0 : isMobile ? 135 : 180,
+        marginTop: isHeaderHidden ? 0 : isMobile ? 135 : 180,
         background: "white",
       }}
     >
-      <Route exact path="/login" component={LoginPage} />
-      <Route exact path="/categories" component={Categories} />
+      <Route exact path="/admin" component={AdminZone} />
+      <Route exact path="/admin/:menu" component={AdminZone} />
       <Route exact path="/subscribe" component={Subscribe} />
       <Route exact path="/checkout" component={Checkout} />
 

@@ -52,6 +52,7 @@ export const FormField = ({
         width: "96%",
         justifyContent: "start",
         padding: isMobile ? "2%" : confirm ? 2 : "",
+        flexWrap: "wrap",
       }}
     >
       <div
@@ -72,7 +73,7 @@ export const FormField = ({
           )}
         </div>
       </div>
-      <div style={{ width: isMobile ? "100%" : "40%" }}>
+      <div>
         {confirm ? (
           <div style={{ marginTop: isMobile ? 10 : "unset" }}>
             {((values as any) || {})[name] || "-"}
@@ -102,8 +103,8 @@ export const FormField = ({
       {err && (
         <div
           style={{
-            width: isMobile ? "100%" : "30%",
             fontSize: 12,
+            marginLeft: 10,
             color: "red",
             display: "flex",
             alignItems: "center",

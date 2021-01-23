@@ -14,7 +14,7 @@ const LoginPage = () => {
   const [loginUser, loggingIn, error] = useAsync(emailPasswordLogin);
 
   const login = () => {
-    loginUser({ email, password }).then(() => history.push("/"));
+    loginUser({ email, password }).then(() => history.push("/admin"));
   };
 
   return (
