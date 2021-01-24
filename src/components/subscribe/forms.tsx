@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import styled from "@emotion/styled";
 import { ReactNode, useContext } from "react";
 import { LayoutContext } from "src/context";
+import { useMultiLanguage } from "src/hooks";
 
 const StyledField = styled(Field)`
   border: ${(props) => (props.error ? "1px solid #F00" : "1px solid #e2e2e2")};
@@ -117,18 +118,6 @@ export const FormField = ({
   );
 };
 
-const UserDetailSchema = Yup.object().shape({
-  title: Yup.string().required("required"),
-  firstName: Yup.string().required("required"),
-  lastName: Yup.string().required("required"),
-  email: Yup.string().email("Invalid email").required("required"),
-  emailConfirm: Yup.string().oneOf(
-    [Yup.ref("email"), null],
-    "Emails must match"
-  ),
-  phone: Yup.string(),
-});
-
 interface IuserDetailForm {
   userDetails: UserDetails;
   formRef: any;
@@ -140,6 +129,18 @@ export const UserDetailsForm = ({
   formRef,
   confirm,
 }: IuserDetailForm) => {
+  const { localize } = useMultiLanguage();
+  const UserDetailSchema = Yup.object().shape({
+    title: Yup.string().required(localize("required")),
+    firstName: Yup.string().required(localize("required")),
+    lastName: Yup.string().required(localize("required")),
+    email: Yup.string().email("Invalid email").required(localize("required")),
+    emailConfirm: Yup.string().oneOf(
+      [Yup.ref("email"), null],
+      "Emails must match"
+    ),
+    phone: Yup.string(),
+  });
   return (
     <div>
       <Formik
@@ -152,7 +153,7 @@ export const UserDetailsForm = ({
           return (
             <Form>
               <FormField
-                label="Title"
+                label={localize("title")}
                 as="select"
                 name="title"
                 required
@@ -166,32 +167,36 @@ export const UserDetailsForm = ({
                 <option value="Dr">Dr</option>
               </FormField>
               <FormField
-                label="First Name"
+                label={localize("first-name")}
                 name="firstName"
                 required
                 confirm={confirm}
               />
               <FormField
-                label="Last Name"
+                label={localize("last-name")}
                 name="lastName"
                 required
                 confirm={confirm}
               />
               <FormField
-                label="Email"
+                label={localize("email")}
                 name="email"
                 type="email"
                 required
                 confirm={confirm}
               />
               <FormField
-                label="Verify Email"
+                label={localize("verify-email")}
                 name="emailConfirm"
                 type="email"
                 required
                 confirm={confirm}
               />
-              <FormField label="Phone" name="phone" confirm={confirm} />
+              <FormField
+                label={localize("phone")}
+                name="phone"
+                confirm={confirm}
+              />
             </Form>
           );
         }}
@@ -199,16 +204,6 @@ export const UserDetailsForm = ({
     </div>
   );
 };
-
-const UserAddressSchema = Yup.object().shape({
-  address1: Yup.string().required("required"),
-  company: Yup.string(),
-  address2: Yup.string(),
-  address3: Yup.string(),
-  town: Yup.string().required("required"),
-  postalCode: Yup.string(),
-  country: Yup.string().required("required"),
-});
 
 interface IuserAddressForm {
   userAddress: UserAddress;
@@ -223,6 +218,16 @@ export const UserAddressForm = ({
   formRef,
   confirm,
 }: IuserAddressForm) => {
+  const { localize } = useMultiLanguage();
+  const UserAddressSchema = Yup.object().shape({
+    address1: Yup.string().required(localize("required")),
+    company: Yup.string(),
+    address2: Yup.string(),
+    address3: Yup.string(),
+    town: Yup.string().required(localize("required")),
+    postalCode: Yup.string(),
+    country: Yup.string().required(localize("required")),
+  });
   return (
     <div>
       <Formik
@@ -235,22 +240,39 @@ export const UserAddressForm = ({
           return (
             <Form>
               <FormField
-                label="Address1"
+                label={localize("address1")}
                 name="address1"
                 required
                 confirm={confirm}
               />
-              <FormField label="Company" name="company" confirm={confirm} />
-              <FormField label="Address2" name="address2" confirm={confirm} />
-              <FormField label="Address3" name="address3" confirm={confirm} />
-              <FormField label="Town" name="town" required confirm={confirm} />
               <FormField
-                label="Postal Code"
+                label={localize("company")}
+                name="company"
+                confirm={confirm}
+              />
+              <FormField
+                label={localize("address2")}
+                name="address2"
+                confirm={confirm}
+              />
+              <FormField
+                label={localize("address3")}
+                name="address3"
+                confirm={confirm}
+              />
+              <FormField
+                label={localize("town")}
+                name="town"
+                required
+                confirm={confirm}
+              />
+              <FormField
+                label={localize("postal-code")}
                 name="postalCode"
                 confirm={confirm}
               />
               <FormField
-                label="Country"
+                label={localize("country")}
                 as="select"
                 name="country"
                 required

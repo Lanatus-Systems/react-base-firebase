@@ -37,8 +37,6 @@ const StyledStep = styled.div<IstepProps>`
   width: 32%;
 `;
 
-const steps = ["Detail", "Review", "Complete"];
-
 const Checkout = () => {
   const location = useLocation();
   const packageDetails = location.state as SubscriptionPackage;
@@ -58,7 +56,7 @@ const Checkout = () => {
   const [activeStep, setActiveStep] = useState(0);
   const { localize, derive, deriveImage } = useMultiLanguage();
   const [saveSubscriptionPageData, saving] = useAsync(api.savePageData);
-
+  const steps = [localize("detail"), localize("review"), localize("complete")];
   useEffect(() => {
     api.getCheckoutPageData().then(setPageData);
   }, []);
@@ -88,7 +86,8 @@ const Checkout = () => {
           //   padding: 10,
         }}
       >
-        <Sticky css={{ zIndex: 3 }}>
+        {/* using zIndex 101 as paypal button have 100 */}
+        <Sticky css={{ zIndex: 101 }}>
           <div
             css={{
               backgroundColor: "#fff",
@@ -106,7 +105,7 @@ const Checkout = () => {
                 width: 100,
               }}
             >
-              <StyledStep active={false}>Back</StyledStep>
+              <StyledStep active={false}>{localize("back")}</StyledStep>
             </PlainLink>
             <div
               css={{
@@ -305,7 +304,7 @@ const Checkout = () => {
           }}
         >
           {isMobile ? <span css={{ marginLeft: 10 }} /> : ""}
-          {"Your Order".toLocaleUpperCase()}
+          {localize("your-order").toLocaleUpperCase()}
         </div>
         <div css={{ marginTop: 5, padding: 10, borderTop: "4px solid black" }}>
           <div
@@ -317,27 +316,27 @@ const Checkout = () => {
           >
             <div>
               <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
-                <div css={{ width: 200 }}>ID</div>
+                <div css={{ width: 200 }}>{localize("id")}</div>
                 <div>{packageDetails.id}</div>
               </div>
               <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
-                <div css={{ width: 200 }}>Name</div>
+                <div css={{ width: 200 }}>{localize("name")}</div>
                 <div>{derive(packageDetails.title)}</div>
               </div>
               <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
-                <div css={{ width: 200 }}>Subscription Term</div>
+                <div css={{ width: 200 }}>{localize("subscription-term")}</div>
                 <div>{packageDetails.term}</div>
               </div>
               <div css={{ width: 200, margin: 5, marginBottom: 0 }}>
-                Details
+                {localize("details")}
               </div>
               <div>{parseQuillHtml(derive(packageDetails.info))}</div>
               <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
-                <div css={{ width: 200 }}>Offer</div>
+                <div css={{ width: 200 }}>{localize("offer")}</div>
                 <div>{derive(packageDetails.priceOffer)}</div>
               </div>
               <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
-                <div css={{ width: 200 }}>Price (€)</div>
+                <div css={{ width: 200 }}>{localize("price")} (€)</div>
                 <div>{packageDetails.price}</div>
               </div>
             </div>
@@ -362,7 +361,7 @@ const Checkout = () => {
                 return (
                   <Form>
                     <FormField
-                      label="Start Date"
+                      label={localize("start-date")}
                       as="select"
                       name="startDate"
                       required
@@ -394,7 +393,7 @@ const Checkout = () => {
               }}
             >
               {isMobile ? <span css={{ marginLeft: 10 }} /> : ""}
-              {"Your Details".toLocaleUpperCase()}
+              {localize("your-details").toLocaleUpperCase()}
             </div>
             <div
               css={{ marginTop: 5, padding: 10, borderTop: "4px solid black" }}
@@ -472,10 +471,10 @@ const Checkout = () => {
                     )}
                     <div css={{ marginLeft: 10 }}>
                       {activeStep === 0
-                        ? "Use Different Delivery Details"
+                        ? localize("use-different-delivery-details")
                         : differentBillingAddress
                         ? ""
-                        : "Same Details will be used for delivery"}
+                        : localize("same-details-will-be-used-for-delivery")}
                     </div>
                   </div>
                   <div
@@ -523,10 +522,10 @@ const Checkout = () => {
                     )}
                     <div css={{ marginLeft: 10 }}>
                       {activeStep === 0
-                        ? "Use Different Delivery Address"
+                        ? localize("use-different-delivery-address")
                         : differentBillingAddress
                         ? ""
-                        : "Same Address will be used for delivery"}
+                        : localize("same-address-will-be-used-for-delivery")}
                     </div>
                   </div>
                   <div
@@ -594,7 +593,7 @@ const Checkout = () => {
                   window.scrollTo(0, 400);
                 }}
               >
-                {activeStep === 0 ? "Review and Confirm" : "Proceed To Pay"}
+                {activeStep === 0 ? localize("review") : localize("pay")}
               </button>
             </div>
           </>

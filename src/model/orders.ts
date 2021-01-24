@@ -25,9 +25,9 @@ export interface MagazineInfo {
   voucher?: string;
 }
 
-export interface TransactionDetails {
-  id: string;
-}
+// export interface TransactionDetails {
+//   id: string;
+// }
 export interface OrderRequest {
   id?: string;
   orderDate: Date;
@@ -36,7 +36,7 @@ export interface OrderRequest {
   userAddress: UserAddress;
   billingDetails?: UserDetails;
   billingAddress?: UserAddress;
-  transaction: TransactionDetails;
+  transaction: any;
 }
 
 export interface ActiveOrder extends OrderRequest {

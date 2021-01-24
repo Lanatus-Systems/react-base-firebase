@@ -2,7 +2,7 @@
 import { css } from "@emotion/react";
 import { useContext } from "react";
 import { LayoutContext } from "src/context";
-import { useAsync } from "src/hooks";
+import { useAsync, useMultiLanguage } from "src/hooks";
 import { SubscriptionPackage } from "src/model/app-pages";
 import {
   MagazineInfo,
@@ -13,6 +13,13 @@ import {
 import * as api from "src/api/orders";
 import Loading from "src/base/Loading";
 import { useHistory } from "react-router-dom";
+
+import React from "react";
+import ReactDOM from "react-dom";
+
+// ignoring to user paypal
+// @ts-ignore: Unreachable code error
+const PayPalButton = window.paypal.Buttons.driver("react", { React, ReactDOM });
 
 interface Iprops {
   packageInfo: SubscriptionPackage;
@@ -32,6 +39,8 @@ const PaymentComponent = ({
 }: Iprops) => {
   const { isMobile } = useContext(LayoutContext);
 
+  const { localize } = useMultiLanguage();
+
   const history = useHistory();
 
   const [addOrderRequest, adding] = useAsync(api.addOrderRequest);
@@ -45,7 +54,7 @@ const PaymentComponent = ({
   //     magazineDetails,
   //   });
 
-  const submitData = () => {
+  const submitData = (transactionDetails: any = {}) => {
     const finalOrder = {
       package: {
         id: packageInfo.id || "-",
@@ -58,12 +67,37 @@ const PaymentComponent = ({
       ...(userAddress ? { userAddress } : {}),
       ...(billingDetails ? { billingDetails } : {}),
       ...(billingAddress ? { billingAddress } : {}),
-      transaction: {},
+      transaction: transactionDetails,
       orderDate: new Date(),
     } as OrderRequest;
     console.log({ finalOrder });
     addOrderRequest(finalOrder).then(() => {
       history.push("/subscribe");
+    });
+  };
+
+  const createOrder = (data: any, actions: any) => {
+    return actions.order.create({
+      plan_id: packageInfo.id || packageInfo.term,
+      application_context: {
+        brand_name: localize("brandName"),
+        shipping_preference: "NO_SHIPPING",
+      },
+      purchase_units: [
+        {
+          amount: {
+            value: packageInfo.price,
+          },
+        },
+      ],
+    });
+  };
+
+  const onApprove = (data: any, actions: any) => {
+    console.log({ data, actions });
+    return actions.order.capture().then((details: any) => {
+      console.log({ details });
+      submitData(details);
     });
   };
 
@@ -80,7 +114,7 @@ const PaymentComponent = ({
         }}
       >
         {isMobile ? <span css={{ marginLeft: 10 }} /> : ""}
-        {"Payment Details".toLocaleUpperCase()}
+        {localize("payment-details").toLocaleUpperCase()}
       </div>
       <div
         css={{
@@ -90,6 +124,14 @@ const PaymentComponent = ({
           backgroundColor: "#fbfbfb",
         }}
       >
+        <div>
+          <PayPalButton
+            amount={packageInfo.price}
+            shippingPreference="NO_SHIPPING"
+            createOrder={createOrder}
+            onApprove={onApprove}
+          />
+        </div>
         <div css={{ display: "flex", justifyContent: "flex-end", margin: 20 }}>
           <button
             css={css`
@@ -107,7 +149,7 @@ const PaymentComponent = ({
               submitData();
             }}
           >
-            Done
+            {localize("complete")}
           </button>
         </div>
       </div>
