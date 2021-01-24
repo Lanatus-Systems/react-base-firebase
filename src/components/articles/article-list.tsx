@@ -117,7 +117,7 @@ const ArticleList = ({ category }: Iprops) => {
   };
 
   const addItem = () => {
-    api.addArticle({ category, date: new Date() } as Article).then((val) => {
+    api.addArticle({ category } as Article).then((val) => {
       if (val?.id) history.push(`/article-content/${val.id}`);
     });
   };

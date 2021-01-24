@@ -19,7 +19,7 @@ interface Iprops {
 }
 
 const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
-  const { derive, deriveImage } = useMultiLanguage();
+  const { derive, deriveImage, localize } = useMultiLanguage();
 
   const { roles } = useContext(AuthContext);
   const { isMobile } = useContext(LayoutContext);
@@ -80,7 +80,8 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
             border: "2px solid black",
           }}
         >
-          Package Term : {value.term || "Not set"}
+          Package Term :{" "}
+          {value.term || "Not set (will be displayed on buy)"}
           <TextEdit
             multiline
             title="Edit Package Term ( you can able see this line in list of order)"
@@ -248,7 +249,7 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
               cursor: "pointer",
             }}
           >
-            START NOW
+            {localize("start-now").toLocaleUpperCase()}
           </button>
         </PlainLink>
       </div>

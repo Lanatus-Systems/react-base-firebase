@@ -88,6 +88,7 @@ const ArticleContent = (props: Iprops) => {
           console.log({ resolvedImage });
           updateArticle({
             ...article,
+            date: article.date || new Date(),
             storyCount: articleContent.stories.length,
             image: resolvedImage,
           });
@@ -305,7 +306,9 @@ const ArticleContent = (props: Iprops) => {
                 <TextEdit
                   title="Edit Date"
                   type="datetime-local"
-                  value={dayjs(article.date).format(DATE_TIME_FORMAT_INPUT_DATE)}
+                  value={dayjs(article.date).format(
+                    DATE_TIME_FORMAT_INPUT_DATE
+                  )}
                   onChange={(updated) =>
                     setArticle((val) => ({ ...val, date: new Date(updated) }))
                   }

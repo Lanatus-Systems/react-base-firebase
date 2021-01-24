@@ -56,7 +56,7 @@ const mapToArticle = (doc: any) => {
   return {
     id: doc.id,
     ...value,
-    date: value.date && value.date.toDate(),
+    ...(value.date ? { date: value.date.toDate() } : {}),
     image: value.image || {},
   } as Article;
 };
@@ -100,6 +100,7 @@ export const getArticle = (id: string) => {
 export const updateArticle = (item: Article) => {
   const finalData = { ...item } as any;
   delete finalData.id;
+  console.log({ finalData });
   return firestore.collection(ARTICLES).doc(item.id).set(finalData);
 };
 

@@ -24,7 +24,7 @@ export const getPendingOrderRequests = (pageSize: number) => {
       return {
         id: doc.id,
         ...value,
-        orderDate: value.orderDate && value.orderDate.toDate(),
+        ...(value.orderDate ? { orderDate: value.orderDate.toDate() } : {}),
       } as OrderRequest;
     });
     return list;
@@ -83,9 +83,9 @@ export const getOrderDetails = ({
       return {
         id: doc.id,
         ...value,
-        orderDate: value.orderDate && value.orderDate.toDate(),
-        startDate: value.startDate && value.startDate.toDate(),
-        endDate: value.endDate && value.endDate.toDate(),
+        ...(value.orderDate ? { orderDate: value.orderDate.toDate() } : {}),
+        ...(value.startDate ? { orderDate: value.startDate.toDate() } : {}),
+        ...(value.endDate ? { orderDate: value.endDate.toDate() } : {}),
       } as ActiveOrder;
     });
     return list;

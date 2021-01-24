@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Loading from "src/base/Loading";
 import { GlobalContext, LayoutContext } from "src/context";
 import { useMultiLanguage } from "src/hooks";
 import { StyledMenuItem } from "src/layout/header";
@@ -12,7 +13,7 @@ interface Iprops {
 const ArticlePage = (props: Iprops) => {
   const { category } = useParams<Iprops>();
 
-  const { categoryMap, subCategoryMap } = useContext(GlobalContext);
+  const { categoryMap, subCategoryMap, categories } = useContext(GlobalContext);
 
   const { isMobile } = useContext(LayoutContext);
 
@@ -26,6 +27,11 @@ const ArticlePage = (props: Iprops) => {
     setSelectedCategory(category);
     window.scrollTo(0, 0);
   }, [category]);
+
+  // Loading until category is loaded in context
+  if (categories.length === 0) {
+    return <Loading />;
+  }
 
   if (subcategories == null || subcategories.length === 0) {
     return (
@@ -49,56 +55,55 @@ const ArticlePage = (props: Iprops) => {
         <ArticleList category={category} />
       </div>
     );
-  } else {
-    return (
-      <div>
-        <div
-          css={{
-            padding: isMobile ? 40 : 20,
-            fontSize: isMobile ? 30 : 40,
-            textAlign: "center",
-          }}
-        >
-          {derive(categoryMap[category]?.label)}
-        </div>
-        <div
-          css={{
-            width: "90%",
-            overflow: "auto",
-            borderBottom: "1px solid lightgrey",
-            borderTop: "1px solid lightgrey",
-            margin: "0px 5%",
-          }}
-        >
-          <div css={{ display: "flex" }}>
+  }
+  return (
+    <div>
+      <div
+        css={{
+          padding: isMobile ? 40 : 20,
+          fontSize: isMobile ? 30 : 40,
+          textAlign: "center",
+        }}
+      >
+        {derive(categoryMap[category]?.label)}
+      </div>
+      <div
+        css={{
+          width: "90%",
+          overflow: "auto",
+          borderBottom: "1px solid lightgrey",
+          borderTop: "1px solid lightgrey",
+          margin: "0px 5%",
+        }}
+      >
+        <div css={{ display: "flex" }}>
+          <StyledMenuItem
+            css={{
+              color: isMobile && selectedCategory === category ? "red" : "",
+              borderBottom:
+                selectedCategory === category ? "5px solid red" : "",
+            }}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {localize("all_topics").toLocaleUpperCase()}
+          </StyledMenuItem>
+          {subcategories.map((item) => (
             <StyledMenuItem
               css={{
-                color: isMobile && selectedCategory === category ? "red" : "",
                 borderBottom:
-                  selectedCategory === category ? "5px solid red" : "",
+                  selectedCategory === item.id ? "5px solid red" : "",
               }}
-              onClick={() => setSelectedCategory(category)}
+              key={item.id}
+              onClick={() => setSelectedCategory(item.id)}
             >
-              {localize("all_topics").toLocaleUpperCase()}
+              {derive(item.label).toLocaleUpperCase()}
             </StyledMenuItem>
-            {subcategories.map((item) => (
-              <StyledMenuItem
-                css={{
-                  borderBottom:
-                    selectedCategory === item.id ? "5px solid red" : "",
-                }}
-                key={item.id}
-                onClick={() => setSelectedCategory(item.id)}
-              >
-                {derive(item.label).toLocaleUpperCase()}
-              </StyledMenuItem>
-            ))}
-          </div>
+          ))}
         </div>
-        <ArticleList category={selectedCategory} />
       </div>
-    );
-  }
+      <ArticleList category={selectedCategory} />
+    </div>
+  );
 };
 
 export default ArticlePage;
