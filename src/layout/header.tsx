@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useContext, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { AuthContext, GlobalContext, LayoutContext } from "src/context";
+import {  GlobalContext, LayoutContext } from "src/context";
 import Headroom from "react-headroom";
 import { Filler } from "src/style-utils";
 import { PlainLink } from "src/base";
@@ -25,7 +24,6 @@ export const StyledMenuItem = styled.div({
 });
 
 const Header = () => {
-  const { roles, logout } = useContext(AuthContext);
   const { rootCategories } = useContext(GlobalContext);
   const { isMobile, isHeaderHidden } = useContext(LayoutContext);
 
@@ -93,18 +91,6 @@ const Header = () => {
           </PlainLink>
 
           <Filler />
-          {(roles.admin || roles.editor) && (
-            <div css={{ padding: 10 }}>
-              <div css={{ display: "flex" }}>
-                {roles.admin && (
-                  <Link to="/admin" css={{ margin: 10 }}>
-                    Admin Zone
-                  </Link>
-                )}
-                <button onClick={() => logout()}>Logout</button>
-              </div>
-            </div>
-          )}
           <div css={{ padding: "15px 0px", display: "flex", height: 30 }}>
             <div>
               <select
@@ -114,6 +100,7 @@ const Header = () => {
                   width: 80,
                   fontFamily: "'Montserrat', sans-serif",
                   fontWeight: 600,
+                  backgroundColor: "white",
                 }}
                 value={i18n.language}
                 onChange={(e) => {

@@ -1,11 +1,11 @@
 /** @jsxImportSource @emotion/react */
-import { useContext, useEffect, useState } from "react";
-import { AuthContext, LayoutContext } from "src/context";
+import { useContext, useEffect, useState, lazy, Suspense } from "react";
+import { AuthContext } from "src/context";
 import { useAsync, useMultiLanguage } from "src/hooks";
 import { SubscribePage, SubscriptionPackage } from "src/model/app-pages";
 import * as api from "../../api/app-pages";
-import ImageEdit from "../editables/ImageEdit";
-import ImagePlaceholder from "../image-placeholder";
+// import ImageEdit from "../editables/ImageEdit";
+// import ImagePlaceholder from "../image-placeholder";
 import Loading from "../../base/Loading";
 import TextPlaceholder from "../text-placeholder";
 import MultiLangTextEdit from "../editables/MultiLangTextEdit";
@@ -14,12 +14,14 @@ import { uploadImage } from "src/api/storage";
 import { mapImageToPromise } from "../articles/article-content";
 import SubscribePackage from "./subscribe-package";
 
+const MagazineSlider = lazy(() => import("./magazine-slider"));
+
 const Subscribe = () => {
-  const { isMobile } = useContext(LayoutContext);
+  // const { isMobile } = useContext(LayoutContext);
 
   const { roles } = useContext(AuthContext);
 
-  const { deriveImage, derive } = useMultiLanguage();
+  const { derive } = useMultiLanguage();
   const [pageData, setPageData] = useState<SubscribePage>();
 
   const [saveSubscriptionPageData, saving] = useAsync(api.savePageData);
@@ -44,13 +46,23 @@ const Subscribe = () => {
         }));
       });
 
+      const uploadedSlides = Promise.all(
+        pageData.sliderImages.map(
+          (image) => image && mapImageToPromise(image, uploadImageData)
+        )
+      ).then((urls) => {
+        return pageData.sliderImages.map((item, index) => urls[index]);
+      });
+
       Promise.all([
         mapImageToPromise(pageData.subHeadCoverImage, uploadImageData),
+        uploadedSlides,
         uploadedPackages,
-      ]).then(([resolvedImage, packages]) => {
-        console.log({ resolvedImage, pageData, packages });
+      ]).then(([resolvedImage, slides, packages]) => {
+        console.log({ resolvedImage, slides, pageData, packages });
         saveSubscriptionPageData({
           ...pageData,
+          sliderImages: slides,
           subHeadCoverImage: resolvedImage,
           packages: packages,
         } as SubscribePage);
@@ -63,26 +75,38 @@ const Subscribe = () => {
   }
   return (
     <div css={{ paddingBottom: 50 }}>
+      <div css={{ minHeight: 200, padding: "2vh 2vw" }}>
+        <Suspense fallback={<Loading />}>
+          <MagazineSlider
+            slides={pageData.sliderImages}
+            updateSlides={(slides) =>
+              setPageData((val) => val && { ...val, sliderImages: slides })
+            }
+          />
+        </Suspense>
+      </div>
       <div
-        style={{
+        css={{
           display: "flex",
-          padding: isMobile ? "5vw" : "5vw 10vw",
-          flexDirection: isMobile ? "column" : "row",
+          padding: "2vw 5vw",
+          paddingTop: 0,
+          // flexDirection: isMobile ? "column" : "row",
+          justifyContent: "center",
+
           // width: "100%",
         }}
       >
-        <div
+        {/* <div
           css={{
             display: "flex",
             justifyContent: "center",
-            width: isMobile ? "90vw" : "30vw",
+            width: isMobile ? "" : "30vw",
           }}
         >
           <div
             style={{
-              // maxWidth: isMobile ? "50vw" : 300,
-              maxHeight: "30vh",
-              minWidth: "20vh",
+              maxHeight: "50vh",
+              minWidth: "40vh",
               position: "relative",
               display: "flex",
               justifyContent: "space-between",
@@ -108,7 +132,7 @@ const Subscribe = () => {
               }
             />
           </div>
-        </div>
+        </div> */}
         <div
           style={{
             display: "flex",

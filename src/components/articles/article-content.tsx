@@ -20,6 +20,7 @@ import ImagePlaceholder from "../image-placeholder";
 import TextPlaceholder from "../text-placeholder";
 import SocialMediaLinks from "../social-media-links";
 import parseQuillHtml from "src/utils/quill-parser";
+import { DATE_TIME_FORMAT_INPUT_DATE } from "src/constants";
 
 interface Iparams {
   id: string;
@@ -304,7 +305,7 @@ const ArticleContent = (props: Iprops) => {
                 <TextEdit
                   title="Edit Date"
                   type="datetime-local"
-                  value={dayjs(article.date).format("YYYY-MM-DDTHH:mm:ss")}
+                  value={dayjs(article.date).format(DATE_TIME_FORMAT_INPUT_DATE)}
                   onChange={(updated) =>
                     setArticle((val) => ({ ...val, date: new Date(updated) }))
                   }
@@ -403,11 +404,6 @@ const ArticleContent = (props: Iprops) => {
           <button
             onClick={() => {
               console.log("clicked....");
-              // setArticleContent(val => {
-
-              //   console.log({val})
-              //   return val
-              // })
               setArticleContent((val) => {
                 if (val == null) return val;
                 const current = val.content || [];

@@ -11,6 +11,7 @@ import * as api from "src/api/app-pages";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import dayjs from "dayjs";
+import { DATE_FORMAT_INPUT_DATE } from "src/constants";
 
 interface Iprops {
   hide: () => void;
@@ -21,6 +22,8 @@ interface Iprops {
 let countriesCache: string[];
 const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
   console.log({ order });
+
+  const isPrintVariant = order.package.type === "print";
 
   const [countries, setCountries] = useState<string[]>([]);
 
@@ -44,27 +47,29 @@ const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
   const updateData = async () => {
     await (orderDetailRef.current as any).submitForm();
     await (userDetailRef.current as any).submitForm();
-    await (billingDetailRef.current as any).submitForm();
-    await (userAddressRef.current as any).submitForm();
-    await (billingAddressRef.current as any).submitForm();
-
+    if (isPrintVariant) {
+      await (billingDetailRef.current as any).submitForm();
+      await (userAddressRef.current as any).submitForm();
+      await (billingAddressRef.current as any).submitForm();
+    }
     if (
       (orderDetailRef.current as any).isValid &&
       (userDetailRef.current as any).isValid &&
-      (userAddressRef.current as any).isValid &&
-      (billingDetailRef.current as any).isValid &&
-      (billingAddressRef.current as any).isValid
+      (!isPrintVariant ||
+        ((userAddressRef.current as any).isValid &&
+          (billingDetailRef.current as any).isValid &&
+          (billingAddressRef.current as any).isValid))
     ) {
-      const userDetails = (userDetailRef.current as any).values;
-      const userAddress = (userAddressRef.current as any).values;
-      const billingDetails = (billingDetailRef.current as any).values;
-      const billingAddress = (billingAddressRef.current as any).values;
       const orderDetails = (orderDetailRef.current as any).values;
+      const userDetails = (userDetailRef.current as any).values;
+      const userAddress = ((userAddressRef.current as any) || {}).values;
+      const billingDetails = ((billingDetailRef.current as any) || {}).values;
+      const billingAddress = ((billingAddressRef.current as any) || {}).values;
 
       const finalData = {
         ...order,
         userDetails,
-        userAddress,
+        ...(userAddress ? { userAddress } : {}),
         ...(billingDetails ? { billingDetails } : {}),
         ...(billingAddress ? { billingAddress } : {}),
         startDate: new Date(orderDetails.startDate),
@@ -86,7 +91,7 @@ const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
             confirm={false}
           />
         </div>
-        {order.package.type === "print" && (
+        {isPrintVariant && (
           <>
             <div css={{ margin: 10 }}>User Address</div>
             <div
@@ -157,8 +162,12 @@ const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
               initialValues={
                 order.startDate && order.endDate
                   ? {
-                      startDate: dayjs(order.startDate).format("YYYY-MM-DD"),
-                      endDate: dayjs(order.endDate).format("YYYY-MM-DD"),
+                      startDate: dayjs(order.startDate).format(
+                        DATE_FORMAT_INPUT_DATE
+                      ),
+                      endDate: dayjs(order.endDate).format(
+                        DATE_FORMAT_INPUT_DATE
+                      ),
                     }
                   : {}
               }

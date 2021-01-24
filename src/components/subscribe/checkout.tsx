@@ -55,7 +55,7 @@ const Checkout = () => {
   const billingAddressRef = useRef();
   const magazineDetailRef = useRef();
 
-  const [activeStep, setActiveStep] = useState(2);
+  const [activeStep, setActiveStep] = useState(0);
   const { localize, derive, deriveImage } = useMultiLanguage();
   const [saveSubscriptionPageData, saving] = useAsync(api.savePageData);
 
@@ -74,6 +74,7 @@ const Checkout = () => {
   if (packageDetails == null) {
     return <Redirect to="/subscribe" />;
   }
+  const isPrintVariant = packageDetails.type === "print";
   if (pageData == null) {
     return <Loading />;
   }
@@ -404,7 +405,7 @@ const Checkout = () => {
                 confirm={activeStep !== 0}
               />
             </div>
-            {packageDetails.type === "print" && (
+            {isPrintVariant && (
               <>
                 <div
                   css={{
@@ -568,18 +569,21 @@ const Checkout = () => {
                   if (activeStep === 0) {
                     await (magazineDetailRef.current as any).submitForm();
                     await (userDetailRef.current as any).submitForm();
-                    await (billingDetailRef.current as any).submitForm();
-                    await (userAddressRef.current as any).submitForm();
-                    await (billingAddressRef.current as any).submitForm();
+                    if (isPrintVariant) {
+                      await (billingDetailRef.current as any).submitForm();
+                      await (userAddressRef.current as any).submitForm();
+                      await (billingAddressRef.current as any).submitForm();
+                    }
 
                     if (
                       (magazineDetailRef.current as any).isValid &&
                       (userDetailRef.current as any).isValid &&
-                      (userAddressRef.current as any).isValid &&
-                      (!differentBillingDetails ||
-                        (billingDetailRef.current as any).isValid) &&
-                      (!differentBillingAddress ||
-                        (billingAddressRef.current as any).isValid)
+                      (!isPrintVariant ||
+                        ((userAddressRef.current as any).isValid &&
+                          (!differentBillingDetails ||
+                            (billingDetailRef.current as any).isValid) &&
+                          (!differentBillingAddress ||
+                            (billingAddressRef.current as any).isValid)))
                     ) {
                       setActiveStep(1);
                     }

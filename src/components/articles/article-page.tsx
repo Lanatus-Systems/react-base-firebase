@@ -64,6 +64,7 @@ const ArticlePage = (props: Iprops) => {
         <div
           css={{
             width: "90%",
+            overflow: "auto",
             borderBottom: "1px solid lightgrey",
             borderTop: "1px solid lightgrey",
             margin: "0px 5%",

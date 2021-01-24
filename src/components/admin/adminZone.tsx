@@ -2,7 +2,6 @@
 import { useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import { AuthContext } from "src/context";
-import LoginPage from "../login";
 import Categories from "./categories";
 import ManageOrders from "./manage-orders";
 import OrderRequests from "./order-requests";
@@ -18,12 +17,12 @@ const AdminHeader = () => {
         <Link to="/admin/categories" css={{ margin: 10 }}>
           Categories
         </Link>
+        <Link to="/admin/order-requests" css={{ margin: 10 }}>
+          Pending Order Requests
+        </Link>
         <Link to="/admin/manage-orders" css={{ margin: 10 }}>
           Manage Orders
         </Link>
-        <Link to="/admin/order-requests" css={{ margin: 10 }}>
-          Pending Order Requests
-        </Link>{" "}
       </div>
     </div>
   );
@@ -43,7 +42,6 @@ const AdminZone = () => {
     <div>
       <AdminHeader />
       <div css={{ margin: 10 }}>
-        {menu === "login" && <LoginPage />}
         {menu === "categories" && <Categories />}
         {menu === "manage-orders" && <ManageOrders />}
         {menu === "order-requests" && <OrderRequests />}

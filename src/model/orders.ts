@@ -30,6 +30,7 @@ export interface TransactionDetails {
 }
 export interface OrderRequest {
   id?: string;
+  orderDate: Date;
   package: MagazineInfo;
   userDetails: UserDetails;
   userAddress: UserAddress;

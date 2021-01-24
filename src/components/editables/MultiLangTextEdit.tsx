@@ -1,4 +1,5 @@
 import React, { Suspense, useState } from "react";
+import Loading from "src/base/Loading";
 import { MultiLanguage } from "src/model/common";
 
 import EditIcon from "./EditIcon";
@@ -23,7 +24,7 @@ const MultiLangTextEdit = ({
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   return modalVisible ? (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loading />}>
       <InputModal
         title={title}
         value={value}

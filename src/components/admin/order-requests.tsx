@@ -5,6 +5,8 @@ import { useAsync } from "src/hooks";
 import Loading from "src/base/Loading";
 import { ORDER_REQUESTS } from "src/api/collections";
 import OrderUpdateModal from "./order-update-modal";
+import dayjs from "dayjs";
+import { ADMIN_DATE_TIME_FORMAT_UI } from "src/constants";
 
 const OrderRequests = () => {
   const [requests, setRequests] = useState<OrderRequest[]>();
@@ -43,6 +45,7 @@ const OrderRequests = () => {
       <div>
         <h1>Order Requests</h1>
       </div>
+      <div>Following table is in descending order by date</div>
       <div>{(loading || adding || removing) && <Loading />}</div>
       {orderToApprove && (
         <OrderUpdateModal
@@ -50,44 +53,62 @@ const OrderRequests = () => {
             setOrderToApprove(undefined);
           }}
           order={orderToApprove as ActiveOrder}
-          title="Update Order"
+          title="Approve Order"
           onOk={(updated) => {
             approveRequest(updated);
             setOrderToApprove(undefined);
           }}
         />
       )}
-      <div>
-        {requests &&
-          requests.map((item) => {
-            return (
-              <div
-                key={item.id}
-                style={{ border: "1px solid lightgrey", margin: 10 }}
-              >
-                <pre>{JSON.stringify(item, null, 4)}</pre>
-                <button
-                  onClick={() => {
-                    approveRequest(item);
-                  }}
-                >
-                  Approve
-                </button>
-                <button
-                  onClick={() => {
-                    if (
-                      window.confirm("Are you sure, you want to remove request?")
-                    ) {
-                      removeRequest(item);
-                    }
-                  }}
-                >
-                  Remove
-                </button>
-              </div>
-            );
-          })}
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Order Date</th>
+            <th>Order ID</th>
+            <th>Variant</th>
+            <th />
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {requests &&
+            requests.map((item) => {
+              return (
+                <tr key={item.id}>
+                  <td>
+                    {dayjs(item.orderDate).format(ADMIN_DATE_TIME_FORMAT_UI)}
+                  </td>
+                  <td>{item.id}</td>
+                  <td>{item.package.type}</td>
+                  <td>
+                    <button
+                      onClick={() => {
+                        setOrderToApprove(item);
+                      }}
+                    >
+                      Approve
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            "Are you sure, you want to remove request?"
+                          )
+                        ) {
+                          removeRequest(item);
+                        }
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+        </tbody>
+      </table>
       <div style={{ margin: 20 }}>
         {requests && requests.length === 0 ? (
           "No More Pending Requests Found"

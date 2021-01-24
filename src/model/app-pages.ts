@@ -16,6 +16,7 @@ export interface AppPage {
 }
 export interface SubscribePage extends AppPage {
   subHeadCoverImage: MultiLanguage;
+  sliderImages: MultiLanguage[];
   subHeadInfo: MultiLanguage;
   packages: SubscriptionPackage[];
 }

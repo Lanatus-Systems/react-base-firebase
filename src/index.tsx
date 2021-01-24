@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
 import {
   AuthContextProvider,
   GlobalContextProvider,
@@ -14,7 +15,6 @@ import "./i18n/config";
 import "react-quill/dist/quill.core.css";
 import "react-quill/dist/quill.snow.css";
 import "src/style-utils/styles/quill-styles-overrides.css";
-import { BrowserRouter } from "react-router-dom";
 
 const ReactApp = () => {
   return (

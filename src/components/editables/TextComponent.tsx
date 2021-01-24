@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef } from "react";
 import ReactQuill, { Quill } from "react-quill";
 import { LayoutContext } from "src/context";
 
+
 const Font = Quill.import("formats/font");
 Font.whitelist = ["", "serif", "monospace", "Sniglet", "Montserrat"];
 Quill.register(Font, true);

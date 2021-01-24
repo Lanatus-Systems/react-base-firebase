@@ -8,7 +8,10 @@ export const resetPagingFor = (collectionName: string) => {
 };
 
 export const getPendingOrderRequests = (pageSize: number) => {
-  let query = firestore.collection(ORDER_REQUESTS).limit(pageSize);
+  let query = firestore
+    .collection(ORDER_REQUESTS)
+    .orderBy("orderDate", "desc")
+    .limit(pageSize);
   if (lastDocMap[ORDER_REQUESTS] != null) {
     query = query.startAfter(lastDocMap[ORDER_REQUESTS]);
   }
@@ -17,10 +20,11 @@ export const getPendingOrderRequests = (pageSize: number) => {
       if (index === all.length - 1) {
         lastDocMap[ORDER_REQUESTS] = doc;
       }
-      const data = doc.data();
+      const value = doc.data();
       return {
         id: doc.id,
-        ...data,
+        ...value,
+        orderDate: value.orderDate && value.orderDate.toDate(),
       } as OrderRequest;
     });
     return list;
@@ -35,8 +39,38 @@ export const removeOrderRequest = (item: OrderRequest) => {
   return firestore.collection(ORDER_REQUESTS).doc(item.id).delete();
 };
 
-export const getOrderDetails = (pageSize: number) => {
-  let query = firestore.collection(ACTIVE_ORDERS).limit(pageSize);
+interface IorderRequestCriteria {
+  pageSize: number;
+  from: Date;
+  to: Date;
+  field: string;
+  order: string;
+}
+
+const ordersBetweenAndOrderedByDate = (
+  field: string,
+  from: Date,
+  to: Date,
+  order: string
+) => {
+  console.log({ from, to });
+  return firestore
+    .collection(ACTIVE_ORDERS)
+    .where(field, ">=", from)
+    .where(field, "<=", to)
+    .orderBy(field, order === "asc" ? "asc" : "desc");
+};
+
+export const getOrderDetails = ({
+  pageSize,
+  field,
+  from,
+  to,
+  order,
+}: IorderRequestCriteria) => {
+  let query = ordersBetweenAndOrderedByDate(field, from, to, order).limit(
+    pageSize
+  );
   if (lastDocMap[ACTIVE_ORDERS] != null) {
     query = query.startAfter(lastDocMap[ACTIVE_ORDERS]);
   }
@@ -49,6 +83,7 @@ export const getOrderDetails = (pageSize: number) => {
       return {
         id: doc.id,
         ...value,
+        orderDate: value.orderDate && value.orderDate.toDate(),
         startDate: value.startDate && value.startDate.toDate(),
         endDate: value.endDate && value.endDate.toDate(),
       } as ActiveOrder;

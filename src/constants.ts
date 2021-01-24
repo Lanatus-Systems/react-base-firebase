@@ -1,0 +1,5 @@
+export const ADMIN_DATE_FORMAT_UI = "YYYY-MM-DD";
+export const ADMIN_DATE_TIME_FORMAT_UI = "YYYY-MM-DD HH:mm:ss";
+
+export const DATE_FORMAT_INPUT_DATE = "YYYY-MM-DD";
+export const DATE_TIME_FORMAT_INPUT_DATE = "YYYY-MM-DDTHH:mm:ss";

@@ -12,6 +12,7 @@ import {
 } from "src/model/orders";
 import * as api from "src/api/orders";
 import Loading from "src/base/Loading";
+import { useHistory } from "react-router-dom";
 
 interface Iprops {
   packageInfo: SubscriptionPackage;
@@ -31,6 +32,8 @@ const PaymentComponent = ({
 }: Iprops) => {
   const { isMobile } = useContext(LayoutContext);
 
+  const history = useHistory();
+
   const [addOrderRequest, adding] = useAsync(api.addOrderRequest);
 
   //   console.log({
@@ -45,19 +48,23 @@ const PaymentComponent = ({
   const submitData = () => {
     const finalOrder = {
       package: {
-        id: packageInfo.id,
+        id: packageInfo.id || "-",
         term: packageInfo.term || "-",
-        type: packageInfo.type,
-        price: packageInfo.price,
+        type: packageInfo.type || "digital",
+        price: packageInfo.price || 0,
         startDate: magazineDetails.startDate,
       },
       userDetails: userDetails,
-      userAddress: userAddress,
+      ...(userAddress ? { userAddress } : {}),
       ...(billingDetails ? { billingDetails } : {}),
       ...(billingAddress ? { billingAddress } : {}),
       transaction: {},
+      orderDate: new Date(),
     } as OrderRequest;
-    addOrderRequest(finalOrder);
+    console.log({ finalOrder });
+    addOrderRequest(finalOrder).then(() => {
+      history.push("/subscribe");
+    });
   };
 
   return (

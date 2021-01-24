@@ -1,4 +1,5 @@
 import React, { CSSProperties, Suspense, useState } from "react";
+import Loading from "src/base/Loading";
 import { MultiLanguage } from "src/model/common";
 import EditIcon from "./EditIcon";
 
@@ -16,7 +17,7 @@ const ImageEdit = ({ title, value, type, onChange, style = {} }: Iprops) => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   return modalVisible ? (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loading />}>
       <ImageEditModal
         title={title}
         value={value}

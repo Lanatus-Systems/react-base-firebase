@@ -1,4 +1,5 @@
 import React, { Suspense, useState } from "react";
+import Loading from "src/base/Loading";
 import EditIcon from "./EditIcon";
 
 const InputModal = React.lazy(() => import("./InputEditModal"));
@@ -23,7 +24,7 @@ const TextEdit = ({
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   return modalVisible ? (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loading />}>
       <InputModal
         title={title}
         value={value}
