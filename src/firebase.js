@@ -4,7 +4,7 @@ import "firebase/auth";
 import "firebase/firestore";
 import "firebase/storage";
 
-const config = {
+const envConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
   projectId: process.env.REACT_APP_PROJECT_ID,
@@ -13,6 +13,12 @@ const config = {
   appId: process.env.REACT_APP_APP_ID,
   measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
+
+// ignoring to use firebase config
+// eslint-disable-next-line no-undef
+const indexHtmlConfig = __indexHtmlFirebaseConfig;
+
+const config = indexHtmlConfig || envConfig;
 
 const firebaseApp = firebase.initializeApp(config);
 

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { LayoutContext } from "src/context";
 import { useAsync, useMultiLanguage } from "src/hooks";
 import { SubscriptionPackage } from "src/model/app-pages";
@@ -17,9 +17,54 @@ import { useHistory } from "react-router-dom";
 import React from "react";
 import ReactDOM from "react-dom";
 
-// ignoring to user paypal
+import {
+  PaymentRequestButtonElement,
+  useStripe,
+  Elements,
+} from "@stripe/react-stripe-js";
+import { PaymentRequest, loadStripe } from "@stripe/stripe-js";
+
+// ignoring to use paypal
 // @ts-ignore: Unreachable code error
 const PayPalButton = window.paypal.Buttons.driver("react", { React, ReactDOM });
+
+const stripePromise = loadStripe("pk_live_21ddE3jYsoHBbJgWLFJ12ede00UaZzWDA7", {
+  apiVersion: "2020-08-27",
+});
+
+const CheckoutForm = () => {
+  const stripe = useStripe();
+  const [paymentRequest, setPaymentRequest] = useState<PaymentRequest>();
+
+  useEffect(() => {
+    if (stripe) {
+      const pr = stripe.paymentRequest({
+        country: "US",
+        currency: "usd",
+        total: {
+          label: "Demo total",
+          amount: 1099,
+        },
+        requestPayerName: true,
+        requestPayerEmail: true,
+      });
+
+      // Check the availability of the Payment Request API.
+      pr.canMakePayment().then((result) => {
+        if (result) {
+          setPaymentRequest(pr as PaymentRequest);
+        }
+      });
+    }
+  }, [stripe]);
+
+  if (paymentRequest != null) {
+    return <PaymentRequestButtonElement options={{ paymentRequest }} />;
+  }
+
+  // Use a traditional checkout form.
+  return <Loading />;
+};
 
 interface Iprops {
   packageInfo: SubscriptionPackage;
@@ -132,7 +177,12 @@ const PaymentComponent = ({
             onApprove={onApprove}
           />
         </div>
-        <div css={{ display: "flex", justifyContent: "flex-end", margin: 20 }}>
+        {/* <div>
+          <Elements stripe={stripePromise}>
+            <CheckoutForm />
+          </Elements>
+        </div> */}
+        {/* <div css={{ display: "flex", justifyContent: "flex-end", margin: 20 }}>
           <button
             css={css`
               color: #fff;
@@ -151,7 +201,7 @@ const PaymentComponent = ({
           >
             {localize("complete")}
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

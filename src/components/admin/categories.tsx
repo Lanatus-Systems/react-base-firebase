@@ -107,7 +107,7 @@ const Item = ({ item, retrieve, allCategories }: Iprops) => {
             <button
               onClick={() => {
                 window.confirm(
-                  `Are you sure you want to remove category "${item.id}" ?`
+                  `it will remove all articles too, Are you sure you want to remove category "${item.id}"?`
                 ) && removeData(item).then(retrieve);
               }}
             >

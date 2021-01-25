@@ -28,7 +28,27 @@ export const addCategory = (item: Category) => {
 };
 
 export const removeCategory = (item: Category) => {
-  return firestore.collection(CATEGORIES).doc(item.id).delete();
+  const writeBatch = firestore.batch();
+  const query = firestore.collection(ARTICLES).where("category", "==", item.id);
+
+  return query.get().then((querySnapshot) => {
+    const documentsToRemove = querySnapshot.docs.map((doc) => {
+      return doc.id;
+    });
+
+    const categoryRef = firestore.collection(CATEGORIES).doc(item.id);
+    console.log({ item, categoryRef });
+    writeBatch.delete(categoryRef);
+
+    documentsToRemove.forEach((docId) => {
+      const artRef = firestore.collection(ARTICLES).doc(docId);
+      const artDetailRef = firestore.collection(ARTICLE_DETAIL).doc(docId);
+      writeBatch.delete(artRef);
+      writeBatch.delete(artDetailRef);
+    });
+
+    return writeBatch.commit();
+  });
 };
 
 // let lastDoc: unknown = null;
@@ -144,7 +164,3 @@ export const updateArticleContent = (item: ArticleDetail) => {
 export const addArticleContent = (item: ArticleDetail) => {
   return firestore.collection(ARTICLE_DETAIL).add(item);
 };
-
-// const removeCategory = (item: Category) => {
-//   return firestore.collection(CATEGORIES).doc(item.id).delete();
-// };

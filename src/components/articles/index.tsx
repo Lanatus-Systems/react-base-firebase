@@ -144,6 +144,7 @@ const ArticleGroup = ({
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                zIndex: 3,
               }}
             >
               <div
