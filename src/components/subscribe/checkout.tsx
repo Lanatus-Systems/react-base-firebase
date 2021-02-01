@@ -53,7 +53,7 @@ const Checkout = () => {
   const billingAddressRef = useRef();
   const magazineDetailRef = useRef();
 
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(2);
   const { localize, derive, deriveImage } = useMultiLanguage();
   const [saveSubscriptionPageData, saving] = useAsync(api.savePageData);
   const steps = [localize("detail"), localize("review"), localize("complete")];

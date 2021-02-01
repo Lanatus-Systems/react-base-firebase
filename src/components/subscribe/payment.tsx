@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, SyntheticEvent } from "react";
 import { LayoutContext } from "src/context";
 import { useAsync, useMultiLanguage } from "src/hooks";
 import { SubscriptionPackage } from "src/model/app-pages";
@@ -21,6 +21,7 @@ import {
   PaymentRequestButtonElement,
   useStripe,
   Elements,
+  CardElement,
 } from "@stripe/react-stripe-js";
 import { PaymentRequest, loadStripe } from "@stripe/stripe-js";
 
@@ -30,9 +31,71 @@ import Swal from "sweetalert2";
 // @ts-ignore: Unreachable code error
 const PayPalButton = window.paypal.Buttons.driver("react", { React, ReactDOM });
 
-const stripePromise = loadStripe("pk_live_21ddE3jYsoHBbJgWLFJ12ede00UaZzWDA7", {
-  apiVersion: "2020-08-27",
-});
+const stripePromise = loadStripe(
+  "pk_test_51IG7i9KMh0PNh1FX735pRKEGUuSOnzdioqUM6aYv3d60KZfhj9HrglowqLdb4Plsvndp7P9JWImtSVZqLqLCMIML00QU8U6Y5h",
+  {
+    apiVersion: "2020-08-27",
+  }
+);
+
+// const CheckoutForm = () => {
+//   const stripe = useStripe();
+//   const elements = useElements();
+
+//   const handleSubmit = async (e: SyntheticEvent) => {
+//     e.preventDefault();
+//     if (!stripe || !elements) {
+//       // Stripe.js has not loaded yet. Make sure to disable
+//       // form submission until Stripe.js has loaded.
+//       return;
+//     }
+
+//     // Get a reference to a mounted CardElement. Elements knows how
+//     // to find your CardElement because there can only ever be one of
+//     // each type of element.
+//     const cardElement = elements.getElement(CardElement);
+
+//     if(cardElement == null){
+//       return;
+//     }
+
+//     // Use your card Element with other Stripe.js APIs
+//     const { error, paymentMethod } = await stripe.createPaymentMethod({
+//       type: "card",
+//       card: cardElement,
+//     });
+
+//     if (error) {
+//       console.log("[error]", error);
+//     } else {
+//       console.log("[PaymentMethod]", paymentMethod);
+//     }
+//   };
+
+//   return (
+//     <form onSubmit={handleSubmit}>
+//       <CardElement
+//         options={{
+//           style: {
+//             base: {
+//               fontSize: "16px",
+//               color: "#424770",
+//               "::placeholder": {
+//                 color: "#aab7c4",
+//               },
+//             },
+//             invalid: {
+//               color: "#9e2146",
+//             },
+//           },
+//         }}
+//       />
+//       <button type="submit" disabled={!stripe}>
+//         Pay
+//       </button>
+//     </form>
+//   );
+// };
 
 const CheckoutForm = () => {
   const stripe = useStripe();
@@ -51,23 +114,77 @@ const CheckoutForm = () => {
         requestPayerEmail: true,
       });
 
+      console.log({pr})
+
       // Check the availability of the Payment Request API.
       pr.canMakePayment().then((result) => {
+        console.log({result})
         if (result) {
-          setPaymentRequest(pr as PaymentRequest);
+          setPaymentRequest(pr);
         }
       });
     }
   }, [stripe]);
 
-  if (paymentRequest != null) {
+  console.log({paymentRequest})
+  if (paymentRequest) {
     return <PaymentRequestButtonElement options={{ paymentRequest }} />;
   }
 
-  // Use a traditional checkout form.
-  return <Loading />;
-};
+  const handleSubmit = async (e: SyntheticEvent) => {
+    e.preventDefault();
+    // if (!stripe || !elements) {
+    //   // Stripe.js has not loaded yet. Make sure to disable
+    //   // form submission until Stripe.js has loaded.
+    //   return;
+    // }
 
+    // // Get a reference to a mounted CardElement. Elements knows how
+    // // to find your CardElement because there can only ever be one of
+    // // each type of element.
+    // const cardElement = elements.getElement(CardElement);
+
+    // if (cardElement == null) {
+    //   return;
+    // }
+
+    // // Use your card Element with other Stripe.js APIs
+    // const { error, paymentMethod } = await stripe.createPaymentMethod({
+    //   type: "card",
+    //   card: cardElement,
+    // });
+
+    // if (error) {
+    //   console.log("[error]", error);
+    // } else {
+    //   console.log("[PaymentMethod]", paymentMethod);
+    // }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <CardElement
+        options={{
+          style: {
+            base: {
+              fontSize: "16px",
+              color: "#424770",
+              "::placeholder": {
+                color: "#aab7c4",
+              },
+            },
+            invalid: {
+              color: "#9e2146",
+            },
+          },
+        }}
+      />
+      <button type="submit" disabled={!stripe}>
+        Pay
+      </button>
+    </form>
+  );
+};
 interface Iprops {
   packageInfo: SubscriptionPackage;
   userDetails: UserDetails;
@@ -198,11 +315,11 @@ const PaymentComponent = ({
             onApprove={onApprove}
           />
         </div>
-        {/* <div>
+        <div>
           <Elements stripe={stripePromise}>
             <CheckoutForm />
           </Elements>
-        </div> */}
+        </div>
         {/* <div css={{ display: "flex", justifyContent: "flex-end", margin: 20 }}>
           <button
             css={css`
