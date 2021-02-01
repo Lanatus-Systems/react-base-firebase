@@ -74,6 +74,7 @@ const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
         ...(billingAddress ? { billingAddress } : {}),
         startDate: new Date(orderDetails.startDate),
         endDate: new Date(orderDetails.endDate),
+        mbockyId: orderDetails.mbockyId,
       };
       console.log(finalData);
       onOk(finalData);
@@ -162,6 +163,7 @@ const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
               initialValues={
                 order.startDate && order.endDate
                   ? {
+                      mbockyId : order.mbockyId || "",
                       startDate: dayjs(order.startDate).format(
                         DATE_FORMAT_INPUT_DATE
                       ),
@@ -172,6 +174,7 @@ const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
                   : {}
               }
               validationSchema={Yup.object().shape({
+                mbockyId: Yup.string().required("required"),
                 startDate: Yup.date().required("required"),
                 endDate: Yup.date()
                   .min(
@@ -185,6 +188,12 @@ const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
               {() => {
                 return (
                   <Form>
+                    <FormField
+                      label="Mbocky Id"
+                      name="mbockyId"
+                      required
+                      confirm={false}
+                    />
                     <FormField
                       label="Start Date"
                       type="date"

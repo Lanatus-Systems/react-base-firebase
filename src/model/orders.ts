@@ -40,6 +40,7 @@ export interface OrderRequest {
 }
 
 export interface ActiveOrder extends OrderRequest {
+  mbockyId: string;
   startDate: Date;
   endDate: Date;
 }

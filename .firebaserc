@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "fashion-magazine-fc07f"
+    "default": "fashion-magazine-fc07f",
+    "prod": "mbocky-d14fb"
   }
 }

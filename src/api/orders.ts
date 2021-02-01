@@ -80,16 +80,32 @@ export const getOrderDetails = ({
         lastDocMap[ACTIVE_ORDERS] = doc;
       }
       const value = doc.data();
+      console.log({ value });
       return {
         id: doc.id,
         ...value,
         ...(value.orderDate ? { orderDate: value.orderDate.toDate() } : {}),
-        ...(value.startDate ? { orderDate: value.startDate.toDate() } : {}),
-        ...(value.endDate ? { orderDate: value.endDate.toDate() } : {}),
+        ...(value.startDate ? { startDate: value.startDate.toDate() } : {}),
+        ...(value.endDate ? { endDate: value.endDate.toDate() } : {}),
       } as ActiveOrder;
     });
     return list;
   });
+};
+
+export const getOrderDetail = (id: string) => {
+  return firestore
+    .collection(ACTIVE_ORDERS)
+    .doc(id)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        const value = doc.data();
+        return { id: doc.id, ...value } as ActiveOrder;
+      } else {
+        throw new Error("Article Does not exists");
+      }
+    });
 };
 
 export const addApprovedOrder = (item: ActiveOrder) => {

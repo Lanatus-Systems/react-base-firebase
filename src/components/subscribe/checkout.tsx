@@ -416,7 +416,7 @@ const Checkout = () => {
                   }}
                 >
                   {isMobile ? <span css={{ marginLeft: 10 }} /> : ""}
-                  {"Billing Address".toLocaleUpperCase()}
+                  {localize("billing-address").toLocaleUpperCase()}
                 </div>
                 <div
                   css={{
@@ -442,7 +442,7 @@ const Checkout = () => {
                   }}
                 >
                   {isMobile ? <span css={{ marginLeft: 10 }} /> : ""}
-                  {"Delivery Details".toLocaleUpperCase()}
+                  {localize("delivery-details").toLocaleUpperCase()}
                 </div>
                 <div
                   css={{

@@ -21,6 +21,8 @@ const ManageOrders = () => {
   const [orderList, setOrderList] = useState<ActiveOrder[]>();
   const [orderToUpdate, setOrderToUpdate] = useState<ActiveOrder>();
 
+  const [orderId, setOrderId] = useState("");
+
   const [getOrderDetails, loading] = useAsync(api.getOrderDetails);
   const [updateOrderDetails, updating] = useAsync(api.updateOrderDetails);
   const [deleteOrder, deleting] = useAsync(api.deleteOrder);
@@ -129,6 +131,18 @@ const ManageOrders = () => {
           disabled={!retrieveEnabled}
         >
           Retrieve
+        </button>
+      </div>
+      <div css={{ display: "flex", marginBottom: 10 }}>
+        <label>Order Id : </label>
+        <input value={orderId} onChange={(e) => setOrderId(e.target.value)} />
+        <button
+          css={{ marginLeft: 10 }}
+          onClick={() => {
+            api.getOrderDetail(orderId).then((val) => setOrderList([val]));
+          }}
+        >
+          Load
         </button>
       </div>
       <div>{(loading || updating || deleting) && <Loading />}</div>

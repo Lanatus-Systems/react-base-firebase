@@ -24,6 +24,8 @@ import {
 } from "@stripe/react-stripe-js";
 import { PaymentRequest, loadStripe } from "@stripe/stripe-js";
 
+import Swal from "sweetalert2";
+
 // ignoring to use paypal
 // @ts-ignore: Unreachable code error
 const PayPalButton = window.paypal.Buttons.driver("react", { React, ReactDOM });
@@ -116,8 +118,27 @@ const PaymentComponent = ({
       orderDate: new Date(),
     } as OrderRequest;
     console.log({ finalOrder });
-    addOrderRequest(finalOrder).then(() => {
-      history.push("/subscribe");
+    addOrderRequest(finalOrder).then((data) => {
+      console.log({ data });
+      const title = localize("your-order-has-been-sent");
+      const details = `<div>${localize(
+        "the-magazine-will-be-sent"
+      )}</div><div style="margin-top:5px">${localize("order-number")} : ${
+        data.id
+      }</div>`;
+      const footer = `<div><div>${localize(
+        "need-help-contact-us"
+      )}</div><div>${localize("can-call-us")}</div><div></div>${localize(
+        "can-email-us"
+      )}</div>`;
+      Swal.fire({
+        icon: "success",
+        title: title,
+        html: details,
+        footer: footer,
+      }).then(() => {
+        history.push("/subscribe");
+      });
     });
   };
 

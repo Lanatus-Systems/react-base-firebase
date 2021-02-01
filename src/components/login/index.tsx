@@ -8,13 +8,17 @@ const LoginPage = () => {
 
   const history = useHistory();
 
-  const [email, setEmail] = useState<string>("test@test.com");
-  const [password, setPassword] = useState<string>("test123");
+  const [email, setEmail] = useState<string>();
+  const [password, setPassword] = useState<string>();
 
   const [loginUser, loggingIn, error] = useAsync(emailPasswordLogin);
 
   const login = () => {
-    loginUser({ email, password }).then(() => history.push("/admin"));
+    if (email && password)
+      loginUser({ email, password }).then(() => history.push("/admin"));
+    else {
+      window.alert("Please provide email and password to login")
+    }
   };
 
   return (
