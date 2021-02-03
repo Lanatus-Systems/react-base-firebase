@@ -19,7 +19,7 @@ interface Iprops {
 }
 
 const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
-  const { derive, deriveImage, localize } = useMultiLanguage();
+  const { derive, deriveImage, localize, i18n } = useMultiLanguage();
 
   const { roles } = useContext(AuthContext);
   const { isMobile } = useContext(LayoutContext);
@@ -80,8 +80,7 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
             border: "2px solid black",
           }}
         >
-          Package Term :{" "}
-          {value.term || "Not set (will be displayed on buy)"}
+          Package Term : {value.term || "Not set (will be displayed on buy)"}
           <TextEdit
             multiline
             title="Edit Package Term ( you can able see this line in list of order)"
@@ -233,7 +232,12 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
           justifyContent: "center",
         }}
       >
-        <PlainLink to={{ pathname: "/checkout", state: value }}>
+        <PlainLink
+          to={{
+            pathname: "/checkout",
+            state: { ...value, language: i18n.language },
+          }}
+        >
           <button
             onClick={() => {
               window.scrollTo(0, 0);

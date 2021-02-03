@@ -22,6 +22,7 @@ export interface MagazineInfo {
   type: "digital" | "print";
   price: number;
   startDate: Date;
+  language?: string;
   voucher?: string;
 }
 

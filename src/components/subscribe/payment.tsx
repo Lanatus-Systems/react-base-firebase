@@ -31,12 +31,9 @@ import Swal from "sweetalert2";
 // @ts-ignore: Unreachable code error
 const PayPalButton = window.paypal.Buttons.driver("react", { React, ReactDOM });
 
-const stripePromise = loadStripe(
-  "pk_test_51IG7i9KMh0PNh1FX735pRKEGUuSOnzdioqUM6aYv3d60KZfhj9HrglowqLdb4Plsvndp7P9JWImtSVZqLqLCMIML00QU8U6Y5h",
-  {
-    apiVersion: "2020-08-27",
-  }
-);
+const stripePromise = loadStripe("pk_live_21ddE3jYsoHBbJgWLFJ12ede00UaZzWDA7", {
+  apiVersion: "2020-08-27",
+});
 
 // const CheckoutForm = () => {
 //   const stripe = useStripe();
@@ -97,92 +94,134 @@ const stripePromise = loadStripe(
 //   );
 // };
 
-const CheckoutForm = () => {
+interface IstripeCheckout {
+  packageInfo: SubscriptionPackage;
+}
+
+const CheckoutForm = ({ packageInfo }: IstripeCheckout) => {
   const stripe = useStripe();
   const [paymentRequest, setPaymentRequest] = useState<PaymentRequest>();
+
+  const { derive } = useMultiLanguage();
 
   useEffect(() => {
     if (stripe) {
       const pr = stripe.paymentRequest({
-        country: "US",
-        currency: "usd",
+        country: "GB",
+        currency: "eur",
         total: {
-          label: "Demo total",
-          amount: 1099,
+          label: derive(packageInfo.title),
+          amount: Math.ceil(packageInfo.price * 100),
         },
-        requestPayerName: true,
-        requestPayerEmail: true,
+        // requestPayerName: true,
+        // requestPayerEmail: true,
       });
 
-      console.log({pr})
+      console.log({ pr });
 
       // Check the availability of the Payment Request API.
       pr.canMakePayment().then((result) => {
-        console.log({result})
+        console.log({ result });
         if (result) {
           setPaymentRequest(pr);
+
+          pr.on("paymentmethod", async (ev) => {
+            console.log({ ev });
+            // Confirm the PaymentIntent without handling potential next actions (yet).
+            // const {paymentIntent, error: confirmError} = await stripe.confirmCardPayment(
+            //   clientSecret,
+            //   {payment_method: ev.paymentMethod.id},
+            //   {handleActions: false}
+            // );
+
+            // if (confirmError) {
+            //   // Report to the browser that the payment failed, prompting it to
+            //   // re-show the payment interface, or show an error message and close
+            //   // the payment interface.
+            //   ev.complete('fail');
+            // } else {
+            //   // Report to the browser that the confirmation was successful, prompting
+            //   // it to close the browser payment method collection interface.
+            //   ev.complete('success');
+            //   // Check if the PaymentIntent requires any actions and if so let Stripe.js
+            //   // handle the flow. If using an API version older than "2019-02-11" instead
+            //   // instead check for: `paymentIntent.status === "requires_source_action"`.
+            //   if (paymentIntent.status === "requires_action") {
+            //     // Let Stripe.js handle the rest of the payment flow.
+            //     const {error} = await stripe.confirmCardPayment(clientSecret);
+            //     if (error) {
+            //       // The payment failed -- ask your customer for a new payment method.
+            //     } else {
+            //       // The payment has succeeded.
+            //     }
+            //   } else {
+            //     // The payment has succeeded.
+            //   }
+            // }
+          });
         }
       });
     }
-  }, [stripe]);
+  }, [derive, packageInfo.price, packageInfo.title, stripe]);
 
-  console.log({paymentRequest})
+  console.log({ paymentRequest });
   if (paymentRequest) {
     return <PaymentRequestButtonElement options={{ paymentRequest }} />;
   }
 
-  const handleSubmit = async (e: SyntheticEvent) => {
-    e.preventDefault();
-    // if (!stripe || !elements) {
-    //   // Stripe.js has not loaded yet. Make sure to disable
-    //   // form submission until Stripe.js has loaded.
-    //   return;
-    // }
+  // const handleSubmit = async (e: SyntheticEvent) => {
+  //   e.preventDefault();
+  // if (!stripe || !elements) {
+  //   // Stripe.js has not loaded yet. Make sure to disable
+  //   // form submission until Stripe.js has loaded.
+  //   return;
+  // }
 
-    // // Get a reference to a mounted CardElement. Elements knows how
-    // // to find your CardElement because there can only ever be one of
-    // // each type of element.
-    // const cardElement = elements.getElement(CardElement);
+  // // Get a reference to a mounted CardElement. Elements knows how
+  // // to find your CardElement because there can only ever be one of
+  // // each type of element.
+  // const cardElement = elements.getElement(CardElement);
 
-    // if (cardElement == null) {
-    //   return;
-    // }
+  // if (cardElement == null) {
+  //   return;
+  // }
 
-    // // Use your card Element with other Stripe.js APIs
-    // const { error, paymentMethod } = await stripe.createPaymentMethod({
-    //   type: "card",
-    //   card: cardElement,
-    // });
+  // // Use your card Element with other Stripe.js APIs
+  // const { error, paymentMethod } = await stripe.createPaymentMethod({
+  //   type: "card",
+  //   card: cardElement,
+  // });
 
-    // if (error) {
-    //   console.log("[error]", error);
-    // } else {
-    //   console.log("[PaymentMethod]", paymentMethod);
-    // }
-  };
+  // if (error) {
+  //   console.log("[error]", error);
+  // } else {
+  //   console.log("[PaymentMethod]", paymentMethod);
+  // }
+  // };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <CardElement
-        options={{
-          style: {
-            base: {
-              fontSize: "16px",
-              color: "#424770",
-              "::placeholder": {
-                color: "#aab7c4",
-              },
-            },
-            invalid: {
-              color: "#9e2146",
-            },
-          },
-        }}
-      />
-      <button type="submit" disabled={!stripe}>
-        Pay
-      </button>
-    </form>
+    <Loading />
+    // <form onSubmit={handleSubmit}>
+    //   <CardElement
+    //     options={{
+    //       style: {
+    //         base: {
+    //           fontSize: "16px",
+    //           color: "#424770",
+    //           "::placeholder": {
+    //             color: "#aab7c4",
+    //           },
+    //         },
+    //         invalid: {
+    //           color: "#9e2146",
+    //         },
+    //       },
+    //     }}
+    //   />
+    //   <button type="submit" disabled={!stripe}>
+    //     Pay
+    //   </button>
+    // </form>
   );
 };
 interface Iprops {
@@ -225,6 +264,7 @@ const PaymentComponent = ({
         term: packageInfo.term || "-",
         type: packageInfo.type || "digital",
         price: packageInfo.price || 0,
+        language: packageInfo.language,
         startDate: magazineDetails.startDate,
       },
       userDetails: userDetails,
@@ -307,18 +347,48 @@ const PaymentComponent = ({
           backgroundColor: "#fbfbfb",
         }}
       >
-        <div>
-          <PayPalButton
-            amount={packageInfo.price}
-            shippingPreference="NO_SHIPPING"
-            createOrder={createOrder}
-            onApprove={onApprove}
-          />
-        </div>
-        <div>
-          <Elements stripe={stripePromise}>
-            <CheckoutForm />
-          </Elements>
+        <div css={{ padding: 10 }}>
+          <div
+            css={{
+              marginTop: 10,
+              fontSize: 20,
+              fontWeight: "bold",
+              fontFamily: "'Montserrat', sans-serif",
+              color: "black",
+            }}
+          >
+            {isMobile ? <span css={{ marginLeft: 10 }} /> : ""}
+            PAYPAL
+          </div>
+          <div
+            css={{ marginTop: 5, padding: 10, borderTop: "4px solid black" }}
+          >
+            <PayPalButton
+              amount={packageInfo.price}
+              shippingPreference="NO_SHIPPING"
+              createOrder={createOrder}
+              onApprove={onApprove}
+            />
+          </div>
+          <div
+            css={{
+              marginTop: 10,
+              fontSize: 20,
+              fontWeight: "bold",
+              fontFamily: "'Montserrat', sans-serif",
+              color: "black",
+            }}
+          >
+            {isMobile ? <span css={{ marginLeft: 10 }} /> : ""}
+            STRIPE
+          </div>
+          <div
+            css={{ marginTop: 5, padding: 10, borderTop: "4px solid black" }}
+          >
+            <Elements stripe={stripePromise}>
+              <CheckoutForm packageInfo={packageInfo} />
+            </Elements>
+          </div>
         </div>
         {/* <div css={{ display: "flex", justifyContent: "flex-end", margin: 20 }}>
           <button
