@@ -45,7 +45,7 @@
     "no-caller": 2,
 
     // Disallow null comparisons without type-checking operators
-    "no-eq-null": 2,
+    "no-eq-null": 0,
 
     // Disallow the use of eval()
     "no-eval": 2,

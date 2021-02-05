@@ -12,6 +12,7 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import dayjs from "dayjs";
 import { DATE_FORMAT_INPUT_DATE } from "src/constants";
+import { ENGLISH, FRENCH } from "src/i18n/languages";
 
 interface Iprops {
   hide: () => void;
@@ -23,7 +24,7 @@ let countriesCache: string[];
 const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
   console.log({ order });
 
-  const isPrintVariant = order.package.type === "print";
+  const isPrintVariant = order.packageInfo.type === "print";
 
   const [countries, setCountries] = useState<string[]>([]);
 
@@ -136,23 +137,23 @@ const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
         <div css={{ marginTop: 5, padding: 10, borderTop: "4px solid black" }}>
           <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
             <div css={{ width: 200 }}>ID</div>
-            <div>{order.package.id}</div>
+            <div>{order.packageInfo.id}</div>
           </div>
           <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
             <div css={{ width: 200 }}>Subscription Term</div>
-            <div>{order.package.term}</div>
+            <div>{order.packageInfo.term}</div>
           </div>
           <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
             <div css={{ width: 200 }}>Subscription Type</div>
-            <div>{order.package.type}</div>
+            <div>{order.packageInfo.type}</div>
           </div>
           <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
             <div css={{ width: 200 }}>Price (€)</div>
-            <div>{order.package.price}</div>
+            <div>{order.packageInfo.price}</div>
           </div>
           <div css={{ display: "flex", flexWrap: "wrap", margin: 5 }}>
             <div css={{ width: 200 }}>Chosen Start Option</div>
-            <div>{order.package.startDate}</div>
+            <div>{order.packageInfo.startDate}</div>
           </div>
         </div>
         <div css={{ margin: 10 }}>Provide Duration</div>
@@ -163,7 +164,8 @@ const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
               initialValues={
                 order.startDate && order.endDate
                   ? {
-                      mbockyId : order.mbockyId || "",
+                      mbockyId: order.mbockyId || "",
+                      language: order.packageInfo.language,
                       startDate: dayjs(order.startDate).format(
                         DATE_FORMAT_INPUT_DATE
                       ),
@@ -171,7 +173,10 @@ const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
                         DATE_FORMAT_INPUT_DATE
                       ),
                     }
-                  : {}
+                  : {
+                      mbockyId: order.mbockyId || "",
+                      language: order.packageInfo.language,
+                    }
               }
               validationSchema={Yup.object().shape({
                 mbockyId: Yup.string().required("required"),
@@ -208,6 +213,15 @@ const OrderUpdateModal = ({ hide, title, order, onOk }: Iprops) => {
                       confirm={false}
                       type="date"
                     />
+                    <FormField
+                      label="Language"
+                      as="select"
+                      name="language"
+                      required
+                    >
+                      <option value={ENGLISH}>English</option>
+                      <option value={FRENCH}>French</option>
+                    </FormField>
                   </Form>
                 );
               }}

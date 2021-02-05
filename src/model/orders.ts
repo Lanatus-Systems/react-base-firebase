@@ -32,7 +32,7 @@ export interface MagazineInfo {
 export interface OrderRequest {
   id?: string;
   orderDate: Date;
-  package: MagazineInfo;
+  packageInfo: MagazineInfo;
   userDetails: UserDetails;
   userAddress: UserAddress;
   billingDetails?: UserDetails;

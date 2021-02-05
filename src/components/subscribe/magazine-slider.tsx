@@ -44,7 +44,7 @@ const MagazineSlider = ({ slides, updateSlides }: Iprops) => {
       >
         {slides.map((image, index) => {
           return (
-            <div>
+            <div key={index}>
               <div>
                 <div
                   key={index}

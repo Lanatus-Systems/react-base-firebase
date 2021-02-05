@@ -10,6 +10,7 @@ export interface SubscriptionPackage {
   priceOffer: MultiLanguage;
   price: number;
   language?: string;
+  availability?: MultiLanguage;
 }
 
 export interface AppPage {

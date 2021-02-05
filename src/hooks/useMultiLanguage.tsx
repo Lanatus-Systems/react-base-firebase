@@ -7,7 +7,7 @@ const useMultiLanguage = () => {
   const { i18n, t } = useTranslation("phrases");
 
   const derive = useCallback(
-    (value: MultiLanguage): string => {
+    (value?: MultiLanguage): string => {
       if (value == null) return "-";
       return value[i18n.language] || "-";
     },

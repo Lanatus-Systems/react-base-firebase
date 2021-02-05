@@ -24,6 +24,12 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
   const { roles } = useContext(AuthContext);
   const { isMobile } = useContext(LayoutContext);
 
+  console.log({ value });
+
+  const availabilityText = derive(value.availability).trim();
+
+  const isAvailable = availabilityText === "-";
+
   return (
     <div
       css={{
@@ -40,7 +46,7 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
       {roles.admin && (
         <button
           onClick={() => {
-            window.confirm("Are you sure you want to remove package?") &&
+            window.confirm("Are you sure you want to remove packageInfo?") &&
               onRemove();
           }}
         >
@@ -223,6 +229,41 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
         </div>
       )}
 
+      {roles.admin && (
+        <div
+          css={{
+            position: "relative",
+            paddingTop: 10,
+            height: 30,
+            width: 200,
+            textAlign: "center",
+            fontWeight: "bold",
+            border: "2px solid black",
+          }}
+        >
+          {isAvailable ? (
+            <div>
+              Make Unavailable
+              <MultiLangTextEdit
+                title="Unavailability Text (Ex, Out of Stock or Coming Soon )"
+                value={value.availability || {}}
+                onChange={(updated) =>
+                  onChange({ ...value, availability: updated })
+                }
+              />
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                onChange({ ...value, availability: {} });
+              }}
+            >
+              Make Available
+            </button>
+          )}
+        </div>
+      )}
+
       <div
         style={{
           width: "100%",
@@ -249,11 +290,14 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
               color: "white",
               fontWeight: "bolder",
               fontFamily: "'Montserrat', sans-serif",
-              backgroundColor: "#c00000",
-              cursor: "pointer",
+              backgroundColor: isAvailable ? "#c00000" : "#999999",
+              cursor: isAvailable ? "pointer" : "auto",
             }}
+            disabled={!isAvailable}
           >
-            {localize("start-now").toLocaleUpperCase()}
+            {isAvailable
+              ? localize("start-now").toLocaleUpperCase()
+              : availabilityText}
           </button>
         </PlainLink>
       </div>

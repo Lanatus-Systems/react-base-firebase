@@ -8,6 +8,7 @@ import { ACTIVE_ORDERS } from "src/api/collections";
 import OrderUpdateModal from "./order-update-modal";
 import dayjs from "dayjs";
 import { ADMIN_DATE_FORMAT_UI, ADMIN_DATE_TIME_FORMAT_UI } from "src/constants";
+import { ENGLISH } from "src/i18n/languages";
 
 const defaultFrom = dayjs()
   .startOf("day")
@@ -165,6 +166,7 @@ const ManageOrders = () => {
             <th>Order Date</th>
             <th>Order ID</th>
             <th>Variant</th>
+            <th>Language</th>
             <th>Start Date</th>
             <th>End Date</th>
             <th />
@@ -180,7 +182,12 @@ const ManageOrders = () => {
                     {dayjs(item.orderDate).format(ADMIN_DATE_TIME_FORMAT_UI)}
                   </td>
                   <td>{item.id}</td>
-                  <td>{item.package.type}</td>
+                  <td>{item.packageInfo.type}</td>
+                  <td>
+                    {item.packageInfo.language === ENGLISH
+                      ? "English"
+                      : "French"}
+                  </td>
                   <td>{dayjs(item.startDate).format(ADMIN_DATE_FORMAT_UI)}</td>
                   <td>{dayjs(item.endDate).format(ADMIN_DATE_FORMAT_UI)}</td>
                   <td>

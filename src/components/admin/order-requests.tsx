@@ -79,7 +79,7 @@ const OrderRequests = () => {
                     {dayjs(item.orderDate).format(ADMIN_DATE_TIME_FORMAT_UI)}
                   </td>
                   <td>{item.id}</td>
-                  <td>{item.package.type}</td>
+                  <td>{item.packageInfo.type}</td>
                   <td>
                     <button
                       onClick={() => {
