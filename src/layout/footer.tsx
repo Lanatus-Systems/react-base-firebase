@@ -14,7 +14,7 @@ const Footer = () => {
     <div
       css={{
         display: "flex",
-        height: 400,
+        height: 350,
         backgroundColor: "rgb(45, 46, 47)",
         justifyContent: "space-around",
         flexDirection: "column",
@@ -23,7 +23,7 @@ const Footer = () => {
       }}
     >
       <div css={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
-        <div css={{ width: 300 }}>
+        <div css={{ width: 150, padding: 10 }}>
           <SocialMediaLinks
             facebook={derive({
               [ENGLISH]: "https://www.facebook.com/MBOCKYEnglisch",
@@ -34,7 +34,18 @@ const Footer = () => {
         </div>
       </div>
       <img src={Logo} alt="Not Available" width="300px" height="150px" />
-      <div>© 2021 prakash dudhat</div>
+      <div css={{ flexGrow: 1 }} />
+      <div>
+        © 2021{" "}
+        <a
+          css={{ color: "unset" }}
+          href="https://www.fiverr.com/prakashd1998"
+          target="_blank"
+          rel="noreferrer"
+        >
+          prakash dudhat
+        </a>
+      </div>
       <div
         css={{
           display: "flex",
@@ -42,9 +53,19 @@ const Footer = () => {
           width: "100%",
         }}
       >
-        <div></div>
+        <div css={{ margin: 5 }}>
+          design inspired by{" "}
+          <a
+            css={{ color: "unset" }}
+            href="https://www.vogue.co.uk"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Vogue
+          </a>
+        </div>
 
-        <div css={{ margin: 10 }}>
+        <div css={{ margin: 5 }}>
           {user == null && (
             <PlainLink to="/login" onClick={() => window.scrollTo(0, 0)}>
               Login
@@ -52,10 +73,10 @@ const Footer = () => {
           )}
         </div>
         {(roles.admin || roles.editor) && (
-          <div css={{ padding: 10 }}>
+          <div css={{ padding: 5 }}>
             <div css={{ display: "flex" }}>
               {roles.admin && (
-                <PlainLink to="/admin" css={{ margin: 10 }}>
+                <PlainLink to="/admin" css={{ margin: 5 }}>
                   Admin Zone
                 </PlainLink>
               )}

@@ -112,7 +112,7 @@ const ArticleGroup = ({
           >
             {articles.map((article, index) => {
               return (
-                <div css={{ width: isMobile ? "100vw" : "22vw" }}>
+                <div key={index} css={{ width: isMobile ? "100vw" : "22vw" }}>
                   <div
                     css={{
                       borderBottom: isMobile ? "1px solid lightgrey" : "",

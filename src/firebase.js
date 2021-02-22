@@ -15,7 +15,7 @@ const envConfig = {
   measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
-console.log({ envConfig });
+// console.log({ envConfig });
 
 // ignoring to use firebase config
 // eslint-disable-next-line no-undef
