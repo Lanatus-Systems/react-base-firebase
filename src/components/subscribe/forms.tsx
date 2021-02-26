@@ -11,15 +11,8 @@ const StyledField = styled(Field)`
   background: #ffffff;
   margin: 5px 0 6px;
   padding: 5px;
-  width: ${(props) =>
-    props.isMobile
-      ? props.as === "select"
-        ? "98%"
-        : "95%"
-      : props.as === "select"
-      ? "262px"
-      : "250px"};
-  height: ${(props) => (props.as === "select" ? "42px" : "32px")};
+  width: ${(props) => (props.isMobile ? "98%" : "250px")};
+  height: 32px;
 `;
 
 interface IfieldProps {

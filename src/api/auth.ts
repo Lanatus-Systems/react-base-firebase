@@ -8,6 +8,6 @@ export const getUserRoles = (email: string): Promise<Roles> => {
     .doc(email)
     .get()
     .then((val) => {
-      return val.data() as Roles;
+      return (val.data() || {}) as Roles;
     });
 };

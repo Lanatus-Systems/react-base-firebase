@@ -8,7 +8,6 @@ import { useContext } from "react";
 import Subscribe from "src/components/subscribe";
 import Checkout from "src/components/subscribe/checkout";
 import AdminZone from "src/components/admin/adminZone";
-import LoginPage from "src/components/login";
 
 const Content = () => {
   const { isMobile, isHeaderHidden } = useContext(LayoutContext);
@@ -23,7 +22,6 @@ const Content = () => {
     >
       <Route exact path="/admin" component={AdminZone} />
       <Route exact path="/admin/:menu" component={AdminZone} />
-      <Route exact path="/login" component={LoginPage} />
       <Route exact path="/subscribe" component={Subscribe} />
       <Route exact path="/checkout" component={Checkout} />
 

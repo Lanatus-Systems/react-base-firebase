@@ -1,7 +1,6 @@
 import { CSSProperties, ReactNode } from "react";
-import ReactModal from "react-modal";
-
-ReactModal.setAppElement("#root");
+import { Dialog } from "primereact/dialog";
+import { Button } from "primereact/button";
 
 interface Iprops {
   title: string;
@@ -20,53 +19,34 @@ const Modal = ({
   onClose,
   onOk,
   width = "50vw",
-  header = (
-    <div style={{ padding: 5, borderBottom: "1px solid lightgrey" }}>
-      {title}
-    </div>
-  ),
   footer = (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "flex-end",
-        padding: 5,
-        borderTop: "1px solid lightgrey",
-      }}
-    >
-      <button style={{ marginRight: 10 }} onClick={onClose}>
-        Close
-      </button>
-      {onOk && <button onClick={onOk}>Save</button>}
+    <div>
+      <Button
+        label="Close"
+        icon="pi pi-times"
+        onClick={onClose}
+        className="p-button-text"
+      />
+      {onOk && (
+        <Button label="Save" icon="pi pi-check" onClick={onOk} autoFocus />
+      )}
     </div>
   ),
   children,
+  ...rest
 }: Iprops) => {
   return (
-    <ReactModal
-      isOpen
-      style={{
-        content: {
-          zIndex: 10,
-          height: "fit-content",
-          padding: 10,
-          inset: "unset",
-          minWidth: width,
-        },
-        overlay: {
-          zIndex: 9,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        },
-      }}
-      onRequestClose={onClose}
-      contentLabel={title}
+    <Dialog
+      appendTo={document.body}
+      header={title}
+      visible
+      style={{ width: width }}
+      footer={footer}
+      onHide={onClose}
+      {...rest}
     >
-      {header}
-      <div style={{ padding: 8, ...contentStyle }}>{children}</div>
-      {footer}
-    </ReactModal>
+      {children}
+    </Dialog>
   );
 };
 

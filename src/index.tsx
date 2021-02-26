@@ -16,6 +16,10 @@ import "react-quill/dist/quill.core.css";
 import "react-quill/dist/quill.snow.css";
 import "src/style-utils/styles/quill-styles-overrides.css";
 
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+
 const ReactApp = () => {
   return (
     <React.StrictMode>

@@ -3,6 +3,8 @@ import { Modal } from "src/base";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
+import { SelectButton } from "primereact/selectbutton";
+
 import { v4 } from "uuid";
 import TextEdit from "./TextEdit";
 import { MultiLanguage } from "src/model/common";
@@ -43,10 +45,15 @@ const ImageEditModal = ({ title, type, value, onChange, hide }: Iprops) => {
       }}
     >
       <div>
-        <button onClick={() => setActiveTab(ENGLISH)}>English</button>
-        <button onClick={() => setActiveTab(FRENCH)}>French</button>
+        <SelectButton
+          value={activeTab}
+          options={[
+            { value: ENGLISH, label: "English" },
+            { value: FRENCH, label: "French" },
+          ]}
+          onChange={(e) => setActiveTab(e.value)}
+        />
         <div>
-          Provide Image for : {activeTab === ENGLISH ? "English" : "French"}
           (If you won't provide image for French then it'll show English Image ,
           so if you want to use use same image then just provide English image
           only)

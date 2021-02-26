@@ -42,7 +42,7 @@ export const ContentEditor = ({ value, onChange }: IeditorProps) => {
     <ReactQuill
       // set the ref to access to quill editor
       ref={ref}
-      style={{ height: 300, marginBottom: isMobile ? 120 : 80 }}
+      style={{ height: 300, marginBottom: isMobile ? 120 : 50 }}
       placeholder="Enter content here..."
       value={value}
       onChange={onChange}

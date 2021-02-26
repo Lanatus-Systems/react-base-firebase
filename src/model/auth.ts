@@ -4,7 +4,8 @@ export interface Roles {
 }
 
 export interface AppUser {
-  id: string;
+  uid: string;
   email: string;
-  editor: boolean;
+  photoURL: string;
+  displayName?: string;
 }

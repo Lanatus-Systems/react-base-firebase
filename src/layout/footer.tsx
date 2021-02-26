@@ -9,7 +9,7 @@ import { ENGLISH, FRENCH } from "src/i18n/languages";
 
 const Footer = () => {
   const { derive } = useMultiLanguage();
-  const { user, roles, logout } = useContext(AuthContext);
+  const { user, roles } = useContext(AuthContext);
   return (
     <div
       css={{
@@ -65,14 +65,7 @@ const Footer = () => {
           </a>
         </div>
 
-        <div css={{ margin: 5 }}>
-          {user == null && (
-            <PlainLink to="/login" onClick={() => window.scrollTo(0, 0)}>
-              Login
-            </PlainLink>
-          )}
-        </div>
-        {(roles.admin || roles.editor) && (
+        {user != null && (
           <div css={{ padding: 5 }}>
             <div css={{ display: "flex" }}>
               {roles.admin && (
@@ -80,7 +73,6 @@ const Footer = () => {
                   Admin Zone
                 </PlainLink>
               )}
-              <button onClick={() => logout()}>Logout</button>
             </div>
           </div>
         )}

@@ -26,6 +26,9 @@ const config = indexHtmlConfig || envConfig;
 const firebaseApp = firebase.initializeApp(config);
 
 export const firebaseAuth = firebaseApp.auth();
+export const firebaseGoogleSignInProvider = new firebase.auth.GoogleAuthProvider();
+export const firebaseFacebookSignInProvider = new firebase.auth.FacebookAuthProvider();
+
 export const firestore = firebaseApp.firestore();
 export const firebaseStorage = firebaseApp.storage();
 
@@ -49,7 +52,7 @@ export default firebaseApp;
 //   .collection(APP_PAGES)
 //   // .orderBy("order")
 //   .get()
-//   .then((querySnapshot) => {    
+//   .then((querySnapshot) => {
 //     const list = querySnapshot.docs.map((doc) => {
 //       const value = doc.data();
 

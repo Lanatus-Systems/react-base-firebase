@@ -1,3 +1,4 @@
+import { SelectButton } from "primereact/selectbutton";
 import { useState } from "react";
 import { Modal } from "src/base";
 import { ENGLISH, FRENCH } from "src/i18n/languages";
@@ -45,11 +46,14 @@ const EditableInputModal = ({
     >
       {rich && (
         <div>
-          <button onClick={() => setActiveTab(ENGLISH)}>English</button>
-          <button onClick={() => setActiveTab(FRENCH)}>French</button>
-          <div>
-            Provide Text in Language : {activeTab === ENGLISH ? "English" : "French"}
-          </div>
+          <SelectButton
+            value={activeTab}
+            options={[
+              { value: ENGLISH, label: "English" },
+              { value: FRENCH, label: "French" },
+            ]}
+            onChange={(e) => setActiveTab(e.value)}
+          />
         </div>
       )}
       {!rich && <div>English</div>}
