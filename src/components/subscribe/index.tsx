@@ -10,7 +10,7 @@ import Loading from "../../base/Loading";
 import TextPlaceholder from "../text-placeholder";
 import MultiLangTextEdit from "../editables/MultiLangTextEdit";
 import parseQuillHtml from "src/utils/quill-parser";
-import { uploadImage } from "src/api/storage";
+import { uploadImage, uploadPdf } from "src/api/storage";
 import { mapImageToPromise } from "../articles/article-content";
 import SubscribePackage from "./subscribe-package";
 
@@ -27,6 +27,7 @@ const Subscribe = () => {
   const [saveSubscriptionPageData, saving] = useAsync(api.savePageData);
 
   const [uploadImageData, uploadingImg] = useAsync(uploadImage);
+  const [uploadPdfData, uploadingPdf] = useAsync(uploadPdf);
 
   useEffect(() => {
     api.getSubscribePageData().then(setPageData);
@@ -35,16 +36,27 @@ const Subscribe = () => {
   console.log({ pageData });
   const saveData = () => {
     if (pageData != null) {
-      const uploadedPackages = Promise.all(
+      const uploadedImages = Promise.all(
         pageData.packages
           .map((pkg) => pkg.image)
           .map((image) => image && mapImageToPromise(image, uploadImageData))
-      ).then((urls) => {
-        return pageData.packages.map((item, index) => ({
-          ...item,
-          image: urls[index] || {},
-        }));
-      });
+      );
+
+      const uploadedPdfs = Promise.all(
+        pageData.packages
+          .map((pkg) => pkg.pdf)
+          .map((pdf) => pdf && mapImageToPromise(pdf, uploadPdfData))
+      );
+
+      const uploadedPackages = Promise.all([uploadedImages, uploadedPdfs]).then(
+        ([imgUrls, pdfUrls]) => {
+          return pageData.packages.map((item, index) => ({
+            ...item,
+            image: imgUrls[index] || {},
+            pdf: pdfUrls[index] || {},
+          }));
+        }
+      );
 
       const uploadedSlides = Promise.all(
         pageData.sliderImages.map(
@@ -53,6 +65,17 @@ const Subscribe = () => {
       ).then((urls) => {
         return pageData.sliderImages.map((item, index) => urls[index]);
       });
+
+      // const uploadedPdfs = Promise.all(
+      //   pageData.packages
+      //     .map((pkg) => pkg.pdf)
+      //     .map((pdf) => pdf && mapImageToPromise(pdf, uploadPdfData))
+      // ).then((urls) => {
+      //   return pageData.packages.map((item, index) => ({
+      //     ...item,
+      //     pdf: urls[index] || {},
+      //   }));
+      // });
 
       Promise.all([
         mapImageToPromise(pageData.subHeadCoverImage, uploadImageData),
@@ -231,7 +254,7 @@ const Subscribe = () => {
       </div>
       {roles.admin && (
         <div style={{ margin: 20 }}>
-          {saving || uploadingImg ? (
+          {saving || uploadingImg || uploadingPdf ? (
             "Saving...."
           ) : (
             <button onClick={saveData}>Save</button>

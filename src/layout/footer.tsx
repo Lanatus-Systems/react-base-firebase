@@ -33,7 +33,9 @@ const Footer = () => {
           />
         </div>
       </div>
-      <img src={Logo} alt="Not Available" width="300px" height="150px" />
+      <PlainLink to="/">
+        <img src={Logo} alt="Not Available" width="300px" height="150px" />
+      </PlainLink>
       <div css={{ flexGrow: 1 }} />
       <div>
         © 2021{" "}

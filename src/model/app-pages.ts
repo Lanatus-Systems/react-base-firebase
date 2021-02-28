@@ -11,6 +11,7 @@ export interface SubscriptionPackage {
   price: number;
   language?: string;
   availability?: MultiLanguage;
+  pdf?: MultiLanguage;
 }
 
 export interface AppPage {

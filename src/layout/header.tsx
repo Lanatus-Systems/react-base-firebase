@@ -65,6 +65,16 @@ const Header = () => {
       },
     },
     {
+      label: "My Magazines",
+      command: () => {
+        history.push("/my-magazines");
+      },
+      style: {
+        fontFamily: "'Montserrat', sans-serif",
+        fontWeight: 600,
+      },
+    },
+    {
       label: "Logout",
       command: () => {
         logout();

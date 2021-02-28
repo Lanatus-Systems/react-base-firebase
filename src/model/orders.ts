@@ -22,6 +22,9 @@ export interface MagazineInfo {
   type: "digital" | "print";
   price: number;
   startDate: Date;
+  image?: string;
+  pdf?: string;
+  priceOffer?: string;
   language?: string;
   voucher?: string;
 }
@@ -44,4 +47,15 @@ export interface ActiveOrder extends OrderRequest {
   mbockyId: string;
   startDate: Date;
   endDate: Date;
+}
+
+export interface UserMagazine {
+  id?: string;
+  orderId: string;
+  email: string;
+  pdf: string;
+  image: string;
+  price: number;
+  term: string;
+  priceOffer: string;
 }

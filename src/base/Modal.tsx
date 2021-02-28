@@ -3,7 +3,7 @@ import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 
 interface Iprops {
-  title: string;
+  title?: string;
   children: ReactNode;
   header?: ReactNode;
   footer?: ReactNode;

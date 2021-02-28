@@ -17,7 +17,7 @@ interface Iprops {
 
 const getIsMobile = () => window.innerWidth < 700;
 
-export const hiddenHeaderRoutes = ["/checkout"];
+export const hiddenHeaderRoutes = ["/checkout", "/pdf-view"];
 
 export const LayoutContextProvider = ({ children }: Iprops) => {
   const [isMobile, setIsMobile] = useState<boolean>(getIsMobile());

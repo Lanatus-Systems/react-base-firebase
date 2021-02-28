@@ -3,6 +3,7 @@ import { useMultiLanguage } from "src/hooks";
 import MultiLangTextEdit from "../editables/MultiLangTextEdit";
 
 import ImageEdit from "../editables/ImageEdit";
+import FileEdit from "../editables/FileEdit";
 import ImagePlaceholder from "../image-placeholder";
 import TextPlaceholder from "../text-placeholder";
 import { useContext } from "react";
@@ -160,6 +161,27 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
           onChange={(url) => onChange({ ...value, image: url })}
         />
       </div>
+      {roles.admin && (
+        <div
+          css={{
+            position: "relative",
+            height: 30,
+            width: "80%",
+            textAlign: "center",
+            fontWeight: "bold",
+            border: "2px solid black",
+          }}
+        >
+          Magazine Pdf : {value.pdf ? "Available" : "Not provided"}
+          <FileEdit
+            css={{ position: "absolute", right: 10, cursor: "pointer" }}
+            title="Edit pdf"
+            value={value.pdf || {}}
+            onChange={(url) => onChange({ ...value, pdf: url })}
+            accept="application/pdf"
+          />
+        </div>
+      )}
 
       <div
         css={{

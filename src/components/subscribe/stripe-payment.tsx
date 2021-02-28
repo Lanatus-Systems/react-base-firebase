@@ -19,7 +19,6 @@ const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUB_KEY || "-", {
 
 interface IstripeButton {
   orderRequest: OrderRequest;
-  showSuccess: (id: string) => void;
   showError: (msg: string) => void;
   submitData: (transaction: any) => void;
 }
@@ -51,7 +50,6 @@ const getStripeClientSecret = async (
 
 const SmartButton = ({
   orderRequest,
-  showSuccess,
   showError,
   submitData,
 }: IstripeButton) => {
@@ -133,14 +131,12 @@ const SmartButton = ({
                   console.log({ error });
                   // The payment failed -- ask your customer for a new payment method.
                 } else {
-                  // showSuccess(paymentIntent.id)
                   submitData(paymentIntent);
                   console.log("payment success");
                   // The payment has succeeded.
                 }
               } else {
                 submitData(paymentIntent);
-                // showSuccess(paymentIntent.id);
                 console.log("payment success");
                 // The payment has succeeded.
               }
@@ -155,7 +151,6 @@ const SmartButton = ({
     orderTerm,
     paymentFailMessage,
     showError,
-    showSuccess,
     stripe,
     submitData,
   ]);
@@ -188,7 +183,6 @@ const SmartButton = ({
 
 const CheckoutForm = ({
   orderRequest,
-  showSuccess,
   showError,
   submitData,
 }: IstripeButton) => {
@@ -306,13 +300,11 @@ const CheckoutForm = ({
               // The payment failed -- ask your customer for a new payment method.
             } else {
               submitData(paymentIntent);
-              // showSuccess(paymentIntent.id);
               console.log("payment success");
               // The payment has succeeded.
             }
           } else {
             submitData(paymentIntent);
-            // showSuccess(paymentIntent.id);
             console.log("payment success");
             // The payment has succeeded.
           }

@@ -1,6 +1,6 @@
 import { firestore } from "src/firebase";
-import { OrderRequest, ActiveOrder } from "src/model/orders";
-import { ACTIVE_ORDERS, ORDER_REQUESTS } from "./collections";
+import { OrderRequest, ActiveOrder, UserMagazine } from "src/model/orders";
+import { ACTIVE_ORDERS, ORDER_REQUESTS, USER_MAGAZINE } from "./collections";
 
 const lastDocMap: Record<string, unknown> = {};
 export const resetPagingFor = (collectionName: string) => {
@@ -25,7 +25,7 @@ export const getPendingOrderRequests = (pageSize: number) => {
         id: doc.id,
         ...value,
         ...(value.orderDate ? { orderDate: value.orderDate.toDate() } : {}),
-        packageInfo : value.packageInfo || value.package
+        packageInfo: value.packageInfo || value.package,
       } as OrderRequest;
     });
     return list;
@@ -38,6 +38,27 @@ export const addOrderRequest = (item: OrderRequest) => {
 
 export const removeOrderRequest = (item: OrderRequest) => {
   return firestore.collection(ORDER_REQUESTS).doc(item.id).delete();
+};
+
+export const addMagazinePdfAccess = (userMagazine: UserMagazine) => {
+  return firestore.collection(USER_MAGAZINE).add(userMagazine);
+};
+
+export const getUserMagazines = (email: string) => {
+  return firestore
+    .collection(USER_MAGAZINE)
+    .where("email", "==", email)
+    .get()
+    .then((querySnapshot) => {
+      const list = querySnapshot.docs.map((doc) => {
+        const value = doc.data();
+        return {
+          id: doc.id,
+          ...value,
+        } as UserMagazine;
+      });
+      return list;
+    });
 };
 
 interface IorderRequestCriteria {
@@ -88,7 +109,7 @@ export const getOrderDetails = ({
         ...(value.orderDate ? { orderDate: value.orderDate.toDate() } : {}),
         ...(value.startDate ? { startDate: value.startDate.toDate() } : {}),
         ...(value.endDate ? { endDate: value.endDate.toDate() } : {}),
-        packageInfo : value.packageInfo || value.package
+        packageInfo: value.packageInfo || value.package,
       } as ActiveOrder;
     });
     return list;

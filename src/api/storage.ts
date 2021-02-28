@@ -4,10 +4,20 @@ import { v4 } from "uuid";
 // import { compressImageFile } from "src/components/editables/ImageEditModal";
 
 const IMAGE_DIRECTORY = "magazine";
+const PDF_DIRECTORY = "pdf";
 
 export const uploadImage = (file: Blob): Promise<string> => {
   return firebaseStorage
     .ref(`${IMAGE_DIRECTORY}/${v4()}`)
+    .put(file)
+    .then((item) => {
+      return firebaseStorage.ref(item.metadata.fullPath).getDownloadURL();
+    });
+};
+
+export const uploadPdf = (file: Blob): Promise<string> => {
+  return firebaseStorage
+    .ref(`${PDF_DIRECTORY}/${v4()}`)
     .put(file)
     .then((item) => {
       return firebaseStorage.ref(item.metadata.fullPath).getDownloadURL();

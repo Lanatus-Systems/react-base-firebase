@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useCallback, useContext, useMemo } from "react";
-import { LayoutContext } from "src/context";
+import { AuthContext, LayoutContext } from "src/context";
 import { useAsync, useMultiLanguage } from "src/hooks";
 import { SubscriptionPackage } from "src/model/app-pages";
 import {
@@ -8,6 +8,7 @@ import {
   OrderRequest,
   UserAddress,
   UserDetails,
+  UserMagazine,
 } from "src/model/orders";
 import * as api from "src/api/orders";
 import Loading from "src/base/Loading";
@@ -18,6 +19,7 @@ import ReactDOM from "react-dom";
 
 import Swal from "sweetalert2";
 import StripePaymentButtons from "./stripe-payment";
+import { ENGLISH } from "src/i18n/languages";
 
 // ignoring to use paypal
 // @ts-ignore: Unreachable code error
@@ -47,7 +49,12 @@ const PaymentComponent = ({
 
   const history = useHistory();
 
+  const { user } = useContext(AuthContext);
+
   const [addOrderRequest, adding] = useAsync(api.addOrderRequest);
+  const [addMagazinePdfAccess, addingPdfAccess] = useAsync(
+    api.addMagazinePdfAccess
+  );
 
   //   console.log({
   //     packageInfo,
@@ -59,14 +66,18 @@ const PaymentComponent = ({
   //   });
 
   const orderRequest = useMemo(() => {
+    const language = packageInfo.language || ENGLISH;
     return {
       packageInfo: {
         id: packageInfo.id || "-",
         term: packageInfo.term || "-",
         type: packageInfo.type || "digital",
         price: packageInfo.price || 0,
-        language: packageInfo.language,
+        language: language,
         startDate: magazineDetails && magazineDetails.startDate,
+        image: packageInfo.image && packageInfo.image[language],
+        pdf: packageInfo.pdf && packageInfo.pdf[language],
+        priceOffer: packageInfo.priceOffer && packageInfo.priceOffer[language],
       },
       userDetails: userDetails,
       ...(userAddress ? { userAddress } : {}),
@@ -79,11 +90,7 @@ const PaymentComponent = ({
     billingAddress,
     billingDetails,
     magazineDetails,
-    packageInfo.id,
-    packageInfo.language,
-    packageInfo.price,
-    packageInfo.term,
-    packageInfo.type,
+    packageInfo,
     userAddress,
     userDetails,
   ]);
@@ -107,7 +114,7 @@ const PaymentComponent = ({
         html: details,
         footer: footer,
       }).then(() => {
-        history.push("/subscribe");
+        history.push("/my-magazines");
       });
     },
     [history, localize]
@@ -129,10 +136,21 @@ const PaymentComponent = ({
       console.log({ finalOrder });
       addOrderRequest(finalOrder).then((data) => {
         console.log({ data });
-        showSuccess(data.id);
+        const orderId = data.id;
+        addMagazinePdfAccess({
+          orderId,
+          email: user?.email,
+          pdf: orderRequest.packageInfo.pdf,
+          image: orderRequest.packageInfo.image,
+          price: orderRequest.packageInfo.price,
+          term: orderRequest.packageInfo.term,
+          priceOffer: orderRequest.packageInfo.priceOffer,
+        } as UserMagazine).then(() => {
+          showSuccess(orderId);
+        });
       });
     },
-    [addOrderRequest, orderRequest, showSuccess]
+    [addMagazinePdfAccess, addOrderRequest, orderRequest, showSuccess, user]
   );
 
   const createOrder = (data: any, actions: any) => {
@@ -162,7 +180,7 @@ const PaymentComponent = ({
 
   return (
     <div>
-      {adding && <Loading />}
+      {adding && addingPdfAccess && <Loading />}
       <div
         css={{
           marginTop: 10,
@@ -223,32 +241,31 @@ const PaymentComponent = ({
           >
             <StripePaymentButtons
               orderRequest={orderRequest}
-              showSuccess={showSuccess}
               showError={showError}
               submitData={submitData}
             />
           </div>
         </div>
-        {/* <div css={{ display: "flex", justifyContent: "flex-end", margin: 20 }}>
+        <div css={{ display: "flex", justifyContent: "flex-end", margin: 20 }}>
           <button
-            css={css`
-              color: #fff;
-              font-size: 17px;
-              border-radius: 6px;
-              text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.25);
-              background: #333 none repeat scroll 0% 0%;
-              font-weight: bold;
-              font-family: "'Montserrat', sans-serif";
-              padding: 10px 20px;
-              cursor: pointer;
-            `}
+            // css={css`
+            //   color: #fff;
+            //   font-size: 17px;
+            //   border-radius: 6px;
+            //   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.25);
+            //   background: #333 none repeat scroll 0% 0%;
+            //   font-weight: bold;
+            //   font-family: "'Montserrat', sans-serif";
+            //   padding: 10px 20px;
+            //   cursor: pointer;
+            // `}
             onClick={() => {
               submitData();
             }}
           >
             {localize("complete")}
           </button>
-        </div> */}
+        </div>
       </div>
     </div>
   );
