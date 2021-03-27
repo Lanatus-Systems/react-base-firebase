@@ -12,6 +12,7 @@ import parseQuillHtml from "src/utils/quill-parser";
 import { SubscriptionPackage } from "src/model/app-pages";
 import TextEdit from "../editables/TextEdit";
 import { PlainLink } from "src/base";
+import { ENGLISH } from "src/i18n/languages";
 
 interface Iprops {
   value: SubscriptionPackage;
@@ -172,7 +173,8 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
             border: "2px solid black",
           }}
         >
-          Magazine Pdf : {value.pdf ? "Available" : "Not provided"}
+          Magazine Pdf :{" "}
+          {value.pdf && value.pdf[ENGLISH] ? "Available" : "Not provided"}
           <FileEdit
             css={{ position: "absolute", right: 10, cursor: "pointer" }}
             title="Edit pdf"

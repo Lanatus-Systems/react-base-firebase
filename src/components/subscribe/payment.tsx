@@ -137,17 +137,21 @@ const PaymentComponent = ({
       addOrderRequest(finalOrder).then((data) => {
         console.log({ data });
         const orderId = data.id;
-        addMagazinePdfAccess({
-          orderId,
-          email: user?.email,
-          pdf: orderRequest.packageInfo.pdf,
-          image: orderRequest.packageInfo.image,
-          price: orderRequest.packageInfo.price,
-          term: orderRequest.packageInfo.term,
-          priceOffer: orderRequest.packageInfo.priceOffer,
-        } as UserMagazine).then(() => {
+        if (orderRequest.packageInfo.pdf) {
+          addMagazinePdfAccess({
+            orderId,
+            email: user?.email,
+            pdf: orderRequest.packageInfo.pdf,
+            image: orderRequest.packageInfo.image,
+            price: orderRequest.packageInfo.price,
+            term: orderRequest.packageInfo.term,
+            priceOffer: orderRequest.packageInfo.priceOffer,
+          } as UserMagazine).then(() => {
+            showSuccess(orderId);
+          });
+        } else {
           showSuccess(orderId);
-        });
+        }
       });
     },
     [addMagazinePdfAccess, addOrderRequest, orderRequest, showSuccess, user]
@@ -246,26 +250,15 @@ const PaymentComponent = ({
             />
           </div>
         </div>
-        <div css={{ display: "flex", justifyContent: "flex-end", margin: 20 }}>
+        {/* <div css={{ display: "flex", justifyContent: "flex-end", margin: 20 }}>
           <button
-            // css={css`
-            //   color: #fff;
-            //   font-size: 17px;
-            //   border-radius: 6px;
-            //   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.25);
-            //   background: #333 none repeat scroll 0% 0%;
-            //   font-weight: bold;
-            //   font-family: "'Montserrat', sans-serif";
-            //   padding: 10px 20px;
-            //   cursor: pointer;
-            // `}
             onClick={() => {
               submitData();
             }}
           >
             {localize("complete")}
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

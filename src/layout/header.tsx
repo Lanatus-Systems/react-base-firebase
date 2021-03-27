@@ -65,7 +65,7 @@ const Header = () => {
       },
     },
     {
-      label: "My Magazines",
+      label: localize("my-magazines"),
       command: () => {
         history.push("/my-magazines");
       },

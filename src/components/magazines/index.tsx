@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react  */
-import { useAsync } from "src/hooks";
+import { useAsync, useMultiLanguage } from "src/hooks";
 import * as api from "src/api/orders";
 import { useContext, useEffect, useState } from "react";
 import Loading from "src/base/Loading";
@@ -12,6 +12,7 @@ const UserMagazines = () => {
 
   const { isMobile } = useContext(LayoutContext);
 
+  const { localize } = useMultiLanguage();
   const [userMagazines, setUserMagazines] = useState<UserMagazine[]>();
 
   const [getUserMagazines, retrieving] = useAsync(api.getUserMagazines);
@@ -33,7 +34,7 @@ const UserMagazines = () => {
           textAlign: "center",
         }}
       >
-        My Magazines
+        {localize("my-magazines")}
       </div>
       <div
         css={{
