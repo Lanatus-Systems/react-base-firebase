@@ -39,14 +39,14 @@ const Footer = () => {
       <div css={{ flexGrow: 1 }} />
       <div>
         © 2021{" "}
-        <a
+        {/* <a
           css={{ color: "unset" }}
           href="https://www.fiverr.com/prakashd1998"
           target="_blank"
           rel="noreferrer"
-        >
-          prakash dudhat
-        </a>
+        > */}
+          Mbocky Magazine
+        {/* </a> */}
       </div>
       <div
         css={{

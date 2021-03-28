@@ -14,3 +14,6 @@ export const ACTIVE_ORDERS = "active-orders"
 
 export const USER_MAGAZINE = "user-magazine"
 
+export const COMMENTS = "comments";
+
+

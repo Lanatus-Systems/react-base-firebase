@@ -38,3 +38,13 @@ export interface ArticleDetail {
   content: Content[];
   stories: Story[];
 }
+
+export interface ArticleComment {
+  articleId: string;
+  date: Date;
+  data: string;
+  lang: string;
+  byId: string;
+  byName: string;
+  byImg: string;
+}

@@ -39,18 +39,20 @@ export const ContentEditor = ({ value, onChange }: IeditorProps) => {
   }, []);
 
   return (
-    <ReactQuill
-      // set the ref to access to quill editor
-      ref={ref}
-      style={{ height: 300, marginBottom: isMobile ? 120 : 50 }}
-      placeholder="Enter content here..."
-      value={value}
-      onChange={onChange}
-      theme="snow"
-      modules={{
-        toolbar: toolbarOptions,
-      }}
-    />
+    <div style={{ height: 365 }}>
+      <ReactQuill
+        // set the ref to access to quill editor
+        ref={ref}
+        style={{ height: 300 }}
+        placeholder="Enter content here..."
+        value={value}
+        onChange={onChange}
+        theme="snow"
+        modules={{
+          toolbar: toolbarOptions,
+        }}
+      />
+    </div>
   );
 };
 interface Iprops {

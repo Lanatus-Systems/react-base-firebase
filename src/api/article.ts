@@ -1,6 +1,12 @@
 import { firestore } from "src/firebase";
-import { Article, ArticleDetail, Category } from "src/model/article";
-import { ARTICLES, ARTICLE_DETAIL, CATEGORIES } from "./collections";
+import firebase from "firebase/app";
+import {
+  Article,
+  ArticleComment,
+  ArticleDetail,
+  Category,
+} from "src/model/article";
+import { ARTICLES, ARTICLE_DETAIL, CATEGORIES, COMMENTS } from "./collections";
 
 export const getCategories = () => {
   return firestore
@@ -163,4 +169,41 @@ export const updateArticleContent = (item: ArticleDetail) => {
 
 export const addArticleContent = (item: ArticleDetail) => {
   return firestore.collection(ARTICLE_DETAIL).add(item);
+};
+
+export const getComments = (id: string) => {
+  return firestore
+    .collection(COMMENTS)
+    .doc(id)
+    .get()
+    .then((doc) => {
+      const value = doc.data() || ({} as any);
+      const comments = value.data || [];
+      return comments.map((item: any) => {
+        return {
+          articleId: doc.id,
+          ...item,
+          ...(item.date ? { date: item.date.toDate() } : {}),
+        } as ArticleComment;
+      });
+    });
+};
+
+export const addComment = (comment: ArticleComment) => {
+  const finalData = { ...comment } as any;
+  const articleId = comment.articleId;
+  delete finalData.articleId;
+  const document = firestore.collection(COMMENTS).doc(articleId);
+
+  return document
+    .update({
+      data: firebase.firestore.FieldValue.arrayUnion(comment),
+    })
+    .catch((err) => {
+      if (err?.code === "not-found") {
+        document.set({
+          data: [comment],
+        });
+      }
+    });
 };

@@ -22,6 +22,8 @@ import SocialMediaLinks from "../social-media-links";
 import parseQuillHtml from "src/utils/quill-parser";
 import { DATE_TIME_FORMAT_INPUT_DATE } from "src/constants";
 
+import Comments from "./comments";
+
 interface Iparams {
   id: string;
 }
@@ -424,7 +426,7 @@ const ArticleContent = (props: Iprops) => {
       </div>
 
       <div>
-        <div style={{ padding: isMobile ? 0 : 20, margin: "5vh 0vw" }}>
+        <div style={{ padding: isMobile ? 0 : 20, marginTop: "5vh" }}>
           {articleContent?.stories?.map((item, index, all) => (
             <StoryItem
               key={index}
@@ -482,6 +484,13 @@ const ArticleContent = (props: Iprops) => {
           )}
         </div>
       )}
+
+      <div style={{ marginBottom: "5vh" }}>
+        <div>Comments</div>
+        <div>
+          <Comments articleId={article.id} />
+        </div>
+      </div>
     </div>
   );
 };
