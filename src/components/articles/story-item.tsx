@@ -8,9 +8,9 @@ import ImagePlaceholder from "../image-placeholder";
 import TextPlaceholder from "../text-placeholder";
 import { useContext } from "react";
 import { AuthContext, LayoutContext } from "src/context";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faShareAlt } from "@fortawesome/free-solid-svg-icons";
 import parseQuillHtml from "src/utils/quill-parser";
+import SocialShare from "../SocialShare";
+import { useLocation } from "react-router-dom";
 interface Iprops {
   value: Story;
   onChange: (item: Story) => void;
@@ -28,12 +28,17 @@ const StoryItem = ({
 }: Iprops) => {
   const { derive, deriveImage } = useMultiLanguage();
 
+  const location = useLocation();
+
   const { isMobile } = useContext(LayoutContext);
 
   const { roles } = useContext(AuthContext);
 
+  const storyLink = `#story-${storyIndex}`;
+
   return (
     <div
+      id={storyLink}
       css={{
         borderBottom: "1px solid lightgrey",
         paddingBottom: 30,
@@ -91,14 +96,15 @@ const StoryItem = ({
             css={{
               display: "flex",
               padding: isMobile ? "2vw" : "1vw",
-              justifyContent: "space-between",
+              // justifyContent: "space-between",
             }}
           >
-            <div css={{ fontSize: 20 }}>{`${storyIndex}/${storyCount}`}</div>
-            <FontAwesomeIcon
-              icon={faShareAlt}
-              size="1x"
-              css={{ fontSize: 20, ":hover": { color: "red" } }}
+            <div
+              css={{ fontSize: 20, marginRight: 10 }}
+            >{`${storyIndex}/${storyCount}`}</div>
+            <SocialShare
+              url={`${window.origin}${location.pathname}${storyLink}`}
+              mediaUrl={deriveImage(value.image)}
             />
           </div>
           <div css={{ position: "relative" }}>

@@ -18,11 +18,11 @@ import { MultiLanguage } from "src/model/common";
 import { zipObj } from "ramda";
 import ImagePlaceholder from "../image-placeholder";
 import TextPlaceholder from "../text-placeholder";
-import SocialMediaLinks from "../social-media-links";
 import parseQuillHtml from "src/utils/quill-parser";
 import { DATE_TIME_FORMAT_INPUT_DATE } from "src/constants";
 
 import Comments from "./comments";
+import SocialShare from "../SocialShare";
 
 interface Iparams {
   id: string;
@@ -65,6 +65,25 @@ const ArticleContent = (props: Iprops) => {
 
   const [article, setArticle] = useState<Article>(location.state?.article);
   const [articleContent, setArticleContent] = useState<ArticleDetail>();
+
+  console.log({ location });
+
+  useEffect(() => {
+    if (articleContent) {
+      const hashLink = location.hash;
+      if (hashLink) {
+        const storyElement = document.getElementById(hashLink);
+        if (storyElement) {
+          setTimeout(() => {
+            window.scrollTo({
+              behavior: "smooth",
+              top: storyElement.offsetTop,
+            });
+          }, 100);
+        }
+      }
+    }
+  }, [articleContent, location.hash]);
 
   useEffect(() => {
     if (location.state?.article == null) {
@@ -359,7 +378,11 @@ const ArticleContent = (props: Iprops) => {
                         justifyContent: "space-around",
                       }}
                     >
-                      <SocialMediaLinks />
+                      {/* <SocialMediaLinks /> */}
+                      <SocialShare
+                        url={`${window.origin}${location.pathname}`}
+                        mediaUrl={deriveImage(article.image)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -485,12 +508,14 @@ const ArticleContent = (props: Iprops) => {
         </div>
       )}
 
-      <div style={{ marginBottom: "5vh" }}>
-        <div>Comments</div>
-        <div>
-          <Comments articleId={article.id} />
+      {article && (
+        <div style={{ marginBottom: "5vh" }}>
+          <div>Comments</div>
+          <div>
+            <Comments articleId={article.id} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

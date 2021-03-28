@@ -1,6 +1,5 @@
-import { useContext, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import ReactQuill, { Quill } from "react-quill";
-import { LayoutContext } from "src/context";
 
 const Font = Quill.import("formats/font");
 Font.whitelist = ["", "serif", "monospace", "Sniglet", "Montserrat"];
@@ -30,8 +29,6 @@ const toolbarOptions = [
 
 export const ContentEditor = ({ value, onChange }: IeditorProps) => {
   const ref = useRef<any>(null);
-
-  const { isMobile } = useContext(LayoutContext);
 
   // Disable spellcheck as component is mounted
   useEffect(() => {

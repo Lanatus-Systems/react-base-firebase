@@ -9,10 +9,6 @@ import parseQuillHtml from "src/utils/quill-parser";
 import { Button } from "primereact/button";
 import Loading from "src/base/Loading";
 import { Avatar } from "primereact/avatar";
-import {
-  ADMIN_DATE_TIME_FORMAT_UI,
-  DATE_TIME_FORMAT_INPUT_DATE,
-} from "src/constants";
 import dayjs from "dayjs";
 
 interface Iprops {
