@@ -10,6 +10,7 @@ import { Button } from "primereact/button";
 import Loading from "src/base/Loading";
 import { Avatar } from "primereact/avatar";
 import dayjs from "dayjs";
+import SignInLink from "src/components/login/signin-modal";
 
 interface Iprops {
   articleId: string;
@@ -84,19 +85,20 @@ const Comments = ({ articleId }: Iprops) => {
           })}
         </div>
       )}
-      {user && (
-        <div style={{ padding: 10 }}>
-          <div>
-            <TextComponent rich value={newComment} onChange={setNewComment} />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              paddingRight: 10,
-              marginTop: 10,
-            }}
-          >
+
+      <div style={{ padding: 10 }}>
+        <div>
+          <TextComponent rich value={newComment} onChange={setNewComment} />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            paddingRight: 10,
+            marginTop: 5,
+          }}
+        >
+          {user ? (
             <Button
               label="Comment"
               disabled={adding}
@@ -118,9 +120,19 @@ const Comments = ({ articleId }: Iprops) => {
                 }
               }}
             />
-          </div>
+          ) : (
+            <SignInLink>
+              {(popModal) => (
+                <Button
+                  className="p-button-danger"
+                  label="Sign In"
+                  onClick={popModal}
+                />
+              )}
+            </SignInLink>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

@@ -23,12 +23,12 @@ export const SignInModal = ({ hide }: Iprops) => {
       >
         <Button
           className="p-button-danger"
-        //   icon="pi pi-google"
+          //   icon="pi pi-google"
           label="Google"
           onClick={googleLogin}
         />
         <Button
-        //   icon="pi pi-facebook"
+          //   icon="pi pi-facebook"
           label="Facebook"
           onClick={facebookLogin}
         />
@@ -41,7 +41,7 @@ interface IlinkProps {
   children: (popModal: () => void) => ReactNode;
 }
 
-const SingInLink = ({ children }: IlinkProps) => {
+const SignInLink = ({ children }: IlinkProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <>
@@ -51,4 +51,4 @@ const SingInLink = ({ children }: IlinkProps) => {
   );
 };
 
-export default SingInLink;
+export default SignInLink;

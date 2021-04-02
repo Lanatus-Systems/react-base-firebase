@@ -11,7 +11,7 @@ import { ENGLISH, FRENCH } from "src/i18n/languages";
 
 import styled from "@emotion/styled";
 import Loading from "src/base/Loading";
-import SingInLink from "src/components/login/signin-modal";
+import SignInLink from "src/components/login/signin-modal";
 import { useHistory } from "react-router-dom";
 
 export const StyledMenuItem = styled.div({
@@ -192,9 +192,9 @@ const Header = () => {
                   />
                 </span>
               ) : (
-                <SingInLink>
+                <SignInLink>
                   {(popModal) => <span onClick={popModal}>Sign In</span>}
-                </SingInLink>
+                </SignInLink>
               )}
             </div>
           </div>

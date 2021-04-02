@@ -11,6 +11,8 @@ import {
   PinterestShareButton,
   TwitterIcon,
   TwitterShareButton,
+  WhatsappIcon,
+  WhatsappShareButton
 } from "react-share";
 
 interface Iprops {
@@ -41,6 +43,9 @@ const SocialShare = ({ url, mediaUrl }: Iprops) => {
             <TwitterShareButton url={url}>
               <TwitterIcon size={32} round />
             </TwitterShareButton>
+            <WhatsappShareButton url={url}>
+              <WhatsappIcon size={32} round />
+            </WhatsappShareButton>
             {mediaUrl ? (
               <PinterestShareButton media={mediaUrl} url={url}>
                 <PinterestIcon size={32} round />
@@ -58,7 +63,7 @@ const SocialShare = ({ url, mediaUrl }: Iprops) => {
         model={shareOptions}
         popup
         ref={menuRef as any}
-        style={{ width: mediaUrl ? 150 : 100 }}
+        style={{ width: mediaUrl ? 180 : 130 }}
       />
       <FontAwesomeIcon
         icon={faShareAlt}
