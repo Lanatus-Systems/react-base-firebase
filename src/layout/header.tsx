@@ -42,28 +42,28 @@ const Header = () => {
 
   const menuRef = useRef();
   const userMenu = [
-    {
-      label: localize("subscribe"),
-      command: () => {
-        history.push("/subscribe");
-      },
-      template: (item: any, options: any) => {
-        return (
-          <div className={options.className} onClick={options.onClick}>
-            <span
-              style={{
-                color: "red",
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 600,
-              }}
-              className={options.labelClassName}
-            >
-              {item.label}
-            </span>
-          </div>
-        );
-      },
-    },
+    // {
+    //   label: localize("subscribe"),
+    //   command: () => {
+    //     history.push("/subscribe");
+    //   },
+    //   template: (item: any, options: any) => {
+    //     return (
+    //       <div className={options.className} onClick={options.onClick}>
+    //         <span
+    //           style={{
+    //             color: "red",
+    //             fontFamily: "'Montserrat', sans-serif",
+    //             fontWeight: 600,
+    //           }}
+    //           className={options.labelClassName}
+    //         >
+    //           {item.label}
+    //         </span>
+    //       </div>
+    //     );
+    //   },
+    // },
     {
       label: localize("my-magazines"),
       command: () => {
@@ -145,7 +145,15 @@ const Header = () => {
           </PlainLink>
 
           <Filler />
-          <div css={{ padding: "15px 0px", display: "flex", height: 50 }}>
+          <div
+            css={{
+              padding: "5px 0px",
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "flex-end",
+              height: 50,
+            }}
+          >
             <select
               css={{
                 border: "0px",
@@ -162,7 +170,7 @@ const Header = () => {
               <option value={ENGLISH}>English</option>
               <option value={FRENCH}>French</option>
             </select>
-            <Menu model={userMenu} popup ref={menuRef as any} />
+            <Menu appendTo={document.body} model={userMenu} popup ref={menuRef as any} />
             <div
               css={{
                 display: "flex",
@@ -196,6 +204,29 @@ const Header = () => {
                   {(popModal) => <span onClick={popModal}>Sign In</span>}
                 </SignInLink>
               )}
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: isMobile ? "5px 5px" : "0px 15px 0px 0px",
+                padding: isMobile ? "0px 5px" : "",
+              }}
+            >
+              <div
+                style={{
+                  color: "red",
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontWeight: 600,
+                }}
+                onClick={() => {
+                  history.push("/subscribe");
+                }}
+              >
+                Subscribe
+              </div>
             </div>
           </div>
         </div>
