@@ -12,6 +12,7 @@ export interface SubscriptionPackage {
   language?: string;
   availability?: MultiLanguage;
   pdf?: MultiLanguage;
+  enabled?: boolean;
 }
 
 export interface AppPage {
@@ -21,7 +22,6 @@ export interface SubscribePage extends AppPage {
   subHeadCoverImage: MultiLanguage;
   sliderImages: MultiLanguage[];
   subHeadInfo: MultiLanguage;
-  packages: SubscriptionPackage[];
 }
 
 export interface CheckoutPage extends AppPage {

@@ -20,7 +20,6 @@ export const getSubscribePageData = () => {
           ...value,
           subHeadCoverImage: (value && value.subHeadCoverImage) || {},
           sliderImages: (value && value.sliderImages) || [],
-          packages: (value && value.packages) || [],
         } as SubscribePage;
       } else {
         throw new Error("Subscribe page data does not exists");

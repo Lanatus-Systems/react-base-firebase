@@ -14,6 +14,8 @@ import TextEdit from "../editables/TextEdit";
 import { PlainLink } from "src/base";
 import { ENGLISH } from "src/i18n/languages";
 
+import { InputSwitch } from "primereact/inputswitch";
+
 interface Iprops {
   value: SubscriptionPackage;
   onChange: (item: SubscriptionPackage) => void;
@@ -59,6 +61,23 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
       {roles.admin && (
         <div
           css={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            margin: 10,
+          }}
+        >
+          <div>Visible : </div>
+          <InputSwitch
+            checked={value.enabled}
+            onChange={(e) => onChange({ ...value, enabled: e.value })}
+          />
+        </div>
+      )}
+
+      {roles.admin && (
+        <div
+          css={{
             position: "relative",
             height: 30,
             marginTop: 10,
@@ -69,11 +88,11 @@ const SubscribePackage = ({ value, onChange, onRemove }: Iprops) => {
           }}
         >
           Package Id : {value.id || "Not set"}
-          <TextEdit
+          {/* <TextEdit
             title="Edit Package ID"
             value={value.id}
             onChange={(updated) => onChange({ ...value, id: updated })}
-          />
+          /> */}
         </div>
       )}
       {roles.admin && (

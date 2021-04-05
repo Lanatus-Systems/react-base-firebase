@@ -13,6 +13,8 @@ import parseQuillHtml from "src/utils/quill-parser";
 import { uploadImage, uploadPdf } from "src/api/storage";
 import { mapImageToPromise } from "../articles/article-content";
 import SubscribePackage from "./subscribe-package";
+import * as articleApi from "src/api/article";
+// import { firestore } from "src/firebase";
 
 const MagazineSlider = lazy(() => import("./magazine-slider"));
 
@@ -29,35 +31,35 @@ const Subscribe = () => {
   const [uploadImageData, uploadingImg] = useAsync(uploadImage);
   const [uploadPdfData, uploadingPdf] = useAsync(uploadPdf);
 
+  const [subscriptionPackages, setSubscriptionPackages] = useState<
+    SubscriptionPackage[]
+  >();
+
+  console.log({ subscriptionPackages });
+
   useEffect(() => {
-    api.getSubscribePageData().then(setPageData);
+    api.getSubscribePageData().then((data) => {
+      // console.log({ data });
+      // const packages = (data as any).packages as any;
+      // packages.map((item: any) => {
+      //   firestore.collection("magazines").add({...item, enabled:true});
+      //   return item;
+      // });
+      setPageData(data);
+    });
   }, []);
+
+  useEffect(() => {
+    if (roles.admin) {
+      articleApi.getAllSubscriptionPackages().then(setSubscriptionPackages);
+    } else {
+      articleApi.getEnabledSubscriptionPackages().then(setSubscriptionPackages);
+    }
+  }, [roles.admin]);
 
   console.log({ pageData });
   const saveData = () => {
     if (pageData != null) {
-      const uploadedImages = Promise.all(
-        pageData.packages
-          .map((pkg) => pkg.image)
-          .map((image) => image && mapImageToPromise(image, uploadImageData))
-      );
-
-      const uploadedPdfs = Promise.all(
-        pageData.packages
-          .map((pkg) => pkg.pdf)
-          .map((pdf) => pdf && mapImageToPromise(pdf, uploadPdfData))
-      );
-
-      const uploadedPackages = Promise.all([uploadedImages, uploadedPdfs]).then(
-        ([imgUrls, pdfUrls]) => {
-          return pageData.packages.map((item, index) => ({
-            ...item,
-            image: imgUrls[index] || {},
-            pdf: pdfUrls[index] || {},
-          }));
-        }
-      );
-
       const uploadedSlides = Promise.all(
         pageData.sliderImages.map(
           (image) => image && mapImageToPromise(image, uploadImageData)
@@ -66,28 +68,15 @@ const Subscribe = () => {
         return pageData.sliderImages.map((item, index) => urls[index]);
       });
 
-      // const uploadedPdfs = Promise.all(
-      //   pageData.packages
-      //     .map((pkg) => pkg.pdf)
-      //     .map((pdf) => pdf && mapImageToPromise(pdf, uploadPdfData))
-      // ).then((urls) => {
-      //   return pageData.packages.map((item, index) => ({
-      //     ...item,
-      //     pdf: urls[index] || {},
-      //   }));
-      // });
-
       Promise.all([
         mapImageToPromise(pageData.subHeadCoverImage, uploadImageData),
         uploadedSlides,
-        uploadedPackages,
-      ]).then(([resolvedImage, slides, packages]) => {
-        console.log({ resolvedImage, slides, pageData, packages });
+      ]).then(([resolvedImage, slides]) => {
+        console.log({ resolvedImage, slides, pageData });
         saveSubscriptionPageData({
           ...pageData,
           sliderImages: slides,
           subHeadCoverImage: resolvedImage,
-          packages: packages,
         } as SubscribePage);
       });
     }
@@ -180,6 +169,15 @@ const Subscribe = () => {
           </div>
         </div>
       </div>
+      {roles.admin && (
+        <div style={{ margin: 20 }}>
+          {saving || uploadingImg || uploadingPdf ? (
+            "Saving...."
+          ) : (
+            <button onClick={saveData}>Save Page Details</button>
+          )}
+        </div>
+      )}
       <div
         css={{
           display: "flex",
@@ -194,31 +192,52 @@ const Subscribe = () => {
             justifyContent: "center",
           }}
         >
-          {pageData.packages?.map((item, index) => (
-            <SubscribePackage
-              key={index}
-              value={item}
-              onChange={(item) =>
-                setPageData((val) => {
-                  if (val == null) {
-                    return val;
-                  }
-                  const current = val.packages || [];
-                  current[index] = item;
-                  return { ...val, packages: current };
-                })
-              }
-              onRemove={() =>
-                setPageData((val) => {
-                  if (val == null) {
-                    return val;
-                  }
-                  const current = val.packages || [];
-                  const updated = current.filter((_, i) => i !== index);
-                  return { ...val, packages: updated };
-                })
-              }
-            />
+          {subscriptionPackages?.map((item, index) => (
+            <>
+              <SubscribePackage
+                key={index}
+                value={item}
+                onChange={(updated) => {
+                  const uploadedImage = mapImageToPromise(
+                    updated.image,
+                    uploadImageData
+                  );
+                  const uploadedPdf = mapImageToPromise(
+                    updated.pdf || {},
+                    uploadPdfData
+                  );
+
+                  Promise.all([uploadedImage, uploadedPdf]).then(
+                    ([imgUrl, pdfUrl]) => {
+                      const finalObj = {
+                        ...updated,
+                        image: imgUrl || "",
+                        pdf: pdfUrl || "",
+                      };
+
+                      articleApi
+                        .updateSubscriptionPackage(finalObj)
+                        .then(() => {
+                          setSubscriptionPackages((val) => {
+                            const current = val ? [...val] : [];
+                            current[index] = finalObj;
+                            return current;
+                          });
+                        });
+                    }
+                  );
+                }}
+                onRemove={() => {
+                  articleApi.removeSubscriptionPackage(item.id).then(() => {
+                    setSubscriptionPackages((val) => {
+                      const current = val ? [...val] : [];
+                      const updated = current.filter((_, i) => i !== index);
+                      return updated;
+                    });
+                  });
+                }}
+              />
+            </>
           ))}
         </div>
         {roles.admin && (
@@ -236,14 +255,10 @@ const Subscribe = () => {
             </div>
             <button
               onClick={() =>
-                setPageData((val) => {
-                  if (val == null) return val;
-                  const current = val.packages || [];
-                  const updated = current.concat({} as SubscriptionPackage);
-                  return {
-                    ...val,
-                    packages: updated,
-                  };
+                articleApi.addSubscriptionPackage().then((item) => {
+                  setSubscriptionPackages((packages) =>
+                    packages?.concat({ id: item.id } as SubscriptionPackage)
+                  );
                 })
               }
             >
@@ -252,15 +267,6 @@ const Subscribe = () => {
           </div>
         )}
       </div>
-      {roles.admin && (
-        <div style={{ margin: 20 }}>
-          {saving || uploadingImg || uploadingPdf ? (
-            "Saving...."
-          ) : (
-            <button onClick={saveData}>Save</button>
-          )}
-        </div>
-      )}
     </div>
   );
 };

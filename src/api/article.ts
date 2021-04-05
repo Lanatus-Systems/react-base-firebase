@@ -6,7 +6,14 @@ import {
   ArticleDetail,
   Category,
 } from "src/model/article";
-import { ARTICLES, ARTICLE_DETAIL, CATEGORIES, COMMENTS } from "./collections";
+import {
+  ARTICLES,
+  ARTICLE_DETAIL,
+  CATEGORIES,
+  COMMENTS,
+  MAGAZINES,
+} from "./collections";
+import { SubscriptionPackage } from "src/model/app-pages";
 
 export const getCategories = () => {
   return firestore
@@ -206,4 +213,43 @@ export const addComment = (comment: ArticleComment) => {
         });
       }
     });
+};
+
+export const getAllSubscriptionPackages = () => {
+  return firestore
+    .collection(MAGAZINES)
+    .get()
+    .then((querySnapshot) => {
+      const list = querySnapshot.docs.map((doc) => {
+        return { id: doc.id, ...doc.data() } as SubscriptionPackage;
+      });
+      return list;
+    });
+};
+
+export const getEnabledSubscriptionPackages = () => {
+  return firestore
+    .collection(MAGAZINES)
+    .where("enabled", "==", true)
+    .get()
+    .then((querySnapshot) => {
+      const list = querySnapshot.docs.map((doc) => {
+        return { id: doc.id, ...doc.data() } as SubscriptionPackage;
+      });
+      return list;
+    });
+};
+
+export const updateSubscriptionPackage = (item: SubscriptionPackage) => {
+  const finalData = { ...item } as any;
+  delete finalData.id;
+  return firestore.collection(MAGAZINES).doc(item.id).set(finalData);
+};
+
+export const addSubscriptionPackage = () => {
+  return firestore.collection(MAGAZINES).add({});
+};
+
+export const removeSubscriptionPackage = (id: string) => {
+  return firestore.collection(MAGAZINES).doc(id).delete();
 };
